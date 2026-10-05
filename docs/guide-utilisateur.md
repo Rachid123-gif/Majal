@@ -27,3 +27,36 @@ Valeurs possibles pour les niveaux : `region`, `prefecture`, `province`, `commun
 
 Ces fichiers ne contiennent jamais de code officiel ni de limite : ces éléments viennent
 toujours d'une source réelle importée.
+
+## Carte du territoire
+
+Après connexion : **Tableau de bord → Ouvrir la carte du territoire**, ou directement
+http://localhost:3000/territoire/rabat.
+
+- **Survoler** une unité affiche son nom en français et en arabe et son niveau de confiance.
+- **Cliquer** ouvre le détail : rattachement, surface, code officiel (non disponible pour
+  l'instant), nombre d'équipements par catégorie.
+- **Périmètre** (à gauche) : agglomération Rabat-Salé-Skhirate-Témara ou préfecture de Rabat.
+- **Équipements** : cocher ou décocher chaque catégorie.
+- **Exporter la carte** : télécharge une image PNG avec le titre et les sources.
+- Les sources et leur date sont toujours affichées en bas de la carte.
+
+## Catégories d'équipements (`config/mappings/osm_facilities.yaml`)
+
+Chaque catégorie regroupe une ou plusieurs étiquettes OpenStreetMap (« clé=valeur », par
+exemple `amenity=school`). Pour ajouter une étiquette, l'écrire dans `rules` ; pour écarter
+certains objets, l'écrire dans `exclude` ; pour masquer une catégorie, mettre
+`enabled: false`. Ensuite : `make check-config` puis `make data`.
+
+## Mettre à jour les données
+
+```bash
+make data
+```
+
+Les données déjà téléchargées sont réutilisées (fonctionne hors ligne). Pour tout
+retélécharger depuis OpenStreetMap :
+
+```bash
+REFRESH=1 make data
+```

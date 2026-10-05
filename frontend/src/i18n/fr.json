@@ -32,7 +32,8 @@
     "progressIntro": "Le démonstrateur se construit par étapes. Chaque fonction s'active quand son étape est validée.",
     "comingSoon": "Bientôt disponible",
     "available": "Disponible",
-    "territoriesUnavailable": "Les territoires s'afficheront quand le serveur répondra."
+    "territoriesUnavailable": "Les territoires s'afficheront quand le serveur répondra.",
+    "openMap": "Ouvrir la carte du territoire"
   },
   "status": {
     "checking": "Vérification du serveur…",
@@ -48,5 +49,49 @@
     "exit": "Quitter",
     "territory": "Territoire présenté"
   },
-  "footer": "Démonstrateur MAJAL — version {version}"
+  "footer": "Démonstrateur MAJAL — version {version}",
+  "map": {
+    "title": "Carte du territoire",
+    "scope": "Périmètre",
+    "facilities": "Équipements",
+    "showAll": "Tout afficher",
+    "hideAll": "Tout masquer",
+    "loading": "Chargement de la carte…",
+    "notImported": "Les données de ce territoire ne sont pas encore importées : elles arrivent à l'étape 6.",
+    "noBasemap": "Fond de carte absent : lancez « make data ».",
+    "hint": "Survolez une unité pour voir son nom ; cliquez pour afficher le détail.",
+    "area": "Surface",
+    "areaMethod": "calculée par MAJAL à partir des limites",
+    "parent": "Rattachement",
+    "facilitiesTitle": "Équipements recensés (OpenStreetMap)",
+    "officialCode": "Code officiel",
+    "notAvailable": "non disponible",
+    "fullSheet": "La fiche complète (indicateurs, rang, écarts à la moyenne) arrive à l'étape 2.",
+    "close": "Fermer",
+    "units": "unités d'analyse",
+    "sources": "Sources",
+    "boundaries": "Limites",
+    "basemap": "Fond de carte",
+    "dataOf": "données du",
+    "toVerify": "limites non officielles, à vérifier",
+    "error": "La carte n'a pas pu se charger. Vérifiez que MAJAL est lancé.",
+    "exportPng": "Exporter la carte (image PNG)"
+  },
+  "badge": {
+    "official": "Officiel",
+    "open": "Ouvert",
+    "estimated": "Estimé",
+    "fictitious": "Fictif",
+    "help": {
+      "official": "Source institutionnelle (HCP, ministère, agence urbaine).",
+      "open": "Source ouverte reconnue (OpenStreetMap, imagerie satellite).",
+      "estimated": "Calculé ou modélisé par MAJAL à partir d'autres données.",
+      "fictitious": "Donnée de démonstration inventée."
+    }
+  },
+  "app": {
+    "dashboard": "Tableau de bord",
+    "territory": "Territoire",
+    "comingStage6": "étape 6"
+  }
 }

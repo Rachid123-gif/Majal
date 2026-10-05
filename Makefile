@@ -27,7 +27,8 @@ setup: .env ## Première installation (Docker) : construit les images et prépar
 	docker compose build
 	docker compose up -d db redis
 	docker compose run --rm backend alembic upgrade head
-	@echo "✓ Installation terminée. Lancez maintenant : make dev"
+	$(MAKE) data
+	@echo "✓ Installation terminée. Lancez maintenant : make start"
 
 setup-local: .env ## Installation sans Docker (uv et npm) pour les tests et l'éditeur
 	cd backend && uv sync
@@ -66,8 +67,11 @@ down: ## Arrête tous les services Docker
 migrate: ## Applique les migrations de la base
 	docker compose run --rm backend alembic upgrade head
 
-data: ## (Re)construit toutes les données — disponible à l'étape 1
-	@echo "Pas encore disponible : les imports arrivent à l'étape 1."
+data: .env ## (Re)construit les données : limites, équipements, routes, fond de carte
+	docker compose up -d db redis
+	docker compose run --rm -T backend alembic upgrade head
+	docker compose run --rm -T backend python -m app.ingestion run $(if $(REFRESH),--refresh,)
+	./scripts/fetch_basemap.sh
 
 demo: ## Lance le mode démonstration hors ligne — disponible à l'étape 7
 	@echo "Pas encore disponible : le mode démonstration arrive à l'étape 7."

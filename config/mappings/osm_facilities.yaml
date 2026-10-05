@@ -1,0 +1,110 @@
+# Correspondance entre les étiquettes OpenStreetMap et les catégories d'équipements de MAJAL.
+# Statut : TODO_REFERENT (proposition provisoire, à valider par le référent scientifique).
+#
+# Chaque catégorie liste une ou plusieurs règles « clé=valeur » d'OpenStreetMap. Un objet est
+# rangé dans la PREMIÈRE catégorie dont une règle correspond (l'ordre compte).
+# « exclude » écarte des objets (par exemple les jardins privés).
+# Pour désactiver une catégorie : enabled: false.
+# Après modification : `make check-config`, puis `make data`.
+
+mapping_version: "0.1-provisoire"
+status: TODO_REFERENT
+source_note: "OpenStreetMap — données ouvertes, complétude variable selon les quartiers"
+
+categories:
+  - code: health_hospital
+    label: { fr: "Hôpitaux", ar: "المستشفيات" }
+    group: sante
+    color: "#a8461f"
+    rules: ["amenity=hospital"]
+
+  - code: health_primary
+    label: { fr: "Centres de santé et cliniques", ar: "المراكز الصحية والمصحات" }
+    group: sante
+    color: "#d0703f"
+    rules: ["amenity=clinic", "healthcare=centre", "amenity=doctors", "healthcare=clinic"]
+
+  - code: pharmacy
+    label: { fr: "Pharmacies", ar: "الصيدليات" }
+    group: sante
+    color: "#e8956b"
+    enabled: false   # très nombreuses ; à activer si utile
+    rules: ["amenity=pharmacy"]
+
+  - code: school
+    label: { fr: "Écoles, collèges et lycées", ar: "المدارس والإعداديات والثانويات" }
+    group: education
+    color: "#12545a"
+    rules: ["amenity=school"]
+
+  - code: higher_education
+    label: { fr: "Enseignement supérieur", ar: "التعليم العالي" }
+    group: education
+    color: "#3f8580"
+    rules: ["amenity=university", "amenity=college"]
+
+  - code: market
+    label: { fr: "Marchés et souks", ar: "الأسواق" }
+    group: commerce
+    color: "#8a6d1e"
+    rules: ["amenity=marketplace"]
+
+  - code: administration
+    label: { fr: "Administrations et services publics", ar: "الإدارات والمرافق العمومية" }
+    group: administration
+    color: "#4a5560"
+    rules: ["amenity=townhall", "office=government", "amenity=post_office", "amenity=courthouse"]
+
+  - code: tram_stop
+    label: { fr: "Arrêts de tramway", ar: "محطات الترامواي" }
+    group: mobilite
+    color: "#6b3fa0"
+    rules: ["railway=tram_stop"]
+
+  - code: bus_stop
+    label: { fr: "Arrêts de bus", ar: "محطات الحافلات" }
+    group: mobilite
+    color: "#9b7cc4"
+    rules: ["highway=bus_stop"]
+
+  - code: rail_station
+    label: { fr: "Gares ferroviaires", ar: "محطات القطار" }
+    group: mobilite
+    color: "#3d2466"
+    rules: ["railway=station"]
+
+  - code: green_space
+    label: { fr: "Parcs publics", ar: "الحدائق العمومية" }
+    group: cadre_de_vie
+    color: "#4f8a3c"
+    rules: ["leisure=park"]
+    exclude: ["access=private", "access=no"]
+
+  - code: garden
+    label: { fr: "Jardins (statut non vérifié)", ar: "حدائق (وضعية غير متحقق منها)" }
+    group: cadre_de_vie
+    color: "#8fb57c"
+    # Désactivé : dans OSM, la plupart sont de petits jardins privés ou de résidences
+    # (question au référent Q14).
+    enabled: false
+    rules: ["leisure=garden"]
+    exclude: ["access=private", "access=no", "garden:type=residential", "garden:type=private"]
+
+  - code: sport
+    label: { fr: "Équipements sportifs", ar: "التجهيزات الرياضية" }
+    group: cadre_de_vie
+    color: "#2f6fb0"
+    rules: ["leisure=sports_centre", "leisure=stadium"]
+
+  - code: culture
+    label: { fr: "Culture", ar: "الثقافة" }
+    group: cadre_de_vie
+    color: "#b0457a"
+    rules: ["amenity=library", "amenity=theatre", "amenity=arts_centre", "amenity=cinema", "tourism=museum"]
+
+  - code: mosque
+    label: { fr: "Mosquées", ar: "المساجد" }
+    group: culte
+    color: "#7a8a99"
+    enabled: false   # « si utile » selon le cahier des charges
+    rules: ["amenity=place_of_worship"]

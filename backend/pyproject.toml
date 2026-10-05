@@ -14,6 +14,9 @@ dependencies = [
     "geoalchemy2>=0.15",
     "pyyaml>=6.0",
     "itsdangerous>=2.2.0",
+    "shapely>=2.1.2",
+    "httpx>=0.28.1",
+    "pmtiles>=3.8.1",
 ]
 
 [dependency-groups]
@@ -23,6 +26,7 @@ dev = [
     "mypy>=1.11",
     "types-pyyaml>=6.0",
     "httpx2>=2.13.1",
+    "types-shapely>=2.1.0.20260728",
 ]
 
 [tool.uv]

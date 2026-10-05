@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     app_env: str = "development"
     database_url: str = "postgresql+psycopg://majal:majal@localhost:5432/majal"
     config_dir: Path = REPO_ROOT / "config"
+    data_dir: Path = REPO_ROOT / "data"
+    # Public Overpass servers, tried in turn (the main one is often overloaded).
+    overpass_urls: list[str] = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
+    ]
     cors_origins: list[str] = ["http://localhost:3000"]
 
     # Sessions: cookie signed with this secret (set a long random value in .env).

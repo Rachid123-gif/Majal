@@ -43,9 +43,21 @@ profiles:
   indicators: urbain
   taxonomy: urbain
 
-# Sources : paramètres complétés à l'étape 1, après vérification de chaque source
-# (docs/sources.md).
-sources: {}
+# Sources vérifiées le 2026-10-05 (docs/sources.md). Relancer les imports : `make data`.
+sources:
+  boundaries:
+    importer: osm_boundaries
+    # Niveaux administratifs d'OpenStreetMap au Maroc (admin_level) -> niveaux MAJAL.
+    admin_levels: { prefecture: 5, commune: 8, arrondissement: 10 }
+  facilities:
+    importer: osm_facilities
+    mapping: config/mappings/osm_facilities.yaml
+  roads:
+    importer: osm_roads
+    highway: [motorway, trunk, primary, secondary, tertiary, unclassified, track]
+  basemap:
+    importer: basemap_pmtiles
+    maxzoom: 15
 
 data_holders: config/data_holders/rabat.yaml
 

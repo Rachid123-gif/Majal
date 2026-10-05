@@ -38,7 +38,8 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 | `make setup-local` / `make dev-local` | Sans Docker (uv + npm), sans base de données |
 | `make test` | pytest + vitest (dans Docker si présent, sinon en local) |
 | `make lint` | ruff, ruff format, mypy strict, eslint, prettier, tsc |
-| `make check-config` | Valide `config/territories/*.yaml`, erreurs en français |
+| `make check-config` | Valide `config/territories/*.yaml` et les correspondances, erreurs en français |
+| `make data` | Imports (limites, équipements, routes) depuis le cache `data/raw/`, puis fond de carte ; `REFRESH=1` retélécharge |
 | `make backup` / `make restore FILE=…` | Sauvegarde / restauration de la base |
 
 ## Architecture
@@ -48,6 +49,17 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   - `app/config_loader/` : lecture YAML avec numéros de ligne, validation Pydantic générique
     (`load_model`) réutilisable pour les grilles, taxonomies et plans de rapport.
   - `app/api/` : `/health` (+ `/api/health`), `/api/territories`, `/api/auth/{login,logout,me}`.
+  - `app/api/maps.py` : tuiles du fond de carte (`/api/tiles/<code>/…`, sans connexion),
+    unités et équipements en GeoJSON (`/api/territories/<code>/units|facilities`, connexion requise).
+  - `app/ingestion/` : `python -m app.ingestion run|bbox|basemaps`. Importeurs déclarés dans
+    `sources` du fichier de territoire (`osm_boundaries`, `osm_facilities`, `osm_roads`,
+    `basemap_pmtiles` géré par `scripts/fetch_basemap.sh`). Idempotents (upsert par
+    `(study_area_id, external_id)` + suppression des disparus), journalisés dans `import_runs`.
+    `boundaries.assemble_units` est pur (testé sans base). Overpass : cache + rotation de serveurs.
+  - Modèles : `data_sources`, `study_areas`, `territories` (MultiPolygon 4326, `is_analysis_unit`,
+    `scopes` JSONB), `facilities`, `roads`, `import_runs` (migration 0002). Surfaces et
+    longueurs sur l'ellipsoïde (`::geography`, décision 0009).
+  - Tests de base de données (`tests/test_ingestion_db.py`) ignorés si PostGIS est absent (CI).
   - `app/security.py` : comptes de démo (mots de passe dans `.env`), cookie de session signé
     `majal_session`, anti-force brute (décision 0005).
   - Dans Docker, `config/` est monté sur `/config` (= `REPO_ROOT/config`, car le code est sous `/app`).
@@ -64,15 +76,21 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
     tableau de bord) : passer `status` à `available` quand une étape est livrée, et remplacer la
     maquette correspondante (`Mockups.tsx`) par une vraie capture.
   - Animations : `components/motion/`, toutes coupées par `prefers-reduced-motion`.
+  - Carte du territoire : `/territoire/[code]` (`components/app/TerritoryMapView.tsx`,
+    `TerritoryMap.tsx` avec MapLibre 6 + `@protomaps/basemaps`). Worker MapLibre servi par
+    `src/app/maplibre/[file]/route.ts`. Polices/icônes du fond : `public/basemap/`.
+  - Badges de confiance : `components/app/ConfidenceBadge.tsx` (texte + symbole, jamais la
+    couleur seule).
   - Carte du Maroc : `src/content/morocco-outline.json`, généré par
     `scripts/build_morocco_outline.py` (Natural Earth, point de vue du Maroc : Sahara inclus).
 
 ## État d'avancement
 
 - Étape 0 — validée le 2026-10-05.
-- Étape 0 bis (vitrine + connexion) — livrée le 2026-10-05, en attente de validation.
-  Vitrine sans aucun logo d'institution, partenaire ni témoignage (aucun partenariat ne doit être
-  suggéré). Chiffres uniquement issus de l'étude d'opportunité, avec leur source.
+- Étape 0 bis (vitrine + connexion) — validée le 2026-10-05 (l'utilisateur a lancé l'étape 1).
+- Étape 1 (Rabat : territoire réel et carte) — livrée le 2026-10-05, en attente de validation.
+  Source des limites validée par l'utilisateur : OpenStreetMap (badge Ouvert, à vérifier).
+  Reste reporté : vraie capture de la carte sur la vitrine (à faire avec Playwright, étape 7).
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

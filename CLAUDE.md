@@ -56,8 +56,9 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 
 ## État d'avancement
 
-- Étape 0 — en cours (2026-10-05) : tout ce qui ne demande pas Docker est fait et testé.
-  Reste, une fois Docker installé : `make setup`, `make dev`, vérification base (PostGIS,
-  pgvector) via `/health`, `make test` dans Docker.
+- Étape 0 — terminée techniquement le 2026-10-05 (Docker : `make setup`, `make dev`, `/health`
+  = ok avec PostGIS 3.6 et pgvector 0.8, `make test` et `make lint` verts dans Docker).
+  En attente de validation du porteur du projet avant l'étape 1.
+- Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;
   unité fine Rabat = carreaux 500 m ; Tétouan = province seule, douars sinon carreaux 1 km.

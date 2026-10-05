@@ -1,0 +1,64 @@
+# MAJAL — environnement local complet. Lancement : `make dev` (voir README).
+name: majal
+
+services:
+  db:
+    build: ./docker/db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-majal}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-majal}
+      POSTGRES_DB: ${POSTGRES_DB:-majal}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-majal} -d ${POSTGRES_DB:-majal}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-majal}:${POSTGRES_PASSWORD:-majal}@db:5432/${POSTGRES_DB:-majal}
+      REDIS_URL: redis://redis:6379/0
+      CONFIG_DIR: /config
+      APP_ENV: ${APP_ENV:-development}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      SOVEREIGN_MODE: ${SOVEREIGN_MODE:-false}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./config:/config:ro
+      - ./data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

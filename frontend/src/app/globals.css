@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* MAJAL palette and typography (brief, section 13). */
+@theme {
+  --color-petrol: #12343b;
+  --color-terracotta: #a8461f;
+  --color-cream: #f6f3ec;
+  --color-slate: #4a5560;
+
+  --font-heading: "EB Garamond", Georgia, serif;
+  --font-sans: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-petrol);
+  font-family: var(--font-sans);
+}
+
+/* In Arabic, every text (headings included) uses the Arabic typeface. */
+html[dir="rtl"] body,
+html[dir="rtl"] .font-heading {
+  font-family: var(--font-arabic);
+}
+
+@media print {
+  body {
+    background: white;
+  }
+}
+
+/* The Latin part of the logo always stays in EB Garamond. */
+html .logo-latin {
+  font-family: var(--font-heading);
+}
+
+/* Arabic script has no italic tradition. */
+html[dir="rtl"] .italic {
+  font-style: normal;
+}

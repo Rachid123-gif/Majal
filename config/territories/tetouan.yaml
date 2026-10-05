@@ -1,0 +1,51 @@
+# Territoire de démonstration : Tétouan (profil mixte : communes urbaines et rurales)
+# Guide : chaque champ est expliqué dans docs/guide-utilisateur.md (section « Territoires »).
+# Les codes officiels, les limites et le milieu (urbain / rural) de chaque commune viennent
+# des imports, jamais d'une saisie ici.
+# Libellés arabes à relire par le référent scientifique (TODO_REFERENT).
+
+code: tetouan
+schema_version: 1
+
+name: { fr: "Tétouan", ar: "تطوان" }
+region: { fr: "Tanger-Tétouan-Al Hoceïma", ar: "جهة طنجة تطوان الحسيمة" }
+
+study_area:
+  level: province
+  label: { fr: "Province de Tétouan", ar: "إقليم تطوان" }
+
+# Province de Tétouan seule (décision du 2026-10-05, M'diq-Fnideq exclue).
+scopes:
+  - code: province
+    default: true
+    label: { fr: "Province de Tétouan", ar: "إقليم تطوان" }
+    members:
+      - { level: province, name_fr: "Tétouan" }
+
+analysis_levels:
+  main:
+    levels: [commune]
+    terms:
+      commune: { fr: "commune", ar: "جماعة" }
+  fine:
+    level: douar
+    term: { fr: "douar", ar: "دوار" }
+    fallback: grid            # si aucune source fiable des douars n'existe
+    fallback_cell_size_m: 1000
+
+profiles:
+  indicators: mixte
+  taxonomy: mixte
+
+# Sources : paramètres complétés à l'étape 6, après vérification de chaque source
+# (docs/sources.md).
+sources: {}
+
+data_holders: config/data_holders/tetouan.yaml
+
+map:
+  center: null   # calculé depuis les limites importées
+  zoom: null
+
+demo:
+  fictitious_contributions: data/demo/tetouan_contributions.csv

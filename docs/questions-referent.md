@@ -1,0 +1,13 @@
+# Questions au référent scientifique
+
+Chaque question indique la réponse appliquée par défaut en attendant sa réponse.
+Dernière mise à jour : 2026-10-05.
+
+| # | Question | Réponse appliquée par défaut | Statut |
+| --- | --- | --- | --- |
+| Q6 | Périmètre d'analyse de Rabat : préfecture seule ou agglomération ? | Agglomération Rabat-Salé-Skhirate-Témara par défaut ; préfecture de Rabat disponible en filtre | Appliquée, à confirmer |
+| Q7 | Unité fine à Rabat : quartiers ou maillage régulier ? | Carreaux de 500 m ; quartiers OpenStreetMap seulement pour situer les lieux cités par les citoyens | Appliquée, à confirmer |
+| Q8 | Tétouan : province seule ou avec M'diq-Fnideq ? | Province de Tétouan seule | Appliquée, à confirmer |
+| Q9 | Grille d'indicateurs et références de normes existantes ? | Grille provisoire (étape 2), toutes les normes vides et marquées `TODO_REFERENT` | En attente |
+| Q10 | Source faisant foi pour les noms officiels en arabe ? | Noms de la source des limites ou d'OpenStreetMap, marqués « à vérifier » | En attente |
+| Q11 | Relecture des textes arabes de l'interface (`frontend/src/i18n/ar.json`) et des libellés des fichiers `config/territories/*.yaml`, en particulier « تجمع الرباط سلا الصخيرات تمارة » et la traduction du slogan « مساعد ذكي في الذكاء الترابي » | Traductions provisoires | À relire |

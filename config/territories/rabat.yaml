@@ -1,0 +1,57 @@
+# Territoire de démonstration : Rabat (profil urbain)
+# Guide : chaque champ est expliqué dans docs/guide-utilisateur.md (section « Territoires »).
+# Les codes officiels et les limites ne sont JAMAIS saisis ici : ils viennent des imports.
+# Libellés arabes à relire par le référent scientifique (TODO_REFERENT).
+
+code: rabat
+schema_version: 1
+
+name: { fr: "Rabat", ar: "الرباط" }
+region: { fr: "Rabat-Salé-Kénitra", ar: "جهة الرباط سلا القنيطرة" }
+
+study_area:
+  level: prefecture
+  label: { fr: "Préfecture de Rabat", ar: "عمالة الرباط" }
+
+# Périmètres d'analyse. Le périmètre par défaut est l'agglomération (décision du 2026-10-05),
+# pour disposer d'assez d'unités à comparer ; la préfecture seule reste disponible en filtre.
+scopes:
+  - code: agglomeration
+    default: true
+    label: { fr: "Agglomération Rabat-Salé-Skhirate-Témara", ar: "تجمع الرباط سلا الصخيرات تمارة" }
+    members:
+      - { level: prefecture, name_fr: "Rabat" }
+      - { level: prefecture, name_fr: "Salé" }
+      - { level: prefecture, name_fr: "Skhirate-Témara" }
+  - code: prefecture
+    label: { fr: "Préfecture de Rabat", ar: "عمالة الرباط" }
+    members:
+      - { level: prefecture, name_fr: "Rabat" }
+
+analysis_levels:
+  main:
+    levels: [arrondissement, commune]
+    terms:
+      arrondissement: { fr: "arrondissement", ar: "مقاطعة" }
+      commune: { fr: "commune", ar: "جماعة" }
+  fine:
+    level: grid
+    cell_size_m: 500
+    term: { fr: "carreau de 500 m", ar: "مربع 500 م" }
+
+profiles:
+  indicators: urbain
+  taxonomy: urbain
+
+# Sources : paramètres complétés à l'étape 1, après vérification de chaque source
+# (docs/sources.md).
+sources: {}
+
+data_holders: config/data_holders/rabat.yaml
+
+map:
+  center: null   # calculé depuis les limites importées
+  zoom: null
+
+demo:
+  fictitious_contributions: data/demo/rabat_contributions.csv

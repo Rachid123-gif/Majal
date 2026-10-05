@@ -1,0 +1,21 @@
+{
+  "tagline": "Copilote d'intelligence territoriale",
+  "lead": "De la donnée publique dispersée au diagnostic territorial chiffré, sourcé et vérifiable.",
+  "principle": "L'outil propose, l'urbaniste valide.",
+  "demoTerritories": "Territoires de démonstration",
+  "defaultScope": "Périmètre par défaut",
+  "profile": "Profil",
+  "profiles": { "urbain": "urbain", "mixte": "mixte (urbain et rural)" },
+  "start": "Commencer la présentation",
+  "startSoon": "Disponible à l'étape 7 (mode présentation)",
+  "switchLanguage": "العربية",
+  "status": {
+    "checking": "Vérification du serveur…",
+    "ok": "Serveur et base de données connectés",
+    "noDatabase": "Serveur connecté — base de données non disponible (Docker pas encore lancé)",
+    "configError": "Serveur connecté — erreur dans les fichiers de configuration",
+    "unreachable": "Serveur non joignable"
+  },
+  "territoriesUnavailable": "Les territoires s'afficheront quand le serveur sera joignable.",
+  "footer": "Démonstrateur MAJAL — version {version}"
+}

@@ -26,6 +26,8 @@ SCALE = 40.0
 PAD = 12.0
 # City locations (WGS84), used only to place the two demo territories on the map.
 CITIES = {"rabat": (-6.8416, 34.0209), "tetouan": (-5.3684, 35.5785)}
+# Control points of the southern provinces, used by the cartography tests (not displayed).
+CHECKS = {"laayoune": (-13.2, 27.15), "dakhla_region": (-15.6, 23.9), "aousserd": (-14.32, 22.55)}
 
 
 def main(shp_path: str) -> None:
@@ -75,6 +77,7 @@ def main(shp_path: str) -> None:
                 "path": parts[0],
                 "context": to_path(context_polygons),
                 "cities": {code: project(*lonlat) for code, lonlat in CITIES.items()},
+                "checks": {code: project(*lonlat) for code, lonlat in CHECKS.items()},
             },
             ensure_ascii=False,
         )

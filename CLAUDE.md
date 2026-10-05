@@ -125,7 +125,14 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 - Étape 1 (Rabat : territoire réel et carte) — validée le 2026-10-05.
 - Étape 2 (indicateurs, fiche, comparaison) — livrée le 2026-10-05, en attente de validation.
   Données officielles HCP trouvées au niveau des arrondissements. Points ouverts : Q13, Q16-Q20.
-  Typologie des communes (souhaitable, méthodologie §5) non faite.
+  Typologie des communes (méthodologie §5) : à faire pendant l'étape 3, présentée comme « proposition ».
+- Engagement (Q20) : remplacer les distances à vol d'oiseau par des distances le long des rues
+  (réseau OSM) au plus tard à l'étape 7.
+- Étape 3 (rapport IA) — plan validé le 2026-10-05 : IA locale Ollama sur le Mac (hors Docker,
+  `host.docker.internal:11434`), SOVEREIGN_MODE=true par défaut (aucun appel extérieur pendant
+  l'utilisation ; `make data` reste une commande d'administration), fournisseur Anthropic codé mais
+  désactivé, secours sans IA (textes à trous), anti-invention obligatoire, cache + `make reports`,
+  exports FR (Word, PDF) ; exports arabes RTL à l'étape 7.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

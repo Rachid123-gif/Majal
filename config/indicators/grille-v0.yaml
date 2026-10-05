@@ -160,7 +160,7 @@ indicators:
     source_expected: "OpenStreetMap + population carroyée (estimé)"
     reference: relative
     threshold_note: "1 km : distance de marche courante pour l'école primaire, à confirmer (TODO_REFERENT)"
-    note: "OpenStreetMap ne distingue pas le niveau des écoles (primaire, collège, lycée) et mêle public et privé."
+    note: "OpenStreetMap ne distingue pas le niveau des écoles (primaire, collège, lycée) et mêle public et privé. Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     provisional: true
     status: TODO_REFERENT
 
@@ -193,6 +193,7 @@ indicators:
     reference: relative
     threshold_note: "2 km, à confirmer (TODO_REFERENT)"
     provisional: true
+    note: "Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   - code: SAN_HOP
@@ -205,7 +206,7 @@ indicators:
     decimals: 2
     source_expected: "OpenStreetMap (ouvert) + population carroyée (estimé)"
     reference: relative
-    note: "Distance à vol d'oiseau, moyenne pondérée par la population."
+    note: "Distance à vol d'oiseau, moyenne pondérée par la population. Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   # ---------------------------------------------------------------- 5. Eau, assainissement, services
@@ -273,6 +274,7 @@ indicators:
     source_expected: "OpenStreetMap + population carroyée (estimé)"
     reference: relative
     threshold_note: "500 m : seuil de planification courant pour l'accès à pied aux transports collectifs (TODO_REFERENT)"
+    note: "Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   - code: MOB_TRAM
@@ -286,6 +288,7 @@ indicators:
     source_expected: "OpenStreetMap + population carroyée (estimé)"
     reference: relative
     threshold_note: "500 m (TODO_REFERENT)"
+    note: "Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   - code: MOB_15MIN
@@ -300,6 +303,7 @@ indicators:
     reference: relative
     threshold_note: "Concept de « ville du quart d'heure » : 1 km ≈ 15 min de marche (TODO_REFERENT)"
     provisional: true
+    note: "Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   - code: MOB_ROUTE
@@ -354,6 +358,7 @@ indicators:
     source_expected: "OpenStreetMap + population carroyée (estimé)"
     reference: relative
     threshold_note: "Recommandation de l'OMS Europe (2016) sur l'accès aux espaces verts urbains"
+    note: "Limite v0 : distances à vol d'oiseau ; distances le long des rues prévues au plus tard à l'étape 7."
     status: TODO_REFERENT
 
   # ---------------------------------------------------------------- 8. Dynamique urbaine et foncière

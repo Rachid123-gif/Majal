@@ -21,13 +21,14 @@ describe("landing content", () => {
     expect(shape(landing.ar)).toEqual(shape(landing.fr));
   });
 
-  it("describes every feature in both languages and never claims unfinished work", () => {
+  it("describes every feature in both languages and marks only delivered work as available", () => {
     expect(features).toHaveLength(7);
     for (const feature of features) {
       expect(feature.points.fr.length).toBe(feature.points.ar.length);
       expect(feature.title.ar).toMatch(/[؀-ۿ]/);
-      // Nothing is delivered yet beyond the landing page and login (stage 0 bis).
-      expect(feature.status).toBe("in_development");
     }
+    // Delivered at stage 2: territorial diagnostic with map, commune sheet and comparison.
+    const available = features.filter((f) => f.status === "available").map((f) => f.id);
+    expect(available).toEqual(["diagnostic", "commune"]);
   });
 });

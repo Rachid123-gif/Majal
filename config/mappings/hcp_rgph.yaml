@@ -1,0 +1,44 @@
+# Correspondance entre les publications du HCP (RGPH 2014 et 2024) et les variables de MAJAL.
+# Les unités sont rattachées aux lignes du HCP par leur nom, au sein de leur préfecture ou
+# province ; le code géographique officiel du HCP est alors enregistré pour chaque unité.
+# Données officielles : badge « Officiel ».
+
+mapping_version: "1"
+
+legal_population:
+  - year: 2024
+    url: "https://www.hcp.ma/file/242341/"
+    page: "https://www.hcp.ma/Population-legale-du-Royaume-du-Maroc-repartie-par-regions-provinces-et-prefectures-et-communes-selon-les-resultats-du_a3974.html"
+    file: hcp/population_legale_rgph2024.xlsx
+    title: "Population légale du Royaume du Maroc selon les résultats du RGPH 2024 (décret n° 2.24.1009)"
+    published: "2024-11-07"
+  - year: 2014
+    url: "https://www.hcp.ma/region-drda/attachment/565048/"
+    page: "https://www.hcp.ma/region-drda/Population-legale-des-regions-provinces-prefectures-municipalites-arrondissements-et-communes-du-royaume-d-apres-les_a88.html"
+    file: hcp/population_legale_rgph2014.xlsx
+    title: "Population légale des régions, provinces, préfectures, municipalités, arrondissements et communes (RGPH 2014)"
+    published: "2015-04-27"
+
+platform:
+  title: "HCP — Résultats du RGPH 2024 (plateforme de diffusion)"
+  url: "https://resultats2024.rgphapps.ma/api/v1/chart/data"
+  page: "https://resultats2024.rgphapps.ma/"
+  year: 2024
+  datasets:
+    demographie: { id: 107, indicator_column: "Key(Nom indicateur)" }
+    activite: { id: 111, indicator_column: "Key(Nom indicateur)" }
+    education: { id: 110, indicator_column: "Titre de l'indicateur" }
+    habitat: { id: 112, indicator_column: "Key(Nom indicateur)" }
+  variables:
+    - { code: share_under_15, dataset: demographie, indicator: "Part de la population de moins de 15 ans (%)", unit: "%" }
+    - { code: share_60_plus, dataset: demographie, indicator: "Part de la population de 60 ans et plus (%)", unit: "%" }
+    - { code: unemployment_rate, dataset: activite, indicator: "Taux de chômage (%)", unit: "%" }
+    - { code: activity_rate_women, dataset: activite, indicator: "Taux d'activité des 15 ans et plus (%)", sex: "Féminin", unit: "%" }
+    - { code: illiteracy_rate, dataset: education, indicator: "Taux d'analphabétisme des 10 ans et plus (%)", unit: "%" }
+    - { code: schooling_rate_6_11, dataset: education, indicator: "Taux de scolarisation des 6-11 ans en 2023/2024 (%)", unit: "%" }
+    - { code: water_access, dataset: habitat, indicator: "Part des ménages sédentaires disposant de l'eau courante (%)", unit: "%" }
+    - { code: sewer_access, dataset: habitat, indicator: "Part des ménages sédentaires raccordés au réseau public d'assainissement (%)", unit: "%" }
+    - { code: electricity_access, dataset: habitat, indicator: "Part des ménages sédentaires disposant de l'électricité (%)", unit: "%" }
+    - { code: precarious_housing_share, dataset: habitat, indicator: "Part des ménages sédentaires vivant dans une maison sommaire ou dans un bidonville (%)", unit: "%" }
+    - { code: paved_road_distance_km, dataset: habitat, indicator: "Distance moyenne des logements à la route goudronnée (Km)", unit: "km" }
+    - { code: household_size, dataset: habitat, indicator: "Taille moyenne des ménages", unit: "personnes" }

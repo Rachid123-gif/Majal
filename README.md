@@ -34,6 +34,7 @@ make stop
 | http://localhost:3000 | Page vitrine (publique) |
 | http://localhost:3000/connexion | Connexion |
 | http://localhost:3000/tableau-de-bord | Tableau de bord (après connexion) |
+| http://localhost:3000/territoire/rabat | Carte et indicateurs de Rabat |
 
 ### Comptes de démonstration et mots de passe
 
@@ -49,6 +50,11 @@ Pour les changer : ouvrez `.env` avec TextEdit, remplacez la valeur après le si
 enregistrez, puis lancez `make stop` et `make start`. Laisser une valeur vide désactive le compte.
 Le fichier `.env` est invisible dans le Finder : appuyez sur `Cmd + Maj + .` pour afficher les
 fichiers cachés.
+
+### Modifier la méthode (grille d'indicateurs, seuils)
+
+Voir le guide dédié : [docs/grille-indicateurs-guide.md](docs/grille-indicateurs-guide.md).
+Après une modification, la carte et les fiches se recalculent toutes seules.
 
 ### Compléter la page vitrine
 

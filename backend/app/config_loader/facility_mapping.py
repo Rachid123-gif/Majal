@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import Annotated, Self
 
-from pydantic import AfterValidator, Field, model_validator
+from pydantic import AfterValidator, Field, field_validator, model_validator
 
 from app.config_loader.territory import Localized, Slug, StrictModel, Text
 from app.config_loader.validation import load_model
@@ -36,6 +36,28 @@ class FacilityCategory(StrictModel):
     rules: list[Annotated[str, AfterValidator(_rule)]] = Field(min_length=1)
     # Objects matching one of these rules are left out (e.g. private gardens).
     exclude: list[Annotated[str, AfterValidator(_rule)]] = Field(default_factory=list)
+    # Optional extra condition on the name (OSM does not tell public from private care).
+    name_regex: str | None = None
+    exclude_name_regex: str | None = None
+
+    @field_validator("name_regex", "exclude_name_regex")
+    @classmethod
+    def regex_compiles(cls, value: str | None) -> str | None:
+        if value is not None:
+            try:
+                re.compile(value)
+            except re.error as exc:
+                raise ValueError(f"Expression « name_regex » invalide : {exc}.") from None
+        return value
+
+    def name_matches(self, tags: dict[str, str]) -> bool:
+        names = [tags.get(k, "") for k in ("name", "name:fr", "name:ar", "official_name")]
+        names = [n for n in names if n]
+        if self.exclude_name_regex and any(re.search(self.exclude_name_regex, n) for n in names):
+            return False
+        if self.name_regex is None:
+            return True
+        return any(re.search(self.name_regex, n) for n in names)
 
     def tag_pairs(self) -> list[tuple[str, str]]:
         return [(rule.split("=", 1)[0], rule.split("=", 1)[1]) for rule in self.rules]
@@ -66,7 +88,10 @@ class FacilityMapping(StrictModel):
         """First enabled category with a matching rule (order matters)."""
         for category in self.enabled:
             if any(tags.get(key) == value for key, value in category.tag_pairs()):
-                return None if category.excluded(tags) else category
+                if category.excluded(tags):
+                    return None
+                if category.name_matches(tags):
+                    return category
         return None
 
 

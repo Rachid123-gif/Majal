@@ -20,7 +20,7 @@ export type Feature = {
 export const features: Feature[] = [
   {
     id: "diagnostic",
-    status: "in_development",
+    status: "available",
     stage: { fr: "Étapes 1 et 2", ar: "المرحلتان 1 و2" },
     title: { fr: "Diagnostic territorial et carte", ar: "التشخيص الترابي والخريطة" },
     summary: {
@@ -42,7 +42,7 @@ export const features: Feature[] = [
   },
   {
     id: "commune",
-    status: "in_development",
+    status: "available",
     stage: { fr: "Étape 2", ar: "المرحلة 2" },
     title: { fr: "Fiche commune et comparaison", ar: "بطاقة الجماعة والمقارنة" },
     summary: {

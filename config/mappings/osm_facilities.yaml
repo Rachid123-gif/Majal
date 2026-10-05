@@ -7,28 +7,40 @@
 # Pour désactiver une catégorie : enabled: false.
 # Après modification : `make check-config`, puis `make data`.
 
-mapping_version: "0.1-provisoire"
+mapping_version: "0.3-provisoire"
 status: TODO_REFERENT
 source_note: "OpenStreetMap — données ouvertes, complétude variable selon les quartiers"
 
 categories:
+  # Réponse provisoire Q14 : seuls les soins de santé primaires (centres de santé,
+  # dispensaires) entrent dans les indicateurs ; cliniques privées et pharmacies sont
+  # affichées en couche seulement. OSM ne distingue pas public et privé : le nom sert de
+  # critère (« name_regex »).
+  - code: health_primary
+    label: { fr: "Soins de santé primaires", ar: "العلاجات الصحية الأولية" }
+    group: sante
+    color: "#d0703f"
+    rules: ["amenity=clinic", "healthcare=centre", "amenity=doctors", "healthcare=clinic", "amenity=hospital"]
+    name_regex: "(?i)(centre\\s+de\\s+sant|dispensaire|\\bCSU\\b|\\bCSR\\b|مركز\\s*صحي|المركز\\s*الصحي|مستوصف)"
+
   - code: health_hospital
     label: { fr: "Hôpitaux", ar: "المستشفيات" }
     group: sante
     color: "#a8461f"
     rules: ["amenity=hospital"]
+    # Cliniques et cabinets privés étiquetés « hôpital » dans OSM : rangés plus bas.
+    exclude_name_regex: "(?i)(clinique|polyclinique|cabinet|docteur|\\bdr\\b|مصحة|عيادة)"
 
-  - code: health_primary
-    label: { fr: "Centres de santé et cliniques", ar: "المراكز الصحية والمصحات" }
+  - code: clinic_private
+    label: { fr: "Cliniques et cabinets (couche seulement)", ar: "المصحات والعيادات (طبقة فقط)" }
     group: sante
-    color: "#d0703f"
-    rules: ["amenity=clinic", "healthcare=centre", "amenity=doctors", "healthcare=clinic"]
+    color: "#e0a07c"
+    rules: ["amenity=clinic", "healthcare=clinic", "amenity=doctors", "healthcare=centre", "amenity=hospital"]
 
   - code: pharmacy
-    label: { fr: "Pharmacies", ar: "الصيدليات" }
+    label: { fr: "Pharmacies (couche seulement)", ar: "الصيدليات (طبقة فقط)" }
     group: sante
     color: "#e8956b"
-    enabled: false   # très nombreuses ; à activer si utile
     rules: ["amenity=pharmacy"]
 
   - code: school
@@ -44,7 +56,7 @@ categories:
     rules: ["amenity=university", "amenity=college"]
 
   - code: market
-    label: { fr: "Marchés et souks", ar: "الأسواق" }
+    label: { fr: "Marchés municipaux et souks", ar: "الأسواق الجماعية" }
     group: commerce
     color: "#8a6d1e"
     rules: ["amenity=marketplace"]
@@ -102,9 +114,10 @@ categories:
     color: "#b0457a"
     rules: ["amenity=library", "amenity=theatre", "amenity=arts_centre", "amenity=cinema", "tourism=museum"]
 
-  - code: mosque
-    label: { fr: "Mosquées", ar: "المساجد" }
-    group: culte
-    color: "#7a8a99"
-    enabled: false   # « si utile » selon le cahier des charges
-    rules: ["amenity=place_of_worship"]
+  - code: square
+    label: { fr: "Places et esplanades (couche seulement)", ar: "الساحات (طبقة فقط)" }
+    group: cadre_de_vie
+    color: "#b8a27a"
+    rules: ["place=square"]
+
+# Lieux de culte : hors du champ du diagnostic (réponse provisoire Q14), non importés.

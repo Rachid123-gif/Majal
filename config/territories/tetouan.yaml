@@ -19,6 +19,7 @@ scopes:
   - code: province
     default: true
     label: { fr: "Province de Tétouan", ar: "إقليم تطوان" }
+    reference_label: { fr: "de la province", ar: "الإقليم" }
     members:
       - { level: province, name_fr: "Tétouan" }
 

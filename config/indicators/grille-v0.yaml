@@ -1,0 +1,409 @@
+# MAJAL — Grille d'indicateurs v0
+# Source : docs/methodologie-v0.md (positions méthodologiques provisoires, section 3).
+# Statut : proposition de travail, à valider par le référent scientifique.
+#
+# Comment modifier cette grille sans programmer : voir docs/grille-indicateurs-guide.md.
+# Après toute modification : `make check-config`, puis recalcul (bouton « Recalculer » ou
+# `make indicators`).
+#
+# Aucune norme n'est inventée : « norm » reste vide (null) et marqué TODO_REFERENT tant que le
+# professeur n'a pas fourni la référence officielle. En attendant, la règle d'évaluation
+# relative de config/indicators/evaluation.yaml s'applique (reference: relative).
+
+grid_version: "v0"
+status: TODO_REFERENT
+display_label:
+  fr: "Grille v0 — proposition en cours de validation"
+  ar: "الشبكة v0 — مقترح قيد المصادقة"
+source_document: docs/methodologie-v0.md
+
+axes:
+  - { code: demographie, number: 1, label: { fr: "Démographie et dynamiques", ar: "الديموغرافيا والديناميات" } }
+  - { code: emploi, number: 2, label: { fr: "Emploi et inclusion", ar: "التشغيل والإدماج" } }
+  - { code: education, number: 3, label: { fr: "Éducation", ar: "التعليم" } }
+  - { code: sante, number: 4, label: { fr: "Santé", ar: "الصحة" } }
+  - { code: eau_services, number: 5, label: { fr: "Eau, assainissement et services de base", ar: "الماء والتطهير والخدمات الأساسية" } }
+  - { code: mobilite, number: 6, label: { fr: "Mobilité et accessibilité", ar: "التنقل والولوجية" } }
+  - { code: cadre_de_vie, number: 7, label: { fr: "Cadre de vie et environnement", ar: "إطار العيش والبيئة" } }
+  - { code: dynamique_urbaine, number: 8, label: { fr: "Dynamique urbaine et foncière", ar: "الدينامية العمرانية والعقارية" } }
+
+indicators:
+  # ---------------------------------------------------------------- 1. Démographie (contexte)
+  - code: DEM_POP
+    axis: demographie
+    label: { fr: "Population 2024", ar: "عدد السكان 2024" }
+    unit: { fr: "habitants", ar: "نسمة" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: raw, input: population, year: 2024 }
+    decimals: 0
+    source_expected: "HCP, RGPH 2024 — population légale (officiel)"
+    reference: none
+    status: TODO_REFERENT
+
+  - code: DEM_TCAM
+    axis: demographie
+    label: { fr: "Croissance annuelle moyenne 2014-2024", ar: "معدل النمو السنوي المتوسط 2014-2024" }
+    unit: { fr: "% par an", ar: "% سنوياً" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: cagr, input: population, from_year: 2014, to_year: 2024 }
+    decimals: 2
+    source_expected: "HCP, RGPH 2014 et 2024 — populations légales (officiel)"
+    reference: none
+    note: "Les limites de certaines communes ont pu changer entre les deux recensements."
+    status: TODO_REFERENT
+
+  - code: DEM_DENS
+    axis: demographie
+    label: { fr: "Densité de population", ar: "الكثافة السكانية" }
+    unit: { fr: "hab. / km²", ar: "نسمة / كلم²" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: density, input: population, year: 2024 }
+    decimals: 0
+    source_expected: "HCP (officiel) et surface calculée à partir des limites (ouvert)"
+    reference: none
+    status: TODO_REFERENT
+
+  - code: DEM_JEUNES
+    axis: demographie
+    label: { fr: "Part des moins de 15 ans", ar: "نسبة السكان دون 15 سنة" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: raw, input: share_under_15, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 (officiel)"
+    reference: none
+    status: TODO_REFERENT
+
+  - code: DEM_AGES
+    axis: demographie
+    label: { fr: "Part des 60 ans et plus", ar: "نسبة السكان البالغين 60 سنة فأكثر" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: raw, input: share_60_plus, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 (officiel)"
+    reference: none
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 2. Emploi et inclusion
+  - code: EMP_CHOM
+    axis: emploi
+    label: { fr: "Taux de chômage", ar: "معدل البطالة" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: lower_better
+    formula: { type: raw, input: unemployment_rate, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  - code: EMP_ACTF
+    axis: emploi
+    label: { fr: "Taux d'activité des femmes", ar: "معدل نشاط النساء" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: raw, input: activity_rate_women, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 — femmes de 15 ans et plus (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  - code: EMP_ANALPH
+    axis: emploi
+    label: { fr: "Taux d'analphabétisme (10 ans et plus)", ar: "معدل الأمية (10 سنوات فأكثر)" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: lower_better
+    formula: { type: raw, input: illiteracy_rate, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 3. Éducation
+  - code: EDU_ECOLES
+    axis: education
+    label:
+      fr: "Établissements primaires et collégiaux pour 1 000 enfants de 6 à 14 ans"
+      ar: "مؤسسات التعليم الابتدائي والإعدادي لكل 1000 طفل من 6 إلى 14 سنة"
+    unit: { fr: "pour 1 000 enfants", ar: "لكل 1000 طفل" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    # Le nombre d'enfants de 6 à 14 ans n'est pas publié par commune, et OpenStreetMap ne
+    # distingue pas le primaire du collège : l'indicateur attend les données de l'Éducation.
+    formula: { type: ratio, numerator: { input: schools_primary_middle }, denominator: { input: population_6_14 }, per: 1000 }
+    decimals: 1
+    source_expected: "Délégation de l'Éducation (officiel) ; OpenStreetMap (ouvert, provisoire)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    requested_from: "Délégation provinciale de l'Éducation nationale"
+    status: TODO_REFERENT
+
+  - code: EDU_PROX
+    axis: education
+    label: { fr: "Part de la population à moins de 1 km d'une école", ar: "نسبة السكان على بعد أقل من 1 كلم من مدرسة" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[school]], distance_m: 1000 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "1 km : distance de marche courante pour l'école primaire, à confirmer (TODO_REFERENT)"
+    note: "OpenStreetMap ne distingue pas le niveau des écoles (primaire, collège, lycée) et mêle public et privé."
+    provisional: true
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 4. Santé
+  - code: SAN_ESSP
+    axis: sante
+    label: { fr: "Établissements de soins de santé primaires pour 10 000 habitants", ar: "مؤسسات العلاجات الصحية الأولية لكل 10000 نسمة" }
+    unit: { fr: "pour 10 000 hab.", ar: "لكل 10000 نسمة" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: ratio, numerator: { facilities: [health_primary] }, denominator: { input: population, year: 2024 }, per: 10000 }
+    decimals: 2
+    source_expected: "Délégation de la Santé (officiel) ; OpenStreetMap (ouvert, provisoire)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    note: "Recensement OpenStreetMap incomplet."
+    provisional: true
+    requested_from: "Délégation provinciale de la Santé"
+    status: TODO_REFERENT
+
+  - code: SAN_PROX
+    axis: sante
+    label: { fr: "Part de la population à moins de 2 km d'un établissement de soins primaires", ar: "نسبة السكان على بعد أقل من 2 كلم من مؤسسة للعلاجات الأولية" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[health_primary]], distance_m: 2000 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "2 km, à confirmer (TODO_REFERENT)"
+    provisional: true
+    status: TODO_REFERENT
+
+  - code: SAN_HOP
+    axis: sante
+    label: { fr: "Distance moyenne à l'hôpital le plus proche", ar: "متوسط المسافة إلى أقرب مستشفى" }
+    unit: { fr: "km", ar: "كلم" }
+    profiles: [urbain, mixte]
+    direction: lower_better
+    formula: { type: distance_mean, categories: [health_hospital] }
+    decimals: 2
+    source_expected: "OpenStreetMap (ouvert) + population carroyée (estimé)"
+    reference: relative
+    note: "Distance à vol d'oiseau, moyenne pondérée par la population."
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 5. Eau, assainissement, services
+  - code: EAU_RES
+    axis: eau_services
+    label: { fr: "Logements raccordés au réseau d'eau potable", ar: "المساكن المرتبطة بشبكة الماء الصالح للشرب" }
+    unit: { fr: "% des ménages", ar: "% من الأسر" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: raw, input: water_access, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 — ménages disposant de l'eau courante (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  - code: EAU_ASS
+    axis: eau_services
+    label: { fr: "Logements raccordés à l'assainissement", ar: "المساكن المرتبطة بشبكة التطهير" }
+    unit: { fr: "% des ménages", ar: "% من الأسر" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: raw, input: sewer_access, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 — ménages raccordés au réseau public d'assainissement (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  - code: EAU_ELEC
+    axis: eau_services
+    label: { fr: "Logements raccordés à l'électricité", ar: "المساكن المرتبطة بشبكة الكهرباء" }
+    unit: { fr: "% des ménages", ar: "% من الأسر" }
+    profiles: [mixte]
+    direction: higher_better
+    formula: { type: raw, input: electricity_access, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  - code: LOG_PREC
+    axis: eau_services
+    label: { fr: "Part des logements sommaires ou précaires", ar: "نسبة المساكن البدائية أو الهشة" }
+    unit: { fr: "% des ménages", ar: "% من الأسر" }
+    profiles: [urbain, mixte]
+    direction: lower_better
+    formula: { type: raw, input: precarious_housing_share, year: 2024 }
+    decimals: 1
+    source_expected: "HCP, RGPH 2024 — maison sommaire ou bidonville (officiel)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 6. Mobilité et accessibilité
+  - code: MOB_TC
+    axis: mobilite
+    label: { fr: "Part de la population à moins de 500 m d'un arrêt de bus ou de tramway", ar: "نسبة السكان على بعد أقل من 500 م من محطة حافلات أو ترامواي" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[bus_stop, tram_stop]], distance_m: 500 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "500 m : seuil de planification courant pour l'accès à pied aux transports collectifs (TODO_REFERENT)"
+    status: TODO_REFERENT
+
+  - code: MOB_TRAM
+    axis: mobilite
+    label: { fr: "Part de la population à moins de 500 m d'une station de tramway", ar: "نسبة السكان على بعد أقل من 500 م من محطة ترامواي" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[tram_stop]], distance_m: 500 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "500 m (TODO_REFERENT)"
+    status: TODO_REFERENT
+
+  - code: MOB_15MIN
+    axis: mobilite
+    label: { fr: "Part de la population ayant école, soins de santé primaires et marché à moins de 1 km", ar: "نسبة السكان الذين تتوفر لهم مدرسة ومؤسسة للعلاجات الأولية وسوق على بعد أقل من 1 كلم" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[school], [health_primary], [market]], distance_m: 1000 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "Concept de « ville du quart d'heure » : 1 km ≈ 15 min de marche (TODO_REFERENT)"
+    provisional: true
+    status: TODO_REFERENT
+
+  - code: MOB_ROUTE
+    axis: mobilite
+    label: { fr: "Distance moyenne de la population à une route revêtue", ar: "متوسط مسافة السكان إلى طريق معبدة" }
+    unit: { fr: "km", ar: "كلم" }
+    profiles: [mixte]
+    direction: lower_better
+    # Le HCP publie directement la distance moyenne des logements à la route goudronnée
+    # (officiel) : préférée au calcul OpenStreetMap prévu dans la méthodologie v0.
+    formula: { type: raw, input: paved_road_distance_km, year: 2024 }
+    decimals: 2
+    source_expected: "HCP, RGPH 2024 — distance moyenne des logements à la route goudronnée (officiel)"
+    reference: relative
+    status: TODO_REFERENT
+
+  - code: MOB_CHEF
+    axis: mobilite
+    label: { fr: "Temps d'accès estimé au chef-lieu de province", ar: "مدة الولوج المقدرة إلى مركز الإقليم" }
+    unit: { fr: "minutes", ar: "دقيقة" }
+    profiles: [mixte]
+    direction: lower_better
+    formula: { type: raw, input: travel_time_to_capital_min, year: 2024 }
+    decimals: 0
+    source_expected: "Réseau routier OpenStreetMap (estimé) — calcul prévu à l'étape 6"
+    reference: relative
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 7. Cadre de vie
+  - code: ENV_VERT
+    axis: cadre_de_vie
+    label: { fr: "Espaces verts publics par habitant", ar: "المساحات الخضراء العمومية لكل نسمة" }
+    unit: { fr: "m² / hab.", ar: "م² / نسمة" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: area_per_capita, categories: [green_space], year: 2024 }
+    decimals: 1
+    source_expected: "OpenStreetMap (ouvert)"
+    reference: relative
+    norm: { value: null, source: TODO_REFERENT }
+    note: "Parcs publics seulement (jardins privés exclus)."
+    status: TODO_REFERENT
+
+  - code: ENV_VERT300
+    axis: cadre_de_vie
+    label: { fr: "Part de la population à moins de 300 m d'un espace vert public d'au moins 0,5 ha", ar: "نسبة السكان على بعد أقل من 300 م من مساحة خضراء عمومية لا تقل عن 0,5 هكتار" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain]
+    direction: higher_better
+    formula: { type: proximity_share, all_of: [[green_space]], distance_m: 300, min_area_m2: 5000 }
+    decimals: 1
+    source_expected: "OpenStreetMap + population carroyée (estimé)"
+    reference: relative
+    threshold_note: "Recommandation de l'OMS Europe (2016) sur l'accès aux espaces verts urbains"
+    status: TODO_REFERENT
+
+  # ---------------------------------------------------------------- 8. Dynamique urbaine et foncière
+  - code: URB_BATI
+    axis: dynamique_urbaine
+    label: { fr: "Surface bâtie", ar: "المساحة المبنية" }
+    unit: { fr: "km²", ar: "كلم²" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: built_up, year: 2020 }
+    decimals: 2
+    source_expected: "JRC GHSL, couche de bâti issue de l'imagerie satellite (ouvert)"
+    reference: none
+    status: TODO_REFERENT
+
+  - code: URB_CROIS
+    axis: dynamique_urbaine
+    label: { fr: "Croissance de la surface bâtie 2015-2020", ar: "نمو المساحة المبنية 2015-2020" }
+    unit: { fr: "%", ar: "%" }
+    profiles: [urbain, mixte]
+    direction: neutral
+    formula: { type: change, input: built_up_km2, from_year: 2015, to_year: 2020 }
+    decimals: 1
+    source_expected: "JRC GHSL (ouvert)"
+    reference: none
+    status: TODO_REFERENT
+
+  - code: URB_CONSO
+    axis: dynamique_urbaine
+    label: { fr: "Surface bâtie supplémentaire par habitant supplémentaire", ar: "المساحة المبنية الإضافية لكل نسمة إضافية" }
+    unit: { fr: "m² / nouvel habitant", ar: "م² / نسمة جديدة" }
+    profiles: [urbain, mixte]
+    direction: lower_better
+    formula: { type: consumption, from_year: 2015, to_year: 2020 }
+    decimals: 0
+    source_expected: "JRC GHSL (ouvert) et HCP (officiel)"
+    reference: relative
+    highlight: true
+    note: "Population 2015 et 2020 interpolée entre les recensements 2014 et 2024. Mesure si la croissance se fait par densification ou par étalement."
+    status: TODO_REFERENT
+
+  - code: URB_DOC
+    axis: dynamique_urbaine
+    label: { fr: "Couverture par un document d'urbanisme homologué", ar: "التغطية بوثيقة تعمير مصادق عليها" }
+    unit: { fr: "oui / partiel / non", ar: "نعم / جزئياً / لا" }
+    profiles: [urbain, mixte]
+    direction: higher_better
+    formula: { type: raw, input: urban_document_coverage, year: 2024 }
+    decimals: 0
+    source_expected: "Agence urbaine (officiel) — à demander"
+    reference: none
+    requested_from: "Agence urbaine"
+    status: TODO_REFERENT

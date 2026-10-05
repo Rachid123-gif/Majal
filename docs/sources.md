@@ -14,6 +14,11 @@ Régénérer le contour du Maroc : `scripts/build_morocco_outline.py` (instructi
 | Routes (Rabat) | OpenStreetMap via Overpass (motorway → track) | Contributeurs OSM | Idem | ODbL 1.0 | Tronçon | Ouvert | Importé (≈ 9 500 tronçons) |
 | Fond de carte (Rabat) | Protomaps, construction du 2026-10-05, extrait z0-15 | Protomaps / contributeurs OSM | 2026-10-05 | ODbL 1.0 | Tuiles vectorielles | Ouvert | Téléchargé (11 Mo) |
 | Polices et icônes du fond de carte | Protomaps basemaps-assets (Noto Sans) | Protomaps, Google Noto | 2026-10 | OFL 1.1 / BSD-3 | — | — | Téléchargé |
+| Population légale 2024, ménages, codes géographiques et noms officiels (FR, AR) | HCP — fichier Excel de la population légale (décret n° 2.24.1009), https://www.hcp.ma/file/242341/ | HCP | 2024-11-07 | Publication officielle | Commune et arrondissement | Officiel | Importé (24/24 unités de Rabat) |
+| Population légale 2014 | HCP — fichier Excel « Population légale … RGPH 2014 », https://www.hcp.ma/region-drda/attachment/565048/ | HCP | 2015 | Publication officielle | Commune et arrondissement | Officiel | Importé (rattachement par code, puis par nom si le code a changé) |
+| Indicateurs communaux du RGPH 2024 (âge, chômage, activité des femmes, analphabétisme, eau, assainissement, électricité, logement sommaire, distance à la route goudronnée…) | HCP — plateforme de diffusion https://resultats2024.rgphapps.ma (tables publiques TAB_VF_*) ; liste dans `config/mappings/hcp_rgph.yaml` | HCP | 2024 | Publication officielle | Commune et arrondissement | Officiel | Importé (306 valeurs pour Rabat) |
+| Population carroyée | JRC GHSL — GHS-POP R2023A, époque 2020, 3″ (≈ 90 m), tuile R6_C18 | Commission européenne (JRC) | 2023 | CC BY 4.0 | Cellule ≈ 90 m | Estimé | Importé (≈ 50 000 cellules, recalées sur la population légale 2024) |
+| Surface bâtie 2015 et 2020 | JRC GHSL — GHS-BUILT-S R2023A, 3″ | Commission européenne (JRC) | 2023 | CC BY 4.0 | Cellule ≈ 90 m | Ouvert | Importé |
 | Chiffres clés de la vitrine | Étude d'opportunité MAJAL (oct. 2026), citant Le Desk (Conseil des ministres du 9 avril 2026), FNH, Infomédiaire | Porteur du projet | Oct. 2026 | — | National | — | Utilisé, à valider (Q12) |
 
 ## Limites administratives — vérification du 2026-10-05 (étape 1.1)

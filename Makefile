@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local start stop logs dev dev-local down migrate data demo test test-backend \
+.PHONY: help setup setup-local start stop logs dev dev-local down indicators migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -72,6 +72,10 @@ data: .env ## (Re)construit les données : limites, équipements, routes, fond d
 	docker compose run --rm -T backend alembic upgrade head
 	docker compose run --rm -T backend python -m app.ingestion run $(if $(REFRESH),--refresh,)
 	./scripts/fetch_basemap.sh
+	docker compose run --rm -T backend python -m app.services.indicators compute
+
+indicators: ## Recalcule les indicateurs (après une modification de la grille)
+	docker compose run --rm -T backend python -m app.services.indicators compute
 
 demo: ## Lance le mode démonstration hors ligne — disponible à l'étape 7
 	@echo "Pas encore disponible : le mode démonstration arrive à l'étape 7."

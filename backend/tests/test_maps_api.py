@@ -34,3 +34,8 @@ def test_unknown_territory(client: TestClient) -> None:
     response = client.get("/api/tiles/atlantide/info")
     assert response.status_code == 404
     assert response.json()["detail"] == "Territoire inconnu : atlantide."
+
+
+def test_diagnostic_requires_login(client: TestClient) -> None:
+    assert client.get("/api/territories/rabat/diagnostic").status_code == 401
+    assert client.post("/api/territories/rabat/diagnostic").status_code == 401

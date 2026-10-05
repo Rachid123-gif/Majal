@@ -1,12 +1,25 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
 import { ConfidenceBadge } from "@/components/app/ConfidenceBadge";
+import { GridBanner } from "@/components/app/GridBanner";
+import { StatusChip } from "@/components/app/StatusChip";
 import type { HoverInfo } from "@/components/app/TerritoryMap";
 import { useLocale } from "@/i18n/LocaleProvider";
+import {
+  NO_DATA,
+  SEQUENTIAL,
+  STATUS_STYLE,
+  classOf,
+  fetchDiagnostic,
+  formatValue,
+  quantileBreaks,
+  type DiagnosticData,
+} from "@/lib/diagnostic";
 import { formatDate, formatNumber } from "@/lib/format";
 import {
   fetchFacilities,
@@ -34,6 +47,66 @@ export function TerritoryMapView({ code }: { code: string }) {
   const [hover, setHover] = useState<HoverInfo>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const [diag, setDiag] = useState<DiagnosticData | null>(null);
+  const [diagError, setDiagError] = useState<string | null>(null);
+  const [indicatorCode, setIndicatorCode] = useState<string | null>(null);
+  const [mode, setMode] = useState<"value" | "status">("value");
+  const [recomputing, setRecomputing] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDiagnostic(code)
+      .then((value) => {
+        if (cancelled) return;
+        setDiag(value);
+        setDiagError(null);
+        // Default: access to public transport if the profile has it, else the first evaluated one.
+        const preferred =
+          value.indicators.find((i) => i.code === "MOB_TC") ??
+          value.indicators.find((i) => i.direction !== "neutral");
+        setIndicatorCode((current) => current ?? preferred?.code ?? null);
+      })
+      .catch((exc: Error) => !cancelled && setDiagError(exc.message));
+    return () => {
+      cancelled = true;
+    };
+  }, [code]);
+
+  async function recompute() {
+    setRecomputing(true);
+    try {
+      setDiag(await fetchDiagnostic(code, true));
+    } catch (exc) {
+      setDiagError((exc as Error).message);
+    } finally {
+      setRecomputing(false);
+    }
+  }
+
+  const indicator = diag?.indicators.find((i) => i.code === indicatorCode) ?? null;
+  const diagUnits = useMemo(
+    () => Object.fromEntries((diag?.units ?? []).map((u) => [u.id, u])),
+    [diag],
+  );
+  const breaks = useMemo(() => {
+    if (!diag || !indicator) return [];
+    const values = diag.units
+      .map((u) => u.values[indicator.code]?.value)
+      .filter((v): v is number => v !== null && v !== undefined);
+    return quantileBreaks(values);
+  }, [diag, indicator]);
+  const unitColors = useMemo(() => {
+    if (!diag || !indicator) return null;
+    const colors: Record<number, string> = {};
+    for (const unit of diag.units) {
+      const entry = unit.values[indicator.code];
+      if (!entry) continue;
+      if (mode === "status") colors[unit.id] = STATUS_STYLE[entry.status].color;
+      else
+        colors[unit.id] = entry.value === null ? NO_DATA : SEQUENTIAL[classOf(entry.value, breaks)];
+    }
+    return colors;
+  }, [diag, indicator, mode, breaks]);
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +156,7 @@ export function TerritoryMapView({ code }: { code: string }) {
       ctx.font = `600 ${size}px "IBM Plex Sans", sans-serif`;
       ctx.textBaseline = "middle";
       ctx.fillText(
-        `MAJAL — ${t("map.title")} — ${scope?.label.fr ?? ""}`,
+        `MAJAL — ${indicator ? indicator.label.fr : t("map.title")} — ${scope?.label.fr ?? ""}`,
         size,
         source.height + band * 0.33,
       );
@@ -158,6 +231,138 @@ export function TerritoryMapView({ code }: { code: string }) {
               </fieldset>
             )}
 
+            {diagError && (
+              <p className="bg-terracotta/10 text-terracotta-dark mt-5 rounded-lg p-3 text-xs">
+                {t("diag.loadError")} {diagError}
+              </p>
+            )}
+            {diag && (
+              <section className="mt-6 space-y-3">
+                <GridBanner data={diag} compact />
+                <label className="block">
+                  <span className="text-slate text-xs font-semibold tracking-wider uppercase">
+                    {t("diag.indicator")}
+                  </span>
+                  <select
+                    value={indicatorCode ?? ""}
+                    onChange={(e) => setIndicatorCode(e.target.value || null)}
+                    className="border-petrol/20 text-petrol mt-1.5 w-full rounded-lg border bg-white px-2 py-2 text-sm"
+                  >
+                    <option value="">{t("diag.none")}</option>
+                    {diag.grid.axes.map((axis) => (
+                      <optgroup key={axis.code} label={`${axis.number}. ${axis.label[locale]}`}>
+                        {diag.indicators
+                          .filter((i) => i.axis === axis.code)
+                          .map((i) => (
+                            <option key={i.code} value={i.code}>
+                              {i.label[locale]}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </label>
+                {indicator && indicator.direction !== "neutral" && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-slate">{t("diag.mode")} :</span>
+                    {(["value", "status"] as const).map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        aria-pressed={mode === m}
+                        onClick={() => setMode(m)}
+                        className={`rounded-full border px-2.5 py-1 ${
+                          mode === m
+                            ? "border-petrol bg-petrol text-cream"
+                            : "border-petrol/20 text-petrol"
+                        }`}
+                      >
+                        {m === "value" ? t("diag.modeValue") : t("diag.modeStatus")}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {indicator && (
+                  <div className="text-xs">
+                    <p className="text-petrol font-medium">
+                      {indicator.label[locale]} ({indicator.unit[locale]})
+                    </p>
+                    <ul className="mt-2 space-y-1">
+                      {mode === "status" && indicator.direction !== "neutral"
+                        ? (
+                            [
+                              "deficit_marked",
+                              "watch",
+                              "ok",
+                              "not_evaluable",
+                              "not_available",
+                            ] as const
+                          ).map((status) => (
+                            <li key={status} className="flex items-center gap-2">
+                              <span
+                                aria-hidden
+                                className="h-3 w-5 rounded-sm"
+                                style={{ background: STATUS_STYLE[status].color }}
+                              />
+                              <span aria-hidden>{STATUS_STYLE[status].symbol}</span>
+                              {diag.evaluation.statuses[status][locale]}
+                            </li>
+                          ))
+                        : SEQUENTIAL.map((color, index) => {
+                            const low = index === 0 ? null : breaks[index - 1];
+                            const high = index < breaks.length ? breaks[index] : null;
+                            return (
+                              <li key={color} className="flex items-center gap-2 tabular-nums">
+                                <span
+                                  aria-hidden
+                                  className="h-3 w-5 rounded-sm"
+                                  style={{ background: color }}
+                                />
+                                {low === null
+                                  ? `≤ ${formatValue(high, indicator, locale)}`
+                                  : high === null
+                                    ? `> ${formatValue(low, indicator, locale)}`
+                                    : `${formatValue(low, indicator, locale)} – ${formatValue(high, indicator, locale)}`}
+                              </li>
+                            );
+                          })}
+                      {mode === "value" && (
+                        <li className="flex items-center gap-2">
+                          <span
+                            aria-hidden
+                            className="h-3 w-5 rounded-sm"
+                            style={{ background: NO_DATA }}
+                          />
+                          {t("diag.legendNoData")} / {t("diag.legendNotEvaluable")}
+                        </li>
+                      )}
+                    </ul>
+                    {indicator.reference && (
+                      <p className="text-slate mt-2">
+                        {t("diag.reference", { ref: diag.evaluation.reference_label[locale] })} :{" "}
+                        <strong className="text-petrol">
+                          {formatValue(indicator.reference.value, indicator, locale)}{" "}
+                          {indicator.unit[locale]}
+                        </strong>
+                      </p>
+                    )}
+                    <p className="text-slate mt-1">{indicator.source_expected}</p>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={recompute}
+                  disabled={recomputing}
+                  className="text-petrol text-xs underline disabled:opacity-50"
+                >
+                  {recomputing ? t("diag.recomputing") : t("diag.recompute")}
+                </button>
+                <span className="text-slate ms-2 text-[11px]">
+                  {t("diag.computedAt")} {formatDate(diag.meta.computed_at, locale)}
+                </span>
+              </section>
+            )}
+
             <div className="mt-6 flex items-center justify-between">
               <h2 className="text-slate text-xs font-semibold tracking-wider uppercase">
                 {t("map.facilities")}
@@ -230,6 +435,7 @@ export function TerritoryMapView({ code }: { code: string }) {
                 units={data.units}
                 facilities={data.facilities}
                 visibleCategories={visible}
+                unitColors={unitColors}
                 colors={colors}
                 selectedId={selectedId}
                 onHover={setHover}
@@ -262,6 +468,22 @@ export function TerritoryMapView({ code }: { code: string }) {
                   {hover.unit.term?.[locale]}
                   <ConfidenceBadge kind="open" />
                 </p>
+                {indicator && diag && diagUnits[hover.unit.id] && (
+                  <div className="border-petrol/10 mt-2 border-t pt-2 text-xs">
+                    <p className="text-slate">{indicator.label[locale]}</p>
+                    <p className="text-petrol mt-0.5 flex flex-wrap items-center gap-2 text-sm font-semibold">
+                      {diagUnits[hover.unit.id].values[indicator.code]?.value === null
+                        ? diag.evaluation.statuses.not_available[locale]
+                        : `${formatValue(diagUnits[hover.unit.id].values[indicator.code]?.value ?? null, indicator, locale)} ${indicator.unit[locale]}`}
+                      {diagUnits[hover.unit.id].values[indicator.code] && (
+                        <StatusChip
+                          status={diagUnits[hover.unit.id].values[indicator.code].status}
+                          data={diag}
+                        />
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -348,9 +570,26 @@ export function TerritoryMapView({ code }: { code: string }) {
                   </li>
                 ))}
               </ul>
-              <p className="bg-cream text-slate mt-6 rounded-lg p-3 text-xs leading-relaxed">
-                {t("map.fullSheet")}
-              </p>
+              {diagUnits[selected.id]?.warning && (
+                <p className="bg-terracotta/10 text-terracotta-dark mt-6 rounded-lg p-3 text-xs leading-relaxed">
+                  <span aria-hidden>▲ </span>
+                  {diagUnits[selected.id].warning?.[locale]}
+                </p>
+              )}
+              <div className="mt-6 flex flex-col gap-2">
+                <Link
+                  href={`/territoire/${code}/unite/${selected.id}`}
+                  className="bg-petrol text-cream hover:bg-petrol-dark rounded-lg px-4 py-2.5 text-center text-sm font-medium"
+                >
+                  {t("diag.openSheet")}
+                </Link>
+                <Link
+                  href={`/territoire/${code}/comparer?ids=${selected.id}`}
+                  className="border-petrol/30 text-petrol hover:bg-petrol/5 rounded-lg border px-4 py-2 text-center text-sm"
+                >
+                  {t("diag.compare")}
+                </Link>
+              </div>
             </aside>
           )}
         </div>

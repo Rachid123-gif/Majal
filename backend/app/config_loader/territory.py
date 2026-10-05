@@ -74,6 +74,8 @@ class Scope(StrictModel):
     label: Localized
     default: bool = False
     members: list[ScopeMember] = Field(min_length=1)
+    # Name used in the relative-evaluation label (« moyenne de l'agglomération »).
+    reference_label: Localized | None = None
 
 
 class MainLevel(StrictModel):
@@ -139,6 +141,15 @@ class DemoSettings(StrictModel):
     fictitious_contributions: Text | None = None
 
 
+class QualityFlag(StrictModel):
+    """Data-quality warning attached to a unit through its official HCP code."""
+
+    official_code: Text
+    boundary_unreliable: bool = False
+    exclude_from_ranking: bool = False
+    warning: Localized
+
+
 class TerritoryConfig(StrictModel):
     code: Slug
     schema_version: Literal[1]
@@ -152,6 +163,7 @@ class TerritoryConfig(StrictModel):
     data_holders: Text | None = None
     map: MapSettings = MapSettings()
     demo: DemoSettings = DemoSettings()
+    quality_flags: list[QualityFlag] = Field(default_factory=list)
 
     @field_validator("code")
     @classmethod
@@ -200,6 +212,8 @@ EXAMPLES = {
     "center": "center: [-6.84, 34.01]   # longitude, latitude",
     "zoom": "zoom: 10",
     "scopes": "scopes:\n    - code: agglomeration\n      default: true …",
+    "official_code": 'official_code: "44410108"',
+    "reference_label": 'reference_label: { fr: "de l\'agglomération", ar: "التجمع" }',
 }
 
 

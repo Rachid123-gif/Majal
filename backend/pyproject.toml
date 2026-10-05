@@ -17,6 +17,9 @@ dependencies = [
     "shapely>=2.1.2",
     "httpx>=0.28.1",
     "pmtiles>=3.8.1",
+    "openpyxl>=3.1.5",
+    "rasterio>=1.5.2",
+    "numpy>=2.5.3",
 ]
 
 [dependency-groups]
@@ -27,6 +30,7 @@ dev = [
     "types-pyyaml>=6.0",
     "httpx2>=2.13.1",
     "types-shapely>=2.1.0.20260728",
+    "types-openpyxl>=3.1.5.20260827",
 ]
 
 [tool.uv]
@@ -44,6 +48,10 @@ python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
 exclude = ["alembic/"]
+
+[[tool.mypy.overrides]]
+module = ["rasterio", "rasterio.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

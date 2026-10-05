@@ -39,7 +39,8 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 | `make test` | pytest + vitest (dans Docker si présent, sinon en local) |
 | `make lint` | ruff, ruff format, mypy strict, eslint, prettier, tsc |
 | `make check-config` | Valide `config/territories/*.yaml` et les correspondances, erreurs en français |
-| `make data` | Imports (limites, équipements, routes) depuis le cache `data/raw/`, puis fond de carte ; `REFRESH=1` retélécharge |
+| `make data` | Imports (limites, recensement HCP, équipements, routes, grilles GHSL) depuis le cache `data/raw/`, fond de carte, puis indicateurs ; `REFRESH=1` retélécharge |
+| `make indicators` | Recalcule le diagnostic (`python -m app.services.indicators compute`) |
 | `make backup` / `make restore FILE=…` | Sauvegarde / restauration de la base |
 
 ## Architecture
@@ -59,6 +60,19 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   - Modèles : `data_sources`, `study_areas`, `territories` (MultiPolygon 4326, `is_analysis_unit`,
     `scopes` JSONB), `facilities`, `roads`, `import_runs` (migration 0002). Surfaces et
     longueurs sur l'ellipsoïde (`::geography`, décision 0009).
+  - Importeurs étape 2 : `hcp_census` (population légale 2014/2024 Excel + plateforme
+    resultats2024.rgphapps.ma → `raw_variables`, codes officiels, noms arabes officiels) et
+    `ghsl_grids` (population carroyée recalée sur le HCP → `population_cells`, bâti 2015/2020).
+  - Méthode (étape 2) : `config/indicators/grille-v0.yaml`, `evaluation.yaml`,
+    `config/confidence.yaml`, `config/mappings/hcp_rgph.yaml` ; schémas dans
+    `app/config_loader/indicators.py`. Source : `docs/methodologie-v0.md` (grille v0, réponses
+    provisoires Q6-Q15). Ne rien coder en dur ; normes = `TODO_REFERENT`.
+  - Moteur : `app/services/indicators/engine.py` (formules, badge = entrée la moins fiable,
+    fiabilité, référence = moyenne pondérée par la population du périmètre par défaut, statuts,
+    rangs) + `spatial.py` (PostGIS). Diagnostics versionnés (`diagnostics`, `indicator_values`,
+    migration 0003) ; `/api/territories/<code>/diagnostic` recalcule si l'empreinte des fichiers
+    de méthode change. `quality_flags` du territoire (Sidi Bouknadel) : spatial non évaluable,
+    exclu des classements.
   - Tests de base de données (`tests/test_ingestion_db.py`) ignorés si PostGIS est absent (CI).
   - `app/security.py` : comptes de démo (mots de passe dans `.env`), cookie de session signé
     `majal_session`, anti-force brute (décision 0005).
@@ -79,6 +93,11 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   - Carte du territoire : `/territoire/[code]` (`components/app/TerritoryMapView.tsx`,
     `TerritoryMap.tsx` avec MapLibre 6 + `@protomaps/basemaps`). Worker MapLibre servi par
     `src/app/maplibre/[file]/route.ts`. Polices/icônes du fond : `public/basemap/`.
+  - Étape 2 : carte colorée par indicateur (valeur en quantiles YlGnBu ou évaluation),
+    fiche `/territoire/[code]/unite/[id]` (`UnitSheetView`), comparaison
+    `/territoire/[code]/comparer?ids=` (`CompareView`, CSV + PNG). Bandeau obligatoire
+    « Grille v0 — proposition en cours de validation » + libellé d'évaluation relative
+    (`GridBanner`). Statuts : `StatusChip` (couleur + symbole + texte).
   - Badges de confiance : `components/app/ConfidenceBadge.tsx` (texte + symbole, jamais la
     couleur seule).
   - Carte du Maroc : `src/content/morocco-outline.json`, généré par
@@ -88,9 +107,10 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 
 - Étape 0 — validée le 2026-10-05.
 - Étape 0 bis (vitrine + connexion) — validée le 2026-10-05 (l'utilisateur a lancé l'étape 1).
-- Étape 1 (Rabat : territoire réel et carte) — livrée le 2026-10-05, en attente de validation.
-  Source des limites validée par l'utilisateur : OpenStreetMap (badge Ouvert, à vérifier).
-  Reste reporté : vraie capture de la carte sur la vitrine (à faire avec Playwright, étape 7).
+- Étape 1 (Rabat : territoire réel et carte) — validée le 2026-10-05.
+- Étape 2 (indicateurs, fiche, comparaison) — livrée le 2026-10-05, en attente de validation.
+  Données officielles HCP trouvées au niveau des arrondissements. Points ouverts : Q13, Q16-Q20.
+  Typologie des communes (souhaitable, méthodologie §5) non faite.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

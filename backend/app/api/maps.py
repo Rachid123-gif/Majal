@@ -225,7 +225,7 @@ def facilities(
         rows = session.execute(
             text(
                 """
-                SELECT f.id, f.category, f.name, f.name_ar,
+                SELECT f.id, f.category, f.name, f.name_ar, f.territory_id,
                        ST_X(ST_PointOnSurface(f.geom)) AS lon,
                        ST_Y(ST_PointOnSurface(f.geom)) AS lat
                 FROM facilities f
@@ -246,6 +246,7 @@ def facilities(
                 "properties": {
                     "id": r["id"],
                     "category": r["category"],
+                    "territory_id": r["territory_id"],
                     "name": r["name"],
                     "name_ar": r["name_ar"],
                 },

@@ -1,0 +1,40 @@
+# MAJAL — Règle d'évaluation en l'absence de norme officielle
+# Source : docs/methodologie-v0.md, section 2. Statut : TODO_REFERENT (seuils à valider).
+#
+# Tant qu'aucune norme officielle n'est fournie pour un indicateur (champ « norm » de la
+# grille), MAJAL ne porte aucun jugement absolu : il compare chaque unité à la moyenne,
+# pondérée par la population, de l'ensemble étudié (agglomération ou province).
+# Dès qu'une norme est renseignée dans la grille, elle remplace cette référence relative.
+
+evaluation_version: "v0"
+status: TODO_REFERENT
+reference: population_weighted_mean   # moyenne pondérée par la population de l'ensemble étudié
+
+# Seuils exprimés en proportion de la référence (1.00 = égal à la moyenne).
+thresholds:
+  higher_better:            # « plus = mieux »
+    deficit_marked: 0.80    # en dessous de 80 % de la référence
+    watch: 0.95             # entre 80 % et 95 %
+  lower_better:             # « moins = mieux »
+    deficit_marked: 1.20    # au-dessus de 120 % de la référence
+    watch: 1.05             # entre 105 % et 120 %
+
+# Un indicateur fondé sur des équipements OpenStreetMap n'est calculé que si l'ensemble
+# étudié compte au moins ce nombre d'équipements de chaque catégorie requise. En dessous,
+# il est « non disponible — recensement insuffisant » et figure dans les besoins en données.
+facility_minimum: 10
+
+# Libellé obligatoire dans l'interface et les rapports. {reference} est remplacé par le nom
+# de l'ensemble étudié (« reference_label » du périmètre, dans le fichier du territoire).
+label:
+  fr: "Évaluation relative à la moyenne {reference} — norme officielle non encore intégrée"
+  ar: "تقييم نسبي مقارنة بمتوسط {reference} — لم يتم بعد إدراج المعيار الرسمي"
+
+statuses:
+  deficit_marked: { fr: "Déficit marqué", ar: "خصاص واضح" }
+  watch: { fr: "À surveiller", ar: "يستدعي المتابعة" }
+  ok: { fr: "Dans la moyenne ou au-dessus", ar: "في المتوسط أو أفضل" }
+  context: { fr: "Contexte (sans évaluation)", ar: "سياق (دون تقييم)" }
+  not_evaluable: { fr: "Non évaluable", ar: "غير قابل للتقييم" }
+  not_available: { fr: "Non disponible", ar: "غير متوفر" }
+  not_applicable: { fr: "Non applicable", ar: "لا ينطبق" }

@@ -1,0 +1,32 @@
+# MAJAL — Niveaux de confiance et score de fiabilité (0 à 100)
+# Statut : proposition v0, TODO_REFERENT.
+
+badges:
+  official:
+    label: { fr: "Officiel", ar: "رسمي" }
+    help: { fr: "Source institutionnelle (HCP, ministère, agence urbaine).", ar: "مصدر مؤسساتي (المندوبية السامية للتخطيط، وزارة، وكالة حضرية)." }
+  open:
+    label: { fr: "Ouvert", ar: "مفتوح" }
+    help: { fr: "Source ouverte reconnue (OpenStreetMap, imagerie satellite).", ar: "مصدر مفتوح معترف به (OpenStreetMap، صور الأقمار الاصطناعية)." }
+  estimated:
+    label: { fr: "Estimé", ar: "تقديري" }
+    help: { fr: "Calculé ou modélisé par MAJAL à partir d'autres données.", ar: "محسوب أو مُنمذج من طرف «مجال» انطلاقاً من معطيات أخرى." }
+  fictitious:
+    label: { fr: "Fictif", ar: "افتراضي" }
+    help: { fr: "Donnée de démonstration inventée.", ar: "معطى افتراضي لأغراض العرض." }
+
+# Le badge d'une valeur calculée est celui de sa donnée d'entrée la moins fiable
+# (officiel > ouvert > estimé > fictif). Une répartition modélisée de la population
+# (population carroyée) donne toujours « estimé ».
+order: [official, open, estimated, fictitious]
+
+# Score de fiabilité = nature de la source + ancienneté + complétude + méthode (total 100).
+reliability:
+  source:        { official: 40, open: 25, estimated: 15, fictitious: 0 }
+  recency:       # âge de la donnée, en années, par rapport à l'année en cours
+    - { max_age: 2, points: 25 }
+    - { max_age: 5, points: 18 }
+    - { max_age: 10, points: 10 }
+    - { max_age: 999, points: 5 }
+  completeness:  { complete: 20, provisional: 10 }   # « provisional » : recensement incomplet (OSM)
+  method:        { direct: 15, derived: 10, modeled: 5 }

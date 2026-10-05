@@ -92,6 +92,13 @@ def translate_error(err: ErrorDetails) -> str:
             return "Un bloc de champs est attendu (champs indentés en dessous)."
         case "tuple_type" | "too_long":
             return "Le nombre d'éléments ne correspond pas à ce qui est attendu."
+        case "union_tag_invalid":
+            return (
+                f"Type « {ctx.get('tag')} » inconnu. "
+                f"Valeurs possibles : {ctx.get('expected_tags', '?')}."
+            )
+        case "union_tag_not_found":
+            return "Le champ « type » est obligatoire (ex. type: raw)."
         case "value_error" | "assertion_error":
             return str(ctx.get("error", err["msg"]))
         case _:

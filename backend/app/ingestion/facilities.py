@@ -41,11 +41,8 @@ def run(ctx: ImportContext) -> ImportResult:
 
     top_level = next(m.level for scope in config.scopes for m in scope.members)
     bbox = bbox_clause(ctx.session, ctx.study_area.id, top_level.value)
-    selectors = "".join(
-        f'nwr["{key}"="{value}"];'
-        for category in mapping.enabled
-        for key, value in category.tag_pairs()
-    )
+    pairs = dict.fromkeys(pair for category in mapping.enabled for pair in category.tag_pairs())
+    selectors = "".join(f'nwr["{key}"="{value}"];' for key, value in pairs)
     query = f"[out:json][timeout:300]{bbox};({selectors});out geom;"
     raw = overpass.fetch(query, ctx.raw_dir / "osm_facilities.json", ctx.refresh)
 

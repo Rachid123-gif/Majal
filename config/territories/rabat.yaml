@@ -19,12 +19,14 @@ scopes:
   - code: agglomeration
     default: true
     label: { fr: "Agglomération Rabat-Salé-Skhirate-Témara", ar: "تجمع الرباط سلا الصخيرات تمارة" }
+    reference_label: { fr: "de l'agglomération", ar: "التجمع" }
     members:
       - { level: prefecture, name_fr: "Rabat" }
       - { level: prefecture, name_fr: "Salé" }
       - { level: prefecture, name_fr: "Skhirate-Témara" }
   - code: prefecture
     label: { fr: "Préfecture de Rabat", ar: "عمالة الرباط" }
+    reference_label: { fr: "de la préfecture", ar: "العمالة" }
     members:
       - { level: prefecture, name_fr: "Rabat" }
 
@@ -52,12 +54,28 @@ sources:
   facilities:
     importer: osm_facilities
     mapping: config/mappings/osm_facilities.yaml
+  census:
+    importer: hcp_census
+    mapping: config/mappings/hcp_rgph.yaml
   roads:
     importer: osm_roads
     highway: [motorway, trunk, primary, secondary, tertiary, unclassified, track]
+  grids:
+    importer: ghsl_grids
+    population_epoch: 2020
+    built_up_epochs: [2015, 2020]
   basemap:
     importer: basemap_pmtiles
     maxzoom: 15
+
+# Signalements de qualité, appliqués par code officiel HCP (réponse provisoire Q15).
+quality_flags:
+  - official_code: "44410108"   # Sidi Bouknadel
+    boundary_unreliable: true
+    exclude_from_ranking: true
+    warning:
+      fr: "Limite manifestement incomplète dans OpenStreetMap (2,1 km² pour 43 598 habitants) : indicateurs spatiaux non évaluables, commune exclue des classements. Limite officielle demandée."
+      ar: "حدود غير مكتملة بشكل واضح في OpenStreetMap (2,1 كلم² مقابل 43598 نسمة): المؤشرات المجالية غير قابلة للتقييم، والجماعة مستثناة من الترتيب. تم طلب الحدود الرسمية."
 
 data_holders: config/data_holders/rabat.yaml
 

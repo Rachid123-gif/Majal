@@ -57,6 +57,7 @@ export function TerritoryMap({
   onHover,
   onSelect,
   onMap,
+  unitColors,
 }: {
   code: string;
   locale: Locale;
@@ -68,6 +69,8 @@ export function TerritoryMap({
   onHover: (info: HoverInfo) => void;
   onSelect: (id: number | null) => void;
   onMap?: (map: maplibregl.Map | null) => void;
+  /** Choropleth: fill colour per unit id (null when the map shows boundaries only). */
+  unitColors?: Record<number, string> | null;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -116,12 +119,7 @@ export function TerritoryMap({
         type: "fill",
         source: "units",
         paint: {
-          "fill-color": [
-            "case",
-            ["boolean", ["feature-state", "selected"], false],
-            TERRACOTTA,
-            PETROL,
-          ],
+          "fill-color": ["coalesce", ["feature-state", "color"], PETROL],
           "fill-opacity": [
             "case",
             ["boolean", ["feature-state", "selected"], false],
@@ -257,6 +255,37 @@ export function TerritoryMap({
       );
     }
   }, [ready, selectedId, units]);
+
+  // Choropleth colours: stronger fill, selection shown by the outline only.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map) return;
+    for (const feature of units.features) {
+      const id = feature.properties.id;
+      map.setFeatureState({ source: "units", id }, { color: unitColors?.[id] ?? null });
+    }
+    map.setPaintProperty(
+      "units-fill",
+      "fill-opacity",
+      unitColors
+        ? ["case", ["boolean", ["feature-state", "hover"], false], 0.92, 0.78]
+        : [
+            "case",
+            ["boolean", ["feature-state", "selected"], false],
+            0.22,
+            ["boolean", ["feature-state", "hover"], false],
+            0.16,
+            0.05,
+          ],
+    );
+    map.setPaintProperty(
+      "units-fill",
+      "fill-color",
+      unitColors
+        ? ["coalesce", ["feature-state", "color"], "#e8e4da"]
+        : ["case", ["boolean", ["feature-state", "selected"], false], TERRACOTTA, PETROL],
+    );
+  }, [ready, unitColors, units]);
 
   return <div ref={container} className="h-full w-full" />;
 }

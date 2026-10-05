@@ -274,8 +274,8 @@ def test_fallback_texts_pass_every_check() -> None:
         if section.mode != "ai":
             continue
         for lang in ("fr", "ar"):
-            result = fallback_section(SHEET, section, lang, "", None, None)  # type: ignore[arg-type]
-            assert check_paragraphs(result.paragraphs, SHEET, lang, CONTROLS) == [], section.code  # type: ignore[arg-type]
+            result = fallback_section(SHEET, section, lang, "", None, None)
+            assert check_paragraphs(result.paragraphs, SHEET, lang, CONTROLS) == [], section.code
 
 
 def test_render_drops_the_sign_after_a_decrease_verb_and_repeated_units() -> None:

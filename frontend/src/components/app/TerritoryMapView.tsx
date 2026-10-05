@@ -487,6 +487,24 @@ export function TerritoryMapView({ code }: { code: string }) {
               </div>
             )}
 
+            {data?.units.meta.bbox && (
+              <button
+                type="button"
+                onClick={() =>
+                  mapRef.current?.fitBounds(
+                    data.units.meta.bbox as [number, number, number, number],
+                    {
+                      padding: 40,
+                      duration: 800,
+                    },
+                  )
+                }
+                className="text-petrol hover:bg-cream absolute top-3 end-14 z-10 rounded-lg bg-white/95 px-3 py-1.5 text-xs font-medium shadow"
+              >
+                <span aria-hidden>⌖ </span>
+                {t("map.recenter")}
+              </button>
+            )}
             {data?.tiles.available === false && (
               <p className="bg-terracotta/10 text-terracotta-dark absolute top-3 start-3 rounded-lg px-3 py-2 text-sm">
                 {t("map.noBasemap")}

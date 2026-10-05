@@ -1,6 +1,5 @@
 "use client";
 
-import { layers, namedFlavor } from "@protomaps/basemaps";
 import * as maplibregl from "maplibre-gl";
 import type {
   ExpressionSpecification,
@@ -11,6 +10,8 @@ import type {
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Locale } from "@/content/types";
+import kingdom from "@/content/maroc-contour.json";
+import { basemapLayers } from "@/lib/basemapStyle";
 import type { FacilityCollection, UnitCollection, UnitProperties } from "@/lib/maps";
 
 // The worker is served by src/app/maplibre/[file]/route.ts (bundlers cannot resolve it).
@@ -21,15 +22,8 @@ const TERRACOTTA = "#a8461f";
 
 export type HoverInfo = { unit: UnitProperties; x: number; y: number } | null;
 
-function baseStyle(code: string, locale: Locale): StyleSpecification {
+export function baseStyle(code: string, locale: Locale): StyleSpecification {
   const origin = window.location.origin;
-  // Brand-tinted light flavour: cream land, soft sea, so MAJAL's layers stand out.
-  const flavor = {
-    ...namedFlavor("light"),
-    background: "#f6f3ec",
-    earth: "#f6f3ec",
-    water: "#cfdfdd",
-  };
   return {
     version: 8,
     glyphs: `${origin}/basemap/fonts/{fontstack}/{range}.pbf`,
@@ -42,7 +36,8 @@ function baseStyle(code: string, locale: Locale): StyleSpecification {
         attribution: "© OpenStreetMap · Protomaps",
       },
     },
-    layers: layers("protomaps", flavor, { lang: locale }),
+    // Filtered layers: the Kingdom of Morocco in its entirety (cartography rules).
+    layers: basemapLayers(locale),
   };
 }
 
@@ -101,6 +96,7 @@ export function TerritoryMap({
       bounds: (units.meta.bbox as [number, number, number, number]) ?? undefined,
       fitBoundsOptions: { padding: 40 },
       attributionControl: { compact: true },
+      minZoom: 3, // the national view stays reachable by zooming out
       dragRotate: false,
       pitchWithRotate: false,
       canvasContextAttributes: { preserveDrawingBuffer: true }, // lets the map be exported as an image
@@ -110,6 +106,16 @@ export function TerritoryMap({
     let hovered: number | null = null;
 
     map.on("load", () => {
+      // Outer border of the Kingdom of Morocco, southern provinces included (Natural Earth,
+      // Morocco point of view), drawn by MAJAL independently of the base map.
+      map.addSource("kingdom", { type: "geojson", data: kingdom as GeoJSON.Feature });
+      map.addLayer({
+        id: "kingdom-outline",
+        type: "line",
+        source: "kingdom",
+        maxzoom: 10,
+        paint: { "line-color": PETROL, "line-width": 1.3, "line-opacity": 0.55 },
+      });
       map.addSource("units", { type: "geojson", data: units, promoteId: "id" });
       map.addSource("unit-labels", { type: "geojson", data: labels });
       map.addSource("facilities", { type: "geojson", data: facilities });
@@ -206,6 +212,13 @@ export function TerritoryMap({
         const feature = map.queryRenderedFeatures(event.point, { layers: ["units-fill"] })[0];
         callbacks.current.onSelect(feature ? Number(feature.id) : null);
       });
+      // Opening view: framed on the studied territory (agglomeration or province).
+      if (units.meta.bbox) {
+        map.fitBounds(units.meta.bbox as [number, number, number, number], {
+          padding: 40,
+          duration: 0,
+        });
+      }
       setReady(true);
       callbacks.current.onMap?.(map);
     });

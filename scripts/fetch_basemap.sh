@@ -9,6 +9,21 @@ mkdir -p data/tiles
 BUILD=$(curl -sf https://build-metadata.protomaps.dev/builds.json \
   | python3 -c 'import json, sys; print(json.load(sys.stdin)[-1]["key"])')
 
+# National base map of the Kingdom of Morocco (provinces du Sud comprises), low zoom only:
+# used when the map is zoomed out beyond the studied territory.
+national="data/tiles/maroc.pmtiles"
+if [ ! -f "$national" ] || [ -n "${REFRESH:-}" ]; then
+  echo "… Fond de carte national (Royaume du Maroc, zoom 0 à 7) : téléchargement"
+  docker run --rm -v "$PWD/data/tiles:/data" protomaps/go-pmtiles:latest extract \
+    "https://build.protomaps.com/$BUILD" "/data/maroc.pmtiles" \
+    --bbox="-20.0,18.5,5.0,38.5" --maxzoom=7 </dev/null
+  printf '{"build": "%s", "bbox": "-20.0,18.5,5.0,38.5", "maxzoom": 7, "retrieved_at": "%s"}\n' \
+    "$BUILD" "$(date -u +%FT%TZ)" >"data/tiles/maroc.json"
+  echo "✓ Fond de carte national : $(du -h "$national" | cut -f1)"
+else
+  echo "✓ Fond de carte national : déjà présent."
+fi
+
 docker compose run --rm -T backend python -m app.ingestion basemaps </dev/null \
   | while read -r code maxzoom; do
     out="data/tiles/$code.pmtiles"

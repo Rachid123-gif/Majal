@@ -12,10 +12,15 @@ import sys
 from pathlib import Path
 
 import shapefile  # pyshp
-from shapely.geometry import MultiPolygon, Polygon, box, shape
+from shapely.geometry import MultiPolygon, Polygon, box, mapping, shape
 from shapely.ops import unary_union
 
-OUTPUT = Path(__file__).resolve().parents[1] / "frontend/src/content/morocco-outline.json"
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT = ROOT / "frontend/src/content/morocco-outline.json"
+# Geographic contour of the Kingdom (lon/lat), used by the cartography tests.
+REFERENCE = ROOT / "data/reference/maroc-natural-earth-pov.geojson"
+# Same contour for the application map (outer border of the Kingdom, drawn by MAJAL).
+APP_CONTOUR = ROOT / "frontend/src/content/maroc-contour.json"
 LAT0 = math.radians(28.0)  # equirectangular projection centred on Morocco
 SCALE = 40.0
 PAD = 12.0
@@ -76,6 +81,19 @@ def main(shp_path: str) -> None:
         + "\n",
         encoding="utf-8",
     )
+    REFERENCE.parent.mkdir(parents=True, exist_ok=True)
+    contour = json.dumps(
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Royaume du Maroc",
+                    "source": "Natural Earth 1:10m admin 0, point de vue du Maroc (domaine public)",
+                },
+                "geometry": mapping(MultiPolygon(polygons)),
+            }
+        ) + "\n"
+    REFERENCE.write_text(contour, encoding="utf-8")
+    APP_CONTOUR.write_text(contour, encoding="utf-8")
     print(f"✓ {OUTPUT} ({len(polygons)} + {len(context_polygons)} context polygon(s))")
 
 

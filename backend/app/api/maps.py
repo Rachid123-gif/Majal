@@ -70,13 +70,24 @@ def tiles_info(code: str) -> dict[str, Any]:
     }
 
 
+NATIONAL = "maroc"  # national base map (Kingdom of Morocco, low zoom), see fetch_basemap.sh
+
+
+def _tile_bytes(path: Path, z: int, x: int, y: int) -> bytes | None:
+    if not path.exists():
+        return None
+    reader, _ = _reader(path, path.stat().st_mtime)
+    data: bytes | None = reader.get(z, x, y)  # type: ignore[no-untyped-call]
+    return data
+
+
 @router.get("/api/tiles/{code}/{z}/{x}/{y}.mvt")
 def tile(code: str, z: int, x: int, y: int) -> Response:
     path = _tiles_path(code)
     if not code.replace("_", "").isalnum() or not path.exists():
         raise HTTPException(status_code=404, detail="Fond de carte absent (lancez `make data`).")
-    reader, _ = _reader(path, path.stat().st_mtime)
-    data = reader.get(z, x, y)  # type: ignore[no-untyped-call]
+    # The territory extract first, then the national map of the Kingdom when zoomed out.
+    data = _tile_bytes(path, z, x, y) or _tile_bytes(_tiles_path(NATIONAL), z, x, y)
     if not data:
         return Response(status_code=204)
     if data[:2] == b"\x1f\x8b":

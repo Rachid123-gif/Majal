@@ -75,7 +75,8 @@
     "dataOf": "données du",
     "toVerify": "limites non officielles, à vérifier",
     "error": "La carte n'a pas pu se charger. Vérifiez que MAJAL est lancé.",
-    "exportPng": "Exporter la carte (image PNG)"
+    "exportPng": "Exporter la carte (image PNG)",
+    "recenter": "Recentrer sur le territoire"
   },
   "badge": {
     "official": "Officiel",

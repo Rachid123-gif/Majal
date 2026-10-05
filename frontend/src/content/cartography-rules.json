@@ -1,0 +1,37 @@
+{
+  "_principe": "Intégrité territoriale du Royaume du Maroc (principe non négociable, voir CLAUDE.md). Le Maroc est représenté dans son intégralité, provinces du Sud comprises. Ces règles s'appliquent à l'affichage du fond de carte, sans modifier les données sources. Elles sont lues par la carte (src/lib/basemapStyle.ts) et vérifiées par des tests automatiques (frontend : basemapStyle.test.ts ; backend : tests/test_cartography.py sur les tuiles réelles).",
+  "boundaries": {
+    "_note": "Seules les frontières d'État non contestées sont affichées. Les limites marquées « disputed », les limites « unrecognized_country » et toutes les limites infra-nationales du fond de carte (régions, macro-régions) sont masquées. Les unités administratives sont dessinées par MAJAL à partir de ses propres données.",
+    "max_kind_detail": 2,
+    "hide_disputed": true,
+    "hide_kinds": ["unrecognized_country", "macroregion", "region"]
+  },
+  "labels": {
+    "_note": "Toute étiquette désignant les provinces du Sud comme un territoire distinct du Maroc est masquée, quelle que soit la langue.",
+    "fields": [
+      "name",
+      "name:fr",
+      "name:en",
+      "name:ar",
+      "name:es",
+      "name2",
+      "name3",
+      "pmap:name_fr",
+      "pmap:name_ar"
+    ],
+    "hide_if_contains": [
+      "Sahara occidental",
+      "Sahara Occidental",
+      "Western Sahara",
+      "Sáhara Occidental",
+      "Westsahara",
+      "الصحراء الغربية",
+      "sahraouie",
+      "Sahraouie",
+      "Sahrawi",
+      "Saharawi",
+      "SADR",
+      "RASD"
+    ]
+  }
+}

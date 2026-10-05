@@ -6,6 +6,19 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 
 ## Règles absolues (BRIEF §19)
 
+- **Intégrité territoriale du Royaume du Maroc — principe non négociable.** Toute carte (application,
+  vitrine, images exportées, cartes des rapports Word et PDF, et toute carte future) représente le
+  Maroc dans son intégralité, provinces du Sud comprises, conformément à la cartographie officielle
+  marocaine : aucune limite contestée (« disputed ») ni limite de pays ou de région séparant les
+  provinces du Sud, aucune étiquette les désignant comme un territoire distinct (FR, AR, amazighe).
+  Règles d'affichage : `frontend/src/content/cartography-rules.json`, appliquées par
+  `frontend/src/lib/basemapStyle.ts` (ne jamais utiliser `layers()` de Protomaps sans ce filtre) ;
+  contour du Royaume : Natural Earth « point de vue du Maroc » (`scripts/build_morocco_outline.py`
+  → `data/reference/maroc-natural-earth-pov.geojson`, `frontend/src/content/maroc-contour.json`,
+  `morocco-outline.json`). Tests qui doivent rester verts : `frontend/src/lib/basemapStyle.test.ts`,
+  `backend/tests/test_cartography.py` (décode les vraies tuiles). Les données sources ne sont pas
+  modifiées, seulement leur affichage. Décision 0013.
+
 - Ne jamais inventer une statistique, une commune, un code officiel, une limite, une norme ou
   une source. Valeur introuvable → « non disponible » (jamais 0).
 - Chaque valeur porte source, date et badge : Officiel / Ouvert / Estimé / Fictif.
@@ -90,6 +103,8 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
     tableau de bord) : passer `status` à `available` quand une étape est livrée, et remplacer la
     maquette correspondante (`Mockups.tsx`) par une vraie capture.
   - Animations : `components/motion/`, toutes coupées par `prefers-reduced-motion`.
+  - Carte : vue de départ cadrée sur le territoire étudié (bouton « Recentrer »), vue nationale en
+    dézoomant (fond national `data/tiles/maroc.pmtiles`, z0-7, servi en repli par l'API des tuiles).
   - Carte du territoire : `/territoire/[code]` (`components/app/TerritoryMapView.tsx`,
     `TerritoryMap.tsx` avec MapLibre 6 + `@protomaps/basemaps`). Worker MapLibre servi par
     `src/app/maplibre/[file]/route.ts`. Polices/icônes du fond : `public/basemap/`.

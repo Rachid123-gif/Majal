@@ -2,3 +2,5 @@
 node_modules
 next-env.d.ts
 public/basemap
+src/content/maroc-contour.json
+src/content/morocco-outline.json

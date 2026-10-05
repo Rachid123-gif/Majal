@@ -1,6 +1,6 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import type { Localized } from "@/content/types";
 
-export type Localized = { fr: string; ar: string };
+export type { Localized };
 
 export type Health = {
   status: "ok" | "degraded";
@@ -18,11 +18,48 @@ export type TerritorySummary = {
   scopes: { code: string; label: Localized; default: boolean }[];
 };
 
-async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, { cache: "no-store" });
-  if (!response.ok) throw new Error(`${path} → HTTP ${response.status}`);
-  return (await response.json()) as T;
+export type Me = { username: string; display_name: Localized; roles: string[] };
+
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+  }
 }
 
-export const fetchHealth = () => getJson<Health>("/health");
-export const fetchTerritories = () => getJson<TerritorySummary[]>("/api/territories");
+// Same-origin calls: /api/* is forwarded to the backend by next.config.ts.
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, { cache: "no-store", credentials: "same-origin", ...init });
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`;
+    try {
+      const body = (await response.json()) as { detail?: unknown };
+      if (typeof body.detail === "string") detail = body.detail;
+    } catch {
+      // Non-JSON error body.
+    }
+    throw new ApiError(response.status, detail);
+  }
+  return (response.status === 204 ? undefined : await response.json()) as T;
+}
+
+export const fetchHealth = () => request<Health>("/api/health");
+export const fetchTerritories = () => request<TerritorySummary[]>("/api/territories");
+export const fetchMe = () => request<Me>("/api/auth/me");
+export const login = (username: string, password: string) =>
+  request<Me>("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+export const logout = () => request<void>("/api/auth/logout", { method: "POST" });
+
+/** Only same-site relative paths are accepted as a post-login destination. */
+export function safeNextPath(value: string | null, fallback = "/tableau-de-bord"): string {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) {
+    return fallback;
+  }
+  return value;
+}

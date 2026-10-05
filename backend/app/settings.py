@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -15,6 +16,18 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://majal:majal@localhost:5432/majal"
     config_dir: Path = REPO_ROOT / "config"
     cors_origins: list[str] = ["http://localhost:3000"]
+
+    # Sessions: cookie signed with this secret (set a long random value in .env).
+    session_secret: str = "dev-only-insecure-secret"
+    session_max_age_hours: int = 12
+    # Demo accounts (stage 0 bis). An empty password disables the account.
+    demo_professeur_password: str = ""
+    demo_presentateur_password: str = ""
+
+    @field_validator("session_secret")
+    @classmethod
+    def empty_secret_means_default(cls, value: str) -> str:
+        return value or "dev-only-insecure-secret"
 
 
 @lru_cache

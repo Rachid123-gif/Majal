@@ -1,21 +1,52 @@
 {
   "tagline": "Copilote d'intelligence territoriale",
-  "lead": "De la donnée publique dispersée au diagnostic territorial chiffré, sourcé et vérifiable.",
-  "principle": "L'outil propose, l'urbaniste valide.",
-  "demoTerritories": "Territoires de démonstration",
-  "defaultScope": "Périmètre par défaut",
-  "profile": "Profil",
-  "profiles": { "urbain": "urbain", "mixte": "mixte (urbain et rural)" },
-  "start": "Commencer la présentation",
-  "startSoon": "Disponible à l'étape 7 (mode présentation)",
   "switchLanguage": "العربية",
+  "backHome": "Retour à l'accueil",
+  "demoBanner": "Démonstrateur — données de démonstration",
+  "login": {
+    "title": "Se connecter",
+    "intro": "Accès réservé au référent scientifique et aux présentateurs du démonstrateur.",
+    "username": "Identifiant",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "hint": "Comptes de démonstration : « professeur » ou « presentateur ». Les mots de passe sont définis dans le fichier .env.",
+    "unreachable": "Le serveur ne répond pas. Vérifiez que MAJAL est bien lancé.",
+    "motto": "L'outil propose, l'urbaniste valide.",
+    "invalid": "Identifiant ou mot de passe incorrect.",
+    "locked": "Trop de tentatives. Patientez une minute avant de réessayer."
+  },
+  "dashboard": {
+    "greeting": "Bonjour",
+    "logout": "Se déconnecter",
+    "chooseTerritory": "Choisissez le territoire de la démonstration",
+    "selected": "Sélectionné",
+    "defaultScope": "Périmètre par défaut",
+    "profile": "Profil",
+    "profiles": {
+      "urbain": "urbain",
+      "mixte": "mixte (urbain et rural)"
+    },
+    "launch": "Lancer le mode présentation",
+    "progressTitle": "Avancement des fonctionnalités",
+    "progressIntro": "Le démonstrateur se construit par étapes. Chaque fonction s'active quand son étape est validée.",
+    "comingSoon": "Bientôt disponible",
+    "available": "Disponible",
+    "territoriesUnavailable": "Les territoires s'afficheront quand le serveur répondra."
+  },
   "status": {
     "checking": "Vérification du serveur…",
     "ok": "Serveur et base de données connectés",
-    "noDatabase": "Serveur connecté — base de données non disponible (Docker pas encore lancé)",
+    "noDatabase": "Serveur connecté — base de données non disponible",
     "configError": "Serveur connecté — erreur dans les fichiers de configuration",
     "unreachable": "Serveur non joignable"
   },
-  "territoriesUnavailable": "Les territoires s'afficheront quand le serveur sera joignable.",
+  "presentation": {
+    "title": "Mode présentation",
+    "soon": "Bientôt disponible : le déroulé complet de la démonstration arrive à l'étape 7.",
+    "fullscreen": "Plein écran",
+    "exit": "Quitter",
+    "territory": "Territoire présenté"
+  },
   "footer": "Démonstrateur MAJAL — version {version}"
 }

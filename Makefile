@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local dev dev-local down migrate data demo test test-backend \
+.PHONY: help setup setup-local start stop logs dev dev-local down migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -33,8 +33,26 @@ setup-local: .env ## Installation sans Docker (uv et npm) pour les tests et l'é
 	cd backend && uv sync
 	cd frontend && npm ci
 
-dev: .env ## Lance MAJAL (Docker) : http://localhost:3000
-	docker compose up
+start: .env ## ★ Lance MAJAL en arrière-plan et ouvre le navigateur
+	docker compose up -d --build -V
+	@printf "Démarrage de MAJAL"; \
+	for i in $$(seq 1 90); do \
+		curl -sf -o /dev/null http://localhost:3000 && break; printf "."; sleep 2; \
+	done; echo
+	@curl -sf -o /dev/null http://localhost:3000 \
+		&& { echo "✓ MAJAL est prêt : http://localhost:3000"; open http://localhost:3000 2>/dev/null || true; } \
+		|| { echo "MAJAL ne répond pas encore. Voir les messages : make logs"; exit 1; }
+
+stop: ## ★ Arrête MAJAL
+	docker compose down
+
+logs: ## Affiche les messages de MAJAL (Ctrl+C pour quitter l'affichage)
+	docker compose logs -f --tail 50
+
+dev: .env ## Lance MAJAL au premier plan, avec les messages (Ctrl+C pour arrêter)
+	@# --build: rebuilds images when dependencies changed (instant otherwise);
+	@# -V: refreshes node_modules so it always matches the image.
+	docker compose up --build -V
 
 dev-local: ## Lance backend et frontend sans Docker (sans base de données)
 	@trap 'kill 0' INT TERM EXIT; \

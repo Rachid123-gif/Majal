@@ -4,7 +4,9 @@ import { createContext, useCallback, useContext, useEffect, useSyncExternalStore
 import ar from "./ar.json";
 import fr from "./fr.json";
 
-export type Locale = "fr" | "ar";
+import type { Locale } from "@/content/types";
+
+export type { Locale };
 type Dictionary = typeof fr;
 
 const dictionaries: Record<Locale, Dictionary> = { fr, ar };

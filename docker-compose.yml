@@ -35,6 +35,9 @@ services:
       APP_ENV: ${APP_ENV:-development}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       SOVEREIGN_MODE: ${SOVEREIGN_MODE:-false}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      DEMO_PROFESSEUR_PASSWORD: ${DEMO_PROFESSEUR_PASSWORD:-}
+      DEMO_PRESENTATEUR_PASSWORD: ${DEMO_PRESENTATEUR_PASSWORD:-}
     ports:
       - "8000:8000"
     volumes:
@@ -50,7 +53,8 @@ services:
   frontend:
     build: ./frontend
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      # The browser only talks to the frontend; /api/* is forwarded to the backend.
+      BACKEND_INTERNAL_URL: http://backend:8000
     ports:
       - "3000:3000"
     volumes:

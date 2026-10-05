@@ -13,6 +13,7 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "geoalchemy2>=0.15",
     "pyyaml>=6.0",
+    "itsdangerous>=2.2.0",
 ]
 
 [dependency-groups]

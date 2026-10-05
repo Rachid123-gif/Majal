@@ -32,6 +32,7 @@ class Health(BaseModel):
 
 
 @router.get("/health")
+@router.get("/api/health", include_in_schema=False)
 def health() -> Health:
     db = check_database()
     try:

@@ -3,13 +3,22 @@
 /* MAJAL palette and typography (brief, section 13). */
 @theme {
   --color-petrol: #12343b;
+  --color-petrol-dark: #0b2227;
   --color-terracotta: #a8461f;
+  --color-terracotta-dark: #8c3a19;
+  --color-terracotta-light: #e8956b;
   --color-cream: #f6f3ec;
   --color-slate: #4a5560;
+  --color-sea: #d7e4e2;
+  --color-land: #ebe3d0;
 
   --font-heading: "EB Garamond", Georgia, serif;
   --font-sans: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
   --font-arabic: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -18,16 +27,17 @@ body {
   font-family: var(--font-sans);
 }
 
-/* In Arabic, every text (headings included) uses the Arabic typeface. */
+/* In Arabic, every text (headings included) uses the Arabic typeface, without italics. */
 html[dir="rtl"] body,
 html[dir="rtl"] .font-heading {
   font-family: var(--font-arabic);
 }
-
-@media print {
-  body {
-    background: white;
-  }
+html[dir="rtl"] .italic {
+  font-style: normal;
+}
+html[dir="rtl"] h1,
+html[dir="rtl"] h2 {
+  line-height: 1.35;
 }
 
 /* The Latin part of the logo always stays in EB Garamond. */
@@ -35,7 +45,264 @@ html .logo-latin {
   font-family: var(--font-heading);
 }
 
-/* Arabic script has no italic tradition. */
-html[dir="rtl"] .italic {
-  font-style: normal;
+.eyebrow {
+  letter-spacing: 0.16em;
+}
+html[dir="rtl"] .eyebrow {
+  letter-spacing: 0;
+}
+
+.nav-link {
+  background: linear-gradient(currentColor, currentColor) no-repeat 50% 100% / 0 1px;
+  padding-bottom: 2px;
+  transition: background-size 0.25s ease;
+}
+.nav-link:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- Motion (everything below is switched off by "reduce motion") ---------- */
+
+[data-reveal] {
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+[data-reveal="out"] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+.hero-glow {
+  background:
+    radial-gradient(60% 50% at 75% 40%, rgba(232, 149, 107, 0.16), transparent 70%),
+    radial-gradient(50% 60% at 10% 90%, rgba(246, 243, 236, 0.06), transparent 70%);
+}
+
+.hero-copy > * {
+  animation: rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hero-copy > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.hero-copy > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.hero-copy > *:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+.morocco-map {
+  direction: ltr;
+}
+.map-outline {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2.2s cubic-bezier(0.6, 0.1, 0.2, 1) 0.2s forwards;
+}
+.map-fill {
+  opacity: 0;
+  animation: fade 1.4s ease 1.2s forwards;
+}
+.map-link {
+  opacity: 0;
+  animation:
+    fade 0.8s ease 2.4s forwards,
+    dash 1.2s linear 2.4s infinite;
+}
+.map-city {
+  opacity: 0;
+  animation: fade 0.8s ease forwards;
+}
+.map-city-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 2.4s ease-out infinite;
+}
+.map-city-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.discover-arrow {
+  display: inline-block;
+  animation: nudge 1.8s ease-in-out infinite;
+}
+
+.mockup-frame {
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.feature-visual:hover .mockup-frame {
+  transform: translate3d(0, -6px, 0) rotate(-0.4deg);
+}
+[data-reveal="in"] .mock-bar {
+  animation: grow 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transform-origin: left;
+}
+[data-reveal="in"] .mock-cell {
+  animation: fade 0.6s ease both;
+}
+
+.territory-card {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.5s ease;
+}
+.territory-card:hover {
+  transform: translate3d(0, -6px, 0);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+}
+
+/* "How it works": a dashed line that flows from one step to the next. */
+.how-connector {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .how-connector {
+    display: block;
+    position: absolute;
+    top: 2rem;
+    inset-inline-start: calc(4rem + 2rem);
+    inset-inline-end: 0;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-terracotta) 0 8px,
+      transparent 8px 16px
+    );
+    background-size: 16px 2px;
+    opacity: 0.6;
+  }
+  .how-step:first-child .how-connector {
+    inset-inline-start: 4rem;
+  }
+  [data-reveal="in"] .how-connector {
+    animation: flow 0.8s linear infinite;
+  }
+  html[dir="rtl"] [data-reveal="in"] .how-connector {
+    animation-direction: reverse;
+  }
+}
+[data-reveal="in"] .how-node {
+  animation: pop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes flow {
+  to {
+    background-position: 16px 0;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  [data-reveal="out"] {
+    opacity: 1;
+    transform: none;
+  }
+  .map-outline {
+    stroke-dashoffset: 0;
+  }
+  .map-fill,
+  .map-link,
+  .map-city {
+    opacity: 1;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  header {
+    position: static !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

@@ -33,7 +33,8 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 | Commande | Effet |
 | --- | --- |
 | `make setup` | Première installation Docker (images, base, migrations) |
-| `make dev` | Lance tout dans Docker → http://localhost:3000 (API : :8000) |
+| `make start` / `make stop` | **Usage du porteur** : lance en arrière-plan (rebuild auto) et ouvre le navigateur / arrête |
+| `make dev` | Lance au premier plan avec les logs → http://localhost:3000 (API : :8000) |
 | `make setup-local` / `make dev-local` | Sans Docker (uv + npm), sans base de données |
 | `make test` | pytest + vitest (dans Docker si présent, sinon en local) |
 | `make lint` | ruff, ruff format, mypy strict, eslint, prettier, tsc |
@@ -46,19 +47,33 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   (`uv.lock` versionné). Base PostgreSQL 16 + PostGIS + pgvector (`docker/db/`).
   - `app/config_loader/` : lecture YAML avec numéros de ligne, validation Pydantic générique
     (`load_model`) réutilisable pour les grilles, taxonomies et plans de rapport.
-  - `app/api/` : `/health` (état base + config), `/api/territories`.
+  - `app/api/` : `/health` (+ `/api/health`), `/api/territories`, `/api/auth/{login,logout,me}`.
+  - `app/security.py` : comptes de démo (mots de passe dans `.env`), cookie de session signé
+    `majal_session`, anti-force brute (décision 0005).
   - Dans Docker, `config/` est monté sur `/config` (= `REPO_ROOT/config`, car le code est sous `/app`).
 - `frontend/` : Next.js 16 (App Router, voir `frontend/AGENTS.md` : lire la doc embarquée dans
   `node_modules/next/dist/docs/` avant d'écrire du code Next), Tailwind 4, Vitest.
   - i18n maison : `src/i18n/{fr,ar}.json` + `LocaleProvider` (bascule `dir="rtl"`).
   - Polices embarquées via `@fontsource/*` (aucun appel réseau : hors ligne).
-  - Palette (BRIEF §13) en tokens Tailwind : `petrol`, `terracotta`, `cream`, `slate`.
+  - Palette (BRIEF §13) en tokens Tailwind : `petrol`, `terracotta`, `cream`, `slate` (+ variantes).
+  - Le navigateur ne parle qu'au frontend : `next.config.ts` relaie `/api/*` vers
+    `BACKEND_INTERNAL_URL`. `src/proxy.ts` protège `/tableau-de-bord` et `/presentation`.
+  - Pages : `/` vitrine publique (`components/landing/`, textes dans `src/content/`),
+    `/connexion`, `/tableau-de-bord`, `/presentation` (`components/app/`).
+  - `src/content/features.ts` = avancement réel des fonctionnalités (lu par la vitrine et le
+    tableau de bord) : passer `status` à `available` quand une étape est livrée, et remplacer la
+    maquette correspondante (`Mockups.tsx`) par une vraie capture.
+  - Animations : `components/motion/`, toutes coupées par `prefers-reduced-motion`.
+  - Carte du Maroc : `src/content/morocco-outline.json`, généré par
+    `scripts/build_morocco_outline.py` (Natural Earth, point de vue du Maroc : Sahara inclus).
 
 ## État d'avancement
 
-- Étape 0 — terminée techniquement le 2026-10-05 (Docker : `make setup`, `make dev`, `/health`
-  = ok avec PostGIS 3.6 et pgvector 0.8, `make test` et `make lint` verts dans Docker).
-  En attente de validation du porteur du projet avant l'étape 1.
+- Étape 0 — validée le 2026-10-05.
+- Étape 0 bis (vitrine + connexion) — livrée le 2026-10-05, en attente de validation.
+  Vitrine sans aucun logo d'institution, partenaire ni témoignage (aucun partenariat ne doit être
+  suggéré). Chiffres uniquement issus de l'étude d'opportunité, avec leur source.
+- Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;
   unité fine Rabat = carreaux 500 m ; Tétouan = province seule, douars sinon carreaux 1 km.

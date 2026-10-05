@@ -6,6 +6,7 @@ from app.models.indicators import (
     PopulationCell,
     RawVariable,
 )
+from app.models.reports import Report
 from app.models.territory import (
     Badge,
     DataSource,
@@ -27,6 +28,7 @@ __all__ = [
     "IndicatorValue",
     "PopulationCell",
     "RawVariable",
+    "Report",
     "Road",
     "StudyArea",
     "Territory",

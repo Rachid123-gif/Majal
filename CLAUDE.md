@@ -123,7 +123,7 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 - Étape 0 — validée le 2026-10-05.
 - Étape 0 bis (vitrine + connexion) — validée le 2026-10-05 (l'utilisateur a lancé l'étape 1).
 - Étape 1 (Rabat : territoire réel et carte) — validée le 2026-10-05.
-- Étape 2 (indicateurs, fiche, comparaison) — livrée le 2026-10-05, en attente de validation.
+- Étape 2 (indicateurs, fiche, comparaison) — validée le 2026-10-05.
   Données officielles HCP trouvées au niveau des arrondissements. Points ouverts : Q13, Q16-Q20.
   Typologie des communes (méthodologie §5) : à faire pendant l'étape 3, présentée comme « proposition ».
 - Engagement (Q20) : remplacer les distances à vol d'oiseau par des distances le long des rues
@@ -133,6 +133,17 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   l'utilisation ; `make data` reste une commande d'administration), fournisseur Anthropic codé mais
   désactivé, secours sans IA (textes à trous), anti-invention obligatoire, cache + `make reports`,
   exports FR (Word, PDF) ; exports arabes RTL à l'étape 7.
+  Code : `backend/app/services/llm/` (fournisseurs, garde souveraine dans `get_provider`),
+  `backend/app/services/reports/` (facts → writer → numbers → generate ; export, maps, jobs,
+  benchmark, `__main__` pour `make reports`), plan du rapport
+  `config/report_templates/diagnostic_commune.yaml`, typologie `config/indicators/typologie.yaml`.
+  Interface : `frontend/src/components/app/ReportPanel.tsx` (sur la fiche d'unité).
+  Le modèle ne voit que des identifiants de faits `{{F012}}` ; jamais de chiffre écrit par l'IA.
+  Modèle : qwen3:8b par défaut, gemma3:4b en repli (choix du porteur, 2026-10-05).
+  Contrôles du sens (`meaning.py` + `config/report_templates/controles.yaml`) : tendances,
+  données manquantes, statuts, jugements subjectifs, nombres collés en arabe — à garder verts
+  (`tests/test_meaning.py`).
+  Banc d'essai : `docs/benchmarks/` ; décisions 0014-0016.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

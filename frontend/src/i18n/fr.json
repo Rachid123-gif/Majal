@@ -149,6 +149,44 @@
     "minimap": "Équipements recensés dans l'unité (OpenStreetMap)",
     "loadError": "Le diagnostic n'a pas pu être chargé.",
     "rankValue": "{rank}e valeur la plus élevée sur {of}",
-    "rankValueFirst": "valeur la plus élevée sur {of}"
+    "rankValueFirst": "valeur la plus élevée sur {of}",
+    "typologyUnclassified": "Non classée : une donnée nécessaire manque."
+  },
+  "report": {
+    "title": "Rapport de diagnostic",
+    "generate": "Générer le diagnostic",
+    "regenerate": "Régénérer",
+    "french": "en français",
+    "arabic": "en arabe",
+    "running": "Rédaction en cours…",
+    "section": "Section {n} sur {total} : {title}",
+    "pending": "En attente de démarrage…",
+    "modeAi": "Rédigé par l'IA locale ({model})",
+    "modeMixed": "Rédigé par l'IA locale ({model}), certaines sections sans IA",
+    "modeFallback": "Rédaction automatique sans IA (modèle indisponible), à partir des mêmes faits",
+    "sectionFallback": "Section rédigée automatiquement sans IA",
+    "cached": "Rapport en cache du {date}",
+    "sovereign": "Mode souverain : aucune donnée ne quitte cet ordinateur",
+    "aiOff": "IA locale non joignable : le rapport sera rédigé sans IA",
+    "watermark": "Document de travail généré par MAJAL — à valider par un urbaniste",
+    "blocked": "Publication bloquée : nombres non tracés détectés",
+    "failed": "La génération a échoué",
+    "downloadDocx": "Télécharger (Word)",
+    "downloadPdf": "Télécharger (PDF)",
+    "arabicExports": "Les exports en arabe arrivent à l'étape 7.",
+    "status": "Statut",
+    "statuses": {
+      "brouillon": "Brouillon",
+      "relu": "Relu",
+      "valide": "Validé"
+    },
+    "markRead": "Marquer comme relu",
+    "validate": "Valider",
+    "backToDraft": "Repasser en brouillon",
+    "history": "Historique",
+    "duration": "Durée de rédaction : {s} s",
+    "factSource": "Source",
+    "noReport": "Aucun rapport pour cette unité.",
+    "outdated": "Rapport rédigé avant une mise à jour des données, des consignes ou du modèle : régénérez-le pour en tenir compte."
   }
 }

@@ -64,25 +64,25 @@ export const features: Feature[] = [
   },
   {
     id: "report",
-    status: "in_development",
+    status: "available",
     stage: { fr: "Étape 3", ar: "المرحلة 3" },
     title: {
       fr: "Rapport rédigé par l'IA, vérifié",
       ar: "تقرير يحرره الذكاء الاصطناعي ويتم التحقق منه",
     },
     summary: {
-      fr: "Un rapport de diagnostic rédigé en quelques minutes, en français et en arabe, exportable en Word et en PDF.",
-      ar: "تقرير تشخيصي يُحرَّر في دقائق، بالفرنسية والعربية، قابل للتصدير بصيغتي Word وPDF.",
+      fr: "Un rapport de diagnostic rédigé en quelques minutes par une IA installée sur l'ordinateur, en français et en arabe ; export Word et PDF en français (en arabe à l'étape 7).",
+      ar: "تقرير تشخيصي يُحرَّر في دقائق بذكاء اصطناعي مثبت على الحاسوب، بالفرنسية والعربية؛ التصدير بصيغتي Word وPDF بالفرنسية (وبالعربية في المرحلة 7).",
     },
     points: {
       fr: [
         "L'IA cite des faits identifiés : elle n'écrit jamais un chiffre elle-même",
-        "Chaque nombre est contrôlé avant publication",
+        "Chaque nombre est contrôlé avant publication, ainsi que le sens des évolutions",
         "Mention « à valider par un urbaniste » jusqu'à sa validation",
       ],
       ar: [
         "يستشهد الذكاء الاصطناعي بوقائع محددة ولا يكتب أي رقم من تلقاء نفسه",
-        "كل رقم يخضع للمراقبة قبل النشر",
+        "كل رقم يخضع للمراقبة قبل النشر، وكذلك اتجاه التطورات",
         "عبارة «في انتظار مصادقة مختص في التعمير» إلى حين المصادقة",
       ],
     },

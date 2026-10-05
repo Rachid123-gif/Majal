@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local start stop logs dev dev-local down indicators migrate data demo test test-backend \
+.PHONY: help setup setup-local start stop logs dev dev-local down indicators reports migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -76,6 +76,9 @@ data: .env ## (Re)construit les données : limites, équipements, routes, fond d
 
 indicators: ## Recalcule les indicateurs (après une modification de la grille)
 	docker compose run --rm -T backend python -m app.services.indicators compute
+
+reports: ## Pré-génère les rapports de toutes les unités (cache pour les démonstrations)
+	docker compose run --rm -T backend python -m app.services.reports pregenerate $(or $(TERRITORY),rabat) $(if $(FORCE),--force,)
 
 demo: ## Lance le mode démonstration hors ligne — disponible à l'étape 7
 	@echo "Pas encore disponible : le mode démonstration arrive à l'étape 7."

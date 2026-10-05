@@ -1,0 +1,111 @@
+# Plan du rapport de diagnostic d'une commune ou d'un arrondissement.
+# Statut : proposition v0 (TODO_REFERENT), modifiable par le référent scientifique.
+#
+# Pour chaque section : les indicateurs dont les faits sont transmis à l'IA, la consigne de
+# rédaction et la longueur visée. L'IA ne voit que ces faits ; elle les cite par leur
+# identifiant ({{F012}}) et n'écrit jamais un nombre elle-même (contrôle automatique).
+# Mode « auto » : section rédigée sans IA (citoyens tant que l'étape 4 n'est pas livrée ;
+# sources et limites toujours).
+
+template_version: "v0"
+status: TODO_REFERENT
+title: { fr: "Diagnostic territorial", ar: "التشخيص الترابي" }
+
+style:
+  fr: >-
+    Ton institutionnel et neutre. Aucun jugement subjectif (pas de « préoccupant », « alarmant »,
+    « remarquable », « satisfaisant ») : qualifie seulement avec le statut calculé (« dans la
+    moyenne ou au-dessus », « à surveiller », « déficit marqué ») et l'écart à la moyenne de
+    l'agglomération. Phrases complètes avec un verbe explicite (« s'établit à », « atteint »,
+    « contre »). Pour une évolution, le mot (hausse, baisse, stable) suit le sens de la valeur ;
+    pour un indicateur observé à une seule date, aucun mot d'évolution. Décris les constats ; ne
+    recommande aucune décision.
+  ar: >-
+    أسلوب مؤسساتي ومحايد. لا أحكام ذاتية (لا «مقلق» ولا «خطير» ولا «لافت» ولا «مرض»): استعمل فقط
+    الوضعية المحتسبة («في المتوسط أو أفضل»، «يستدعي المتابعة»، «خصاص واضح») والفارق عن متوسط
+    التجمع الحضري. جمل تامة بفعل صريح («يبلغ»، «يصل إلى»، «مقابل»). لا تضع عددين متجاورين أبداً.
+    اكتب «التجمع الحضري» للدلالة على التجمع. في حالة التطور، تتبع الكلمة (ارتفاع، انخفاض،
+    استقرار) اتجاه القيمة؛ ولمؤشر لوحظ في تاريخ واحد، لا تستعمل أي كلمة تطور. صف المعاينات ولا
+    توص بأي قرار.
+
+# Phrases modèles à imiter (identifiants F9xx fictifs : le modèle doit utiliser ceux de la liste).
+examples:
+  fr:
+    - "La population de l'arrondissement s'établit à {{F901}} en 2024. Elle recule de {{F902}} en moyenne depuis 2014."
+    - "Le taux de chômage atteint {{F910}}, contre {{F911}} ; l'arrondissement se situe dans la catégorie « à surveiller »."
+    - "Les données disponibles ne permettent pas d'évaluer l'offre de soins de santé primaires. La carte sanitaire est à demander à la délégation de la Santé."
+  ar:
+    - "يبلغ عدد سكان المقاطعة {{F901}} سنة 2024، ويتراجع بمعدل {{F902}} في المتوسط منذ 2014."
+    - "يبلغ معدل البطالة {{F910}}، مقابل {{F911}}؛ وتندرج المقاطعة ضمن فئة «يستدعي المتابعة»."
+    - "لا تسمح المعطيات المتوفرة بتقييم العرض من العلاجات الصحية الأولية. ويُطلب الحصول على الخريطة الصحية من المندوبية الإقليمية للصحة."
+
+sections:
+  - code: presentation
+    title: { fr: "Présentation du territoire", ar: "تقديم المجال الترابي" }
+    indicators: [DEM_POP, DEM_DENS, URB_BATI]
+    include_identity: true
+    words: 90
+    instruction:
+      fr: "Présente l'unité : son rattachement, sa population, sa densité et son niveau d'urbanisation."
+      ar: "قدّم الوحدة: انتماؤها الإداري، وعدد سكانها، وكثافتها، ومستوى تعميرها."
+
+  - code: demographie
+    title: { fr: "Dynamiques démographiques", ar: "الديناميات الديموغرافية" }
+    indicators: [DEM_POP, DEM_TCAM, DEM_JEUNES, DEM_AGES]
+    words: 110
+    instruction:
+      fr: "Décris l'évolution de la population entre les deux recensements et la structure par âge."
+      ar: "صف تطور عدد السكان بين الإحصاءين وبنية الأعمار."
+
+  - code: equipements
+    title: { fr: "Équipements et services de base", ar: "التجهيزات والخدمات الأساسية" }
+    indicators: [EDU_ECOLES, SAN_ESSP, SAN_HOP, EAU_RES, EAU_ASS, EAU_ELEC, LOG_PREC, ENV_VERT]
+    words: 130
+    instruction:
+      fr: "Décris l'accès aux services de base (eau, assainissement, logement, santé, éducation, espaces verts). Signale clairement les données non disponibles."
+      ar: "صف الولوج إلى الخدمات الأساسية (الماء، التطهير، السكن، الصحة، التعليم، المساحات الخضراء). أشر بوضوح إلى المعطيات غير المتوفرة."
+
+  - code: accessibilite
+    title: { fr: "Accessibilité", ar: "الولوجية" }
+    indicators: [MOB_TC, MOB_TRAM, MOB_15MIN, EDU_PROX, SAN_PROX, ENV_VERT300, MOB_ROUTE, MOB_CHEF]
+    words: 110
+    instruction:
+      fr: "Décris l'accès de la population aux transports collectifs et aux équipements de proximité."
+      ar: "صف ولوج السكان إلى النقل العمومي وإلى تجهيزات القرب."
+
+  - code: dynamique_urbaine
+    title: { fr: "Dynamique urbaine et foncière", ar: "الدينامية العمرانية والعقارية" }
+    indicators: [URB_BATI, URB_CROIS, URB_CONSO, URB_DOC]
+    words: 100
+    instruction:
+      fr: "Décris l'évolution de la surface bâtie. Ne qualifie le mode de croissance (densification ou étalement) que si un fait fourni le permet ; sinon, dis que la donnée manque."
+      ar: "صف تطور المساحة المبنية. لا تحدد نمط النمو (تكثيف أو توسع) إلا إذا سمحت بذلك واقعة مقدمة؛ وإلا فاذكر أن المعطى ناقص."
+
+  - code: vulnerabilites
+    title: { fr: "Vulnérabilités", ar: "مواطن الهشاشة" }
+    indicators: [EMP_CHOM, EMP_ACTF, EMP_ANALPH, LOG_PREC]
+    words: 110
+    instruction:
+      fr: "Décris les vulnérabilités sociales observées (emploi, activité des femmes, analphabétisme, habitat précaire)."
+      ar: "صف مواطن الهشاشة الاجتماعية الملاحظة (التشغيل، نشاط النساء، الأمية، السكن الهش)."
+
+  - code: citoyens
+    title: { fr: "Ce que disent les citoyens", ar: "ما يقوله المواطنون" }
+    mode: auto
+    words: 40
+    auto_text:
+      fr: "L'analyse des contributions citoyennes sera intégrée lorsque le module d'écoute citoyenne sera disponible."
+      ar: "سيتم إدراج تحليل مساهمات المواطنين عندما تصبح وحدة الإنصات للمواطنين متاحة."
+
+  - code: synthese
+    title: { fr: "Synthèse des enjeux et pistes de réflexion", ar: "خلاصة الرهانات ومسارات التفكير" }
+    indicators: attention
+    include_typology: true
+    words: 140
+    instruction:
+      fr: "Résume les principaux enjeux à partir des points d'attention. Formule les pistes sous forme de questions ou de pistes de réflexion, jamais comme des décisions."
+      ar: "لخّص أهم الرهانات انطلاقاً من نقاط الانتباه. صُغ المسارات في شكل أسئلة أو مسارات للتفكير، وليس كقرارات أبداً."
+
+  - code: sources
+    title: { fr: "Sources, méthode et limites des données", ar: "المصادر والمنهجية وحدود المعطيات" }
+    mode: auto

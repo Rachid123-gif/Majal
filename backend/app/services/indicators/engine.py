@@ -42,6 +42,7 @@ from app.config_loader.indicators import (
 from app.config_loader.territory import QualityFlag, TerritoryConfig
 from app.models import Diagnostic, IndicatorDefinitionRow, IndicatorValue, StudyArea, Territory
 from app.services.indicators import spatial
+from app.services.indicators.typology import TypologyConfig, compute_typology, load_typology
 from app.settings import get_settings
 
 BADGE_ORDER = ["official", "open", "estimated", "fictitious"]
@@ -94,7 +95,14 @@ class Method:
     evaluation: Evaluation
     confidence: Confidence
     mapping: FacilityMapping | None
+    typology: TypologyConfig
     fingerprint: str
+
+
+def _mapping_path(config: TerritoryConfig) -> Path | None:
+    facilities = config.sources.get("facilities")
+    mapping = facilities.model_dump().get("mapping") if facilities else None
+    return get_settings().config_dir.parent / mapping if mapping else None
 
 
 def method_paths(config: TerritoryConfig) -> list[Path]:
@@ -102,26 +110,24 @@ def method_paths(config: TerritoryConfig) -> list[Path]:
     paths = [
         root / "indicators" / "grille-v0.yaml",
         root / "indicators" / "evaluation.yaml",
+        root / "indicators" / "typologie.yaml",
         root / "confidence.yaml",
         root / "territories" / f"{config.code}.yaml",
     ]
-    facilities = config.sources.get("facilities")
-    mapping = facilities.model_dump().get("mapping") if facilities else None
-    if mapping:
-        paths.append(root.parent / mapping)
-    return paths
+    mapping = _mapping_path(config)
+    return [*paths, mapping] if mapping else paths
 
 
 def load_method(config: TerritoryConfig) -> Method:
     root = get_settings().config_dir
-    paths = method_paths(config)
-    mapping = load_facility_mapping(paths[4]) if len(paths) > 4 else None
+    mapping = _mapping_path(config)
     return Method(
         grid=load_grid(root / "indicators" / "grille-v0.yaml"),
         evaluation=load_evaluation(root / "indicators" / "evaluation.yaml"),
         confidence=load_confidence(root / "confidence.yaml"),
-        mapping=mapping,
-        fingerprint=method_fingerprint(*paths),
+        mapping=load_facility_mapping(mapping) if mapping else None,
+        typology=load_typology(root / "indicators" / "typologie.yaml"),
+        fingerprint=method_fingerprint(*method_paths(config)),
     )
 
 
@@ -588,7 +594,7 @@ class Engine:
             lang: getattr(evaluation.label, lang).replace("{reference}", getattr(ref_label, lang))
             for lang in ("fr", "ar")
         }
-        return {
+        payload: dict[str, Any] = {
             "territory": self.config.code,
             "computed_at": datetime.now(UTC).isoformat(),
             "duration_ms": duration,
@@ -644,6 +650,9 @@ class Engine:
                 for u in self.units
             ],
         }
+        labels = {i.code: i.label.model_dump() for i in self.method.grid.indicators}
+        payload["typology"] = compute_typology(self.method.typology, payload["units"], labels)
+        return payload
 
 
 def _year(source: dict[str, Any] | None) -> int | None:

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import auth, diagnostics, health, maps, territories
+from app.api import auth, diagnostics, health, maps, reports, territories
 from app.settings import get_settings
 
 INSECURE_SECRET = "dev-only-insecure-secret"
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(maps.router)
     app.include_router(diagnostics.router)
+    app.include_router(reports.router)
     return app
 
 

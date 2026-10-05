@@ -1,0 +1,101 @@
+# MAJAL — Contrôles automatiques du sens des textes rédigés par l'IA
+#
+# Le contrôle des chiffres (aucun nombre écrit par l'IA) ne suffit pas : un modèle peut affirmer
+# une chose fausse sans écrire de chiffre. Deux contrôles complémentaires rejettent la section
+# (le modèle la réécrit, puis le texte sans IA prend le relais) :
+#
+# 1. Sens des évolutions : un mot de tendance (hausse, baisse, stable…) rattaché à un indicateur
+#    doit correspondre au signe de la valeur calculée. Pour un indicateur sans mesure dans le
+#    temps (un taux observé une seule année), tout mot de tendance est refusé.
+# 2. Données manquantes : pour un indicateur « non disponible » ou « non évaluable », le texte ne
+#    peut rien affirmer sur son thème, sauf que la donnée manque.
+# 3. Ton : aucun jugement subjectif (liste « subjective »). En arabe, jamais deux nombres collés.
+#
+# Les mots sont cherchés en début de mot (« augment » couvre augmente, augmentation…) pour le
+# français, et sous leur forme exacte (avec و، ب، ل، ال… devant) pour l'arabe.
+# Statut : à compléter au fil des relectures ; seuils « stable » à valider par le référent.
+
+controls_version: "v0"
+status: TODO_REFERENT
+
+trend:
+  # Distance maximale (en caractères) entre un mot de tendance et l'indicateur qu'il qualifie.
+  window: 100
+  words:
+    up:
+      fr: [hausse, augment, croissance, croît, croissant, progress, accroissement, accroît, expansion, essor]
+      ar: [ارتفاع, ارتفع, يرتفع, ارتفعت, تزايد, يتزايد, تزايدت, نمو, نما, ينمو, زيادة, ازدياد]
+    down:
+      fr: [baisse, diminu, recul, déclin, décroissance, décroît, régress, contraction, perd]
+      ar: [انخفاض, انخفض, ينخفض, انخفضت, تراجع, يتراجع, تراجعت, تناقص, يتناقص, تقلص]
+    stable:
+      fr: [stable, stabilis, stagn]
+      ar: [استقرار, مستقر, مستقرة, استقر, ركود]
+  # Expressions qui contiennent un mot de tendance sans en être une (noms d'indicateurs).
+  neutral_phrases:
+    fr: ["croissance annuelle moyenne", "taux de croissance", "rythme de croissance", "croissance de la surface bâtie"]
+    ar: ["معدل النمو", "معدل نمو", "نسبة النمو", "نمو المساحة المبنية"]
+  # Indicateurs qui mesurent une évolution : le signe de leur valeur décide.
+  # stable_band : en deçà (en valeur absolue), « stable » est accepté.
+  indicators:
+    # covers : indicateurs de niveau dont celui-ci mesure l'évolution.
+    DEM_TCAM: { stable_band: 0.1, covers: [DEM_POP, DEM_DENS] }   # % par an — TODO_REFERENT
+    URB_CROIS: { stable_band: 0.5, covers: [URB_BATI] }           # % sur la période — TODO_REFERENT
+
+missing:
+  # Marques sûres que la phrase dit seulement que la donnée manque.
+  strong_markers:
+    fr: ["non disponible", "pas disponible", "indisponible", "non calculé", "non évaluable", "à demander", "besoins en données", "ne permet pas", "ne permettent pas", "sans qu'on puisse", "impossible d'"]
+    ar: ["غير محتسب", "يطلب من", "يُطلب من", "غير قابل للتقييم", "الحاجيات من المعطيات", "لا تسمح", "لا يسمح", "يتعذر", "تعذر"]
+  # Marques ambiguës (« absence de centres de santé » est une affirmation) : acceptées seulement
+  # si la phrase parle aussi de données.
+  weak_markers:
+    fr: [manqu, absence, aucun, aucune, lacune, inconnu]
+    ar: ["غير متوفر", "غير متوفرة", "ناقص", "ناقصة", "لا تتوفر", "لا يتوفر", "غياب", "لا توجد", "لا يوجد"]
+  data_nouns:
+    fr: [donnée, données, information, informations, indicateur, statistique, chiffre]
+    ar: [معطى, معطيات, المعطى, المعطيات, بيانات, البيانات, مؤشر, المؤشر, إحصاء, إحصاءات, معلومات, المعلومات]
+  # Mots qui séparent deux propositions : chacune est contrôlée à part.
+  clause_breaks:
+    fr: [mais, cependant, toutefois, néanmoins, "bien que", "alors que", "tandis que", "en revanche"]
+    ar: [لكن, "غير أن", "إلا أن", "على الرغم", رغم, بينما, "في حين", أما]
+
+# 3. Ton institutionnel : jugements subjectifs refusés (seuls les statuts calculés qualifient).
+subjective:
+  fr: [préoccupant, alarmant, remarquable, notable, inquiétant, satisfaisant, excellent, dramatique, exceptionnel]
+  ar: [مقلق, خطير, لافت, ملحوظ, ممتاز, "مثير للقلق", مأساوي, استثنائي]
+
+# Mots-clés du thème de chaque indicateur (en plus de son libellé exact).
+# Un mot partagé par plusieurs indicateurs n'est contrôlé que si TOUS sont non disponibles.
+topics:
+  DEM_TCAM:
+    fr: [population, démograph]
+    ar: [السكان, سكان, الساكنة, ديموغراف]
+  EMP_CHOM: { fr: [chômage], ar: [البطالة, بطالة] }
+  EMP_ACTF: { fr: [activité des femmes, activité féminine], ar: [نشاط النساء] }
+  EMP_ANALPH: { fr: [analphabétisme], ar: [الأمية, أمية] }
+  EDU_ECOLES:
+    fr: [établissement scolaire, établissements scolaires, établissements primaires, écoles primaires, collège, collégia, enseignement primaire]
+    ar: [مؤسسات تعليمية, مؤسسات التعليم, التعليم الابتدائي, الإعدادي, ابتدائية, إعدادية]
+  EDU_PROX: { fr: [école, écoles], ar: [مدرسة, مدارس, المدارس] }
+  SAN_ESSP:
+    fr: [santé, soins primaires, soins de santé primaires, centre de santé, centres de santé, dispensaire, établissement de soins, établissements de soins]
+    ar: [الصحة, صحة, الصحية, صحية, صحي, العلاجات الأولية, العلاجات الصحية الأولية, علاجية أولية, مركز صحي, مراكز صحية, المراكز الصحية, مستوصف, المستوصف, الرعاية الصحية الأولية]
+  SAN_PROX:
+    fr: [santé, soins primaires, soins de santé primaires, centre de santé, centres de santé, dispensaire, établissement de soins, établissements de soins]
+    ar: [الصحة, صحة, الصحية, صحية, صحي, العلاجات الأولية, العلاجات الصحية الأولية, علاجية أولية, مركز صحي, مراكز صحية, المراكز الصحية, مستوصف, المستوصف, الرعاية الصحية الأولية]
+  SAN_HOP: { fr: [santé, hôpital, hôpitaux, hospitali], ar: [الصحة, صحة, الصحية, صحية, صحي, مستشفى, المستشفى, مستشفيات, المستشفيات] }
+  EAU_RES: { fr: [eau potable], ar: [الماء الصالح للشرب] }
+  EAU_ASS: { fr: [assainissement], ar: [التطهير] }
+  EAU_ELEC: { fr: [électricité], ar: [الكهرباء] }
+  LOG_PREC: { fr: [habitat précaire, logements sommaires, logements précaires, bidonville], ar: [السكن الهش, المساكن البدائية, المساكن الهشة, دور الصفيح] }
+  MOB_TC: { fr: [bus, transports collectifs, transport collectif], ar: [حافلات, الحافلات, النقل العمومي, النقل الجماعي] }
+  MOB_TRAM: { fr: [tramway], ar: [ترامواي, الترامواي] }
+  MOB_15MIN: { fr: [marché, marchés], ar: [سوق, أسواق, الأسواق] }
+  MOB_ROUTE: { fr: [route revêtue, routes revêtues], ar: [طريق معبدة, الطرق المعبدة] }
+  MOB_CHEF: { fr: [chef-lieu], ar: [مركز الإقليم] }
+  ENV_VERT: { fr: [espaces verts, espace vert], ar: [المساحات الخضراء, مساحة خضراء, مساحات خضراء] }
+  ENV_VERT300: { fr: [espaces verts, espace vert], ar: [المساحات الخضراء, مساحة خضراء, مساحات خضراء] }
+  URB_CROIS: { fr: [surface bâtie, bâti, construction], ar: [المساحة المبنية, البناء, المبني] }
+  URB_CONSO: { fr: [consommation foncière, consommation d'espace, étalement, densification], ar: [الاستهلاك العقاري, التوسع العمراني, التكثيف] }
+  URB_DOC: { fr: [document d'urbanisme, plan d'aménagement, plan d'urbanisme, schéma directeur], ar: [وثيقة تعمير, وثائق التعمير, تصميم التهيئة, المخطط المديري] }

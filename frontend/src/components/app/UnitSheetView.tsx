@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
 import { ConfidenceBadge } from "@/components/app/ConfidenceBadge";
 import { GridBanner } from "@/components/app/GridBanner";
+import { ReportPanel } from "@/components/app/ReportPanel";
 import { StatusChip } from "@/components/app/StatusChip";
 import { useLocale } from "@/i18n/LocaleProvider";
 import {
@@ -424,6 +425,7 @@ function SheetBody({
               <ConfidenceBadge kind="open" />
             </p>
           )}
+          <TypologyLine data={diag} unitId={unit.id} />
           <Link
             href={`/territoire/${code}/comparer?ids=${unit.id}`}
             className="border-petrol/30 text-petrol hover:bg-petrol/5 mt-5 inline-flex rounded-lg border px-4 py-2 text-sm print:hidden"
@@ -454,6 +456,32 @@ function SheetBody({
           </section>
         );
       })}
+
+      <ReportPanel code={code} unitId={unit.id} />
     </>
+  );
+}
+
+function TypologyLine({ data, unitId }: { data: DiagnosticData; unitId: number }) {
+  const { locale, t } = useLocale();
+  const typology = data.typology;
+  if (!typology?.available) return null;
+  const entry = typology.units[String(unitId)];
+  return (
+    <div className="border-petrol/10 mt-4 border-t pt-4 text-sm">
+      <p className="text-slate text-xs">{typology.label[locale]}</p>
+      {entry ? (
+        <>
+          <p className="text-petrol mt-1 font-medium">{entry.label[locale]}</p>
+          {entry.traits.length > 0 && (
+            <p className="text-slate mt-1 text-xs">
+              {entry.traits.map((trait) => trait[locale]).join(" · ")}
+            </p>
+          )}
+        </>
+      ) : (
+        <p className="text-slate mt-1">{t("diag.typologyUnclassified")}</p>
+      )}
+    </div>
   );
 }

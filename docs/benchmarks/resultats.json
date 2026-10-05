@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-05T22:54:04.696268+00:00",
+  "unit": "Yacoub El Mansour",
+  "results": [
+    {
+      "model": "aya-expanse:8b",
+      "lang": "fr",
+      "load_s": 2.8,
+      "total_s": 71.5,
+      "sections_ai": 7,
+      "sections_fallback": 0,
+      "attempts": 9,
+      "retries": 2,
+      "caught_numbers": 2,
+      "tokens": 1585,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/aya-expanse_8b-fr.md"
+    },
+    {
+      "model": "aya-expanse:8b",
+      "lang": "ar",
+      "load_s": 2.8,
+      "total_s": 115.2,
+      "sections_ai": 7,
+      "sections_fallback": 0,
+      "attempts": 11,
+      "retries": 4,
+      "caught_numbers": 4,
+      "tokens": 2552,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/aya-expanse_8b-ar.md"
+    },
+    {
+      "model": "qwen3:8b",
+      "lang": "fr",
+      "load_s": 2.8,
+      "total_s": 63.8,
+      "sections_ai": 7,
+      "sections_fallback": 0,
+      "attempts": 8,
+      "retries": 1,
+      "caught_numbers": 1,
+      "tokens": 1405,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/qwen3_8b-fr.md"
+    },
+    {
+      "model": "qwen3:8b",
+      "lang": "ar",
+      "load_s": 2.8,
+      "total_s": 63.7,
+      "sections_ai": 7,
+      "sections_fallback": 0,
+      "attempts": 9,
+      "retries": 2,
+      "caught_numbers": 2,
+      "tokens": 1372,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/qwen3_8b-ar.md"
+    },
+    {
+      "model": "gemma3:4b",
+      "lang": "fr",
+      "load_s": 2.4,
+      "total_s": 31.4,
+      "sections_ai": 7,
+      "sections_fallback": 0,
+      "attempts": 8,
+      "retries": 1,
+      "caught_numbers": 1,
+      "tokens": 1092,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/gemma3_4b-fr.md"
+    },
+    {
+      "model": "gemma3:4b",
+      "lang": "ar",
+      "load_s": 2.4,
+      "total_s": 58.2,
+      "sections_ai": 6,
+      "sections_fallback": 1,
+      "attempts": 11,
+      "retries": 4,
+      "caught_numbers": 5,
+      "tokens": 2098,
+      "final_untraced_numbers": 0,
+      "file": "docs/benchmarks/gemma3_4b-ar.md"
+    }
+  ]
+}

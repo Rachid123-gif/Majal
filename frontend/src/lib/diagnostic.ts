@@ -81,7 +81,34 @@ export type DiagnosticData = {
   indicators: IndicatorMeta[];
   units: DiagnosticUnit[];
   meta: { diagnostic_id: number; computed_at: string; recomputed: boolean; author: string | null };
+  typology?: Typology;
 };
+
+export type TypologyUnit = {
+  group: number;
+  profile: string;
+  label: Localized;
+  traits: Localized[];
+};
+
+export type Typology =
+  | { available: false; reason: string; unclassified: number[] }
+  | {
+      available: true;
+      label: Localized;
+      status: string;
+      variables: string[];
+      groups: {
+        group: number;
+        profile: string;
+        label: Localized;
+        description: Localized | null;
+        traits: Localized[];
+        members: number[];
+      }[];
+      units: Record<string, TypologyUnit>;
+      unclassified: number[];
+    };
 
 export async function fetchDiagnostic(code: string, recompute = false): Promise<DiagnosticData> {
   const response = await fetch(`/api/territories/${code}/diagnostic`, {

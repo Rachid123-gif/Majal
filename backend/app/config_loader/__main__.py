@@ -37,6 +37,19 @@ def main() -> int:
         "indicators/evaluation.yaml", load_evaluation, root / "indicators" / "evaluation.yaml"
     )
     ok &= check("confidence.yaml", load_confidence, root / "confidence.yaml")
+    # Imported here: these schemas live with the services that use them.
+    from app.services.indicators.typology import load_typology
+    from app.services.reports.meaning import load_controls
+    from app.services.reports.template import load_template
+
+    ok &= check("indicators/typologie.yaml", load_typology, root / "indicators" / "typologie.yaml")
+    templates = root / "report_templates"
+    ok &= check(
+        "report_templates/diagnostic_commune.yaml",
+        load_template,
+        templates / "diagnostic_commune.yaml",
+    )
+    ok &= check("report_templates/controles.yaml", load_controls, templates / "controles.yaml")
     mappings = {
         source.model_dump().get("mapping")
         for territory in territories.values()

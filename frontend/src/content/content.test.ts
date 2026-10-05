@@ -27,8 +27,8 @@ describe("landing content", () => {
       expect(feature.points.fr.length).toBe(feature.points.ar.length);
       expect(feature.title.ar).toMatch(/[؀-ۿ]/);
     }
-    // Delivered at stage 2: territorial diagnostic with map, commune sheet and comparison.
+    // Delivered: stage 2 (diagnostic map, commune sheet, comparison), stage 3 (AI report).
     const available = features.filter((f) => f.status === "available").map((f) => f.id);
-    expect(available).toEqual(["diagnostic", "commune"]);
+    expect(available).toEqual(["diagnostic", "commune", "report"]);
   });
 });

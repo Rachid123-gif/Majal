@@ -45,8 +45,8 @@ describe("LandingPage", () => {
 
   it("marks features honestly as in development and mockups as illustrations", () => {
     renderLanding();
-    expect(screen.getAllByText(/En cours de développement/)).toHaveLength(5);
-    expect(screen.getAllByText(/^Disponible/)).toHaveLength(2);
+    expect(screen.getAllByText(/En cours de développement/)).toHaveLength(4);
+    expect(screen.getAllByText(/^Disponible/)).toHaveLength(3);
     expect(screen.getAllByText("Maquette d'illustration — aucune donnée réelle")).toHaveLength(7);
   });
 

@@ -18,8 +18,10 @@ inacceptable pour un outil destiné aux institutions marocaines.
   contour que la carte animée de la vitrine.
 - **Vue nationale** : fond national du Royaume (`data/tiles/maroc.pmtiles`, zoom 0 à 7), servi en
   repli par l'API des tuiles quand on dézoome au-delà du territoire étudié.
-- **Images exportées** : elles reprennent le rendu de la carte, donc les mêmes règles. Les cartes
-  des futurs rapports Word et PDF devront être produites à partir du même style.
+- **Images exportées** : elles reprennent le rendu de la carte, donc les mêmes règles.
+- **Cartes des rapports Word et PDF** (étape 3) : dessinées par MAJAL sans fond de carte ; le
+  médaillon de situation montre le Royaume entier à partir du même contour de référence, et
+  aucune autre limite (`backend/app/services/reports/maps.py`).
 
 ## Garde-fous automatiques
 - `frontend/src/lib/basemapStyle.test.ts` : une seule couche de limites, filtrée ; une limite
@@ -28,6 +30,8 @@ inacceptable pour un outil destiné aux institutions marocaines.
   visible traverse l'intérieur du Royaume ; vérifie que la ligne contestée existe bien dans les
   tuiles nationales (le test a donc un sens) et que le contour de référence inclut Laâyoune et
   Aousserd.
+- `backend/tests/test_report_map.py` : le médaillon des cartes de rapport est exactement le
+  contour de référence (même surface, rien d'ajouté) et couvre les provinces du Sud.
 
 ## Limite connue
 Entre les zooms 8 et 15, le fond de carte détaillé ne couvre que l'emprise du territoire étudié :

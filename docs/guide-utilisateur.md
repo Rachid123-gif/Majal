@@ -60,3 +60,34 @@ retélécharger depuis OpenStreetMap :
 ```bash
 REFRESH=1 make data
 ```
+
+## Rapports de diagnostic (IA locale)
+
+1. Ouvrez Ollama sur le Mac (l'icône du lama apparaît dans la barre des menus).
+2. Lancez MAJAL (`make start`), ouvrez la fiche d'une commune ou d'un arrondissement.
+3. En bas de la fiche, choisissez la langue puis « Générer le diagnostic ». La rédaction prend
+   environ une minute ; la progression s'affiche section par section.
+4. Relisez le rapport, puis « Marquer comme relu ». Seul le compte « professeur » peut le valider.
+   Tant qu'il n'est pas validé, le filigrane « Document de travail » reste sur les exports.
+5. Téléchargez-le en Word ou en PDF (français ; l'arabe arrive à l'étape 7).
+
+Bon à savoir :
+
+- **Aucune donnée ne quitte l'ordinateur** (mode souverain, réglage `SOVEREIGN_MODE=true` dans `.env`).
+- **L'IA n'écrit aucun chiffre** : MAJAL les insère et les vérifie. MAJAL contrôle aussi le
+  sens : une évolution doit suivre la valeur calculée (pas de « hausse » pour une population qui
+  baisse), rien n'est affirmé sur une donnée manquante, pas de jugement subjectif. Une phrase
+  fautive est réécrite, ou la section est rédigée sans IA. Les contrôles ne voient pas tout :
+  la relecture par un urbaniste reste indispensable.
+- Les mots surveillés sont dans `config/report_templates/controles.yaml` (modifiable).
+- **Si Ollama est fermé**, le rapport est rédigé quand même, sans IA, à partir de phrases-types
+  (l'écran l'indique).
+- Les rapports sont gardés en mémoire : un rapport déjà rédigé s'affiche immédiatement. Pour tout
+  préparer avant une présentation :
+
+```bash
+make reports
+```
+
+- Changer de modèle : ligne `OLLAMA_MODEL=` dans `.env`, puis `make start`. Si ce modèle n'est
+  pas installé, MAJAL utilise `OLLAMA_FALLBACK_MODEL` (gemma3:4b).

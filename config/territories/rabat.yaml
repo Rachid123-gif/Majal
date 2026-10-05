@@ -19,7 +19,7 @@ scopes:
   - code: agglomeration
     default: true
     label: { fr: "Agglomération Rabat-Salé-Skhirate-Témara", ar: "تجمع الرباط سلا الصخيرات تمارة" }
-    reference_label: { fr: "de l'agglomération", ar: "التجمع" }
+    reference_label: { fr: "de l'agglomération", ar: "التجمع الحضري" }
     members:
       - { level: prefecture, name_fr: "Rabat" }
       - { level: prefecture, name_fr: "Salé" }

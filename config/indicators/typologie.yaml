@@ -1,0 +1,61 @@
+# MAJAL — Typologie des communes (proposition)
+# Source : docs/methodologie-v0.md, section 5. Statut : TODO_REFERENT.
+#
+# Méthode : regroupement simple (k-moyennes) des unités sur quelques indicateurs
+# standardisés (écart à la moyenne en nombre d'écarts-types). Chaque groupe obtenu est
+# ensuite rapproché du profil-type dont la « signature » lui ressemble le plus, et reçoit
+# son nom PROVISOIRE. Les noms définitifs sont donnés à la main après lecture des résultats.
+# Une unité à laquelle il manque une variable n'est pas classée.
+
+typology_version: "v0"
+status: TODO_REFERENT
+label:
+  fr: "Typologie des communes — proposition, à valider"
+  ar: "تصنيف الجماعات — مقترح قيد المصادقة"
+clusters: 4
+seed: 42
+# Un groupe ne reçoit le nom d'un profil-type que si sa ressemblance avec la signature
+# atteint ce score (somme des écarts standardisés dans le sens attendu). Sinon il reste
+# « Groupe N — profil à nommer », décrit seulement par ses caractéristiques.
+min_match_score: 1.0
+
+# Variables (codes de la grille). « log: true » : échelle logarithmique (densité).
+variables:
+  - { code: DEM_DENS, log: true }
+  - { code: DEM_TCAM }
+  - { code: URB_CROIS }
+  - { code: MOB_TC }
+  - { code: EDU_PROX }
+  - { code: ENV_VERT300 }
+  - { code: SAN_HOP }
+
+# Profils-types de la méthodologie. Signature : +1 = nettement au-dessus de la moyenne,
+# -1 = nettement au-dessous, 0 ou absent = indifférent.
+profiles:
+  - code: centres_consolides
+    label: { fr: "Centres consolidés", ar: "مراكز موطدة" }
+    description:
+      fr: "Forte densité et bon niveau d'accès aux équipements et aux transports."
+      ar: "كثافة مرتفعة ومستوى جيد من الولوج إلى التجهيزات والنقل."
+    signature: { DEM_DENS: 1, MOB_TC: 1, EDU_PROX: 1, ENV_VERT300: 1, SAN_HOP: -1 }
+
+  - code: deficit_equipements
+    label: { fr: "Quartiers en déficit d'équipements", ar: "أحياء تعاني خصاصاً في التجهيزات" }
+    description:
+      fr: "Forte densité mais accès plus faible aux équipements et aux espaces verts."
+      ar: "كثافة مرتفعة لكن ولوج أضعف إلى التجهيزات والمساحات الخضراء."
+    signature: { DEM_DENS: 1, ENV_VERT300: -1, EDU_PROX: -1 }
+
+  - code: fronts_urbanisation
+    label: { fr: "Fronts d'urbanisation", ar: "واجهات التعمير" }
+    description:
+      fr: "Forte croissance de la population et du bâti ; équipements en retard."
+      ar: "نمو قوي للسكان وللمساحة المبنية؛ تأخر في التجهيزات."
+    signature: { DEM_TCAM: 1, URB_CROIS: 1, MOB_TC: -1 }
+
+  - code: periurbain_rural
+    label: { fr: "Espaces périurbains ou ruraux", ar: "مجالات شبه حضرية أو قروية" }
+    description:
+      fr: "Faible densité et accessibilité faible."
+      ar: "كثافة ضعيفة وولوجية ضعيفة."
+    signature: { DEM_DENS: -1, MOB_TC: -1, EDU_PROX: -1, SAN_HOP: 1 }

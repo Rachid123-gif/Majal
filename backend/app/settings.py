@@ -23,6 +23,20 @@ class Settings(BaseSettings):
     ]
     cors_origins: list[str] = ["http://localhost:3000"]
 
+    # Artificial intelligence. Sovereign mode (default): no call to any external service.
+    sovereign_mode: bool = True
+    llm_provider: str = "ollama"  # ollama | anthropic | none
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen3:8b"
+    # Used when the main model is not installed (choice of 2026-10-05, docs/benchmarks/).
+    ollama_fallback_model: str = "gemma3:4b"
+    llm_timeout_s: float = 300.0
+    redis_url: str = "redis://localhost:6379/0"
+    # true: reports are generated in a thread of the API instead of the background worker.
+    reports_inline: bool = False
+    anthropic_api_key: str = ""
+    anthropic_model: str = "claude-sonnet-5-5"
+
     # Sessions: cookie signed with this secret (set a long random value in .env).
     session_secret: str = "dev-only-insecure-secret"
     session_max_age_hours: int = 12

@@ -91,6 +91,7 @@ export type CrossingIndicator = {
   aggregate?: {
     unfavourable_units: { name_fr: string; name_ar: string | null }[];
     units: number;
+    missing_units: number;
     population_share: number | null;
   };
 };

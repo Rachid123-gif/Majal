@@ -98,7 +98,9 @@ export function CitizenCrossing({
                       {row.indicators.map((ind) => (
                         <li key={ind.code} className="text-slate">
                           {ind.label?.[locale] ?? ind.code} :{" "}
-                          {ind.aggregate ? (
+                          {ind.aggregate && ind.aggregate.units === 0 ? (
+                            <span className="text-petrol">{t("citizens.notAvailable")}</span>
+                          ) : ind.aggregate ? (
                             <span className="text-petrol">
                               {t("citizens.aggregate", {
                                 n: String(ind.aggregate.unfavourable_units.length),
@@ -110,7 +112,7 @@ export function CitizenCrossing({
                             <>
                               <span className="text-petrol tabular-nums">
                                 {ind.value === null
-                                  ? t("badge.not_available")
+                                  ? t("citizens.notAvailable")
                                   : `${formatNumber(ind.value, locale, ind.decimals)} ${ind.unit?.[locale] ?? ""}`}
                               </span>
                               {ind.status_label && <> — {ind.status_label[locale]}</>}

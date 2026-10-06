@@ -249,7 +249,7 @@ def crossing(
             elif strong:
                 verdict = "demand_only"
             elif unfavourable:
-                verdict = "data_only"
+                verdict = "moderate_deficit"  # some demand (not « strong ») and a deficit
             else:
                 verdict = "moderate"
         rows.append(
@@ -268,12 +268,13 @@ def crossing(
         )
     order = {
         "convergence": 0,
-        "demand_only": 1,
-        "data_only": 2,
-        "moderate": 3,
-        "too_few": 4,
-        "no_indicator": 5,
-        "no_indicator_planned": 6,
+        "moderate_deficit": 1,
+        "demand_only": 2,
+        "data_only": 3,
+        "moderate": 4,
+        "too_few": 5,
+        "no_indicator": 6,
+        "no_indicator_planned": 7,
     }
     rows.sort(key=lambda r: (order[str(r["verdict"])], -int(r["count"])))
     return {
@@ -299,8 +300,10 @@ def aggregate_indicator(
     """Commune scale: no aggregated value is computed. The indicator is unfavourable for the
     commune if the units in « déficit marqué » or « à surveiller » gather at least
     `aggregate_unfavourable_share` of its population."""
-    total_pop = sum(m.get("population") or 0 for m in members)
-    bad = [m for m in members if (m["values"].get(code) or {}).get("status") in UNFAVOURABLE]
+    # Only units where the indicator is known count; « non disponible » is never « favourable ».
+    known = [m for m in members if (m["values"].get(code) or {}).get("value") is not None]
+    total_pop = sum(m.get("population") or 0 for m in known)
+    bad = [m for m in known if (m["values"].get(code) or {}).get("status") in UNFAVOURABLE]
     bad_pop = sum(m.get("population") or 0 for m in bad)
     pop_share = bad_pop / total_pop if total_pop else None
     return {
@@ -315,7 +318,8 @@ def aggregate_indicator(
             "unfavourable_units": [
                 {"name_fr": m["name_fr"], "name_ar": m.get("name_ar")} for m in bad
             ],
-            "units": len(members),
+            "units": len(known),
+            "missing_units": len(members) - len(known),
             "population_share": round(pop_share, 4) if pop_share is not None else None,
         },
         "unfavourable": pop_share is not None and pop_share >= rules.aggregate_unfavourable_share,

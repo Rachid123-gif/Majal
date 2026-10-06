@@ -89,9 +89,13 @@ def test_commune_scale_groups_units_and_judges_indicators_by_population() -> Non
         {
             "name_fr": "Layayda",
             "population": 200,
-            "values": {"ENV_VERT": {"status": "deficit_marked"}},
+            "values": {"ENV_VERT": {"value": 0.2, "status": "deficit_marked"}},
         },
-        {"name_fr": "Tabriquet", "population": 100, "values": {"ENV_VERT": {"status": "ok"}}},
+        {
+            "name_fr": "Tabriquet",
+            "population": 100,
+            "values": {"ENV_VERT": {"value": 3.0, "status": "ok"}},
+        },
     ]
     result = stats.crossing(
         contributions, TAXONOMY, {}, {"ENV_VERT": {"label": {"fr": "x"}}}, {}, members=members
@@ -101,3 +105,35 @@ def test_commune_scale_groups_units_and_judges_indicators_by_population() -> Non
     assert aggregate["population_share"] == round(200 / 300, 4)  # 67 % ≥ 50 %: unfavourable
     assert row["indicators"][0]["value"] is None  # no aggregated value is invented
     assert row["indicators"][0]["unfavourable"] is True
+
+
+def test_moderate_demand_with_a_deficit_is_not_called_absence_of_demand() -> None:
+    items = rows(
+        [C(str(i), ["espaces_verts"]) for i in range(5)]
+        + [C(f"x{i}", ["voirie"]) for i in range(30)]
+    )
+    deficit = {"ENV_VERT": {"value": 0.2, "status": "deficit_marked"}}
+    result = stats.crossing(items, TAXONOMY, deficit, {"ENV_VERT": {"label": {"fr": "x"}}}, {})
+    row = next(r for r in result["rows"] if r["theme"] == "espaces_verts")
+    assert row["verdict"] == "moderate_deficit"  # 5 of 35: some demand, not « strong »
+
+
+def test_unknown_indicators_are_not_reported_as_favourable_at_commune_scale() -> None:
+    members = [
+        {
+            "name_fr": "A",
+            "population": 10,
+            "values": {"SAN_ESSP": {"value": None, "status": "not_available"}},
+        },
+        {
+            "name_fr": "B",
+            "population": 10,
+            "values": {"SAN_ESSP": {"value": None, "status": "not_available"}},
+        },
+    ]
+    result = stats.crossing(
+        rows([C("A", ["sante"], unit=1)] * 5), TAXONOMY, {}, {}, {}, members=members
+    )
+    indicator = next(r for r in result["rows"] if r["theme"] == "sante")["indicators"][0]
+    assert indicator["aggregate"]["units"] == 0 and indicator["aggregate"]["missing_units"] == 2
+    assert indicator["aggregate"]["population_share"] is None and not indicator["unfavourable"]

@@ -266,6 +266,9 @@ crossing:
     too_few:
       fr: "Trop peu de contributions pour conclure"
       ar: "عدد المساهمات غير كاف للاستنتاج"
+    moderate_deficit:
+      fr: "Demande modérée et indicateur défavorable"
+      ar: "طلب معتدل ومؤشر غير موات"
     moderate:
       fr: "Demande modérée, sans déficit mesuré"
       ar: "طلب معتدل دون خصاص مقيس"

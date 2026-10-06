@@ -250,6 +250,7 @@
     "scaleUnit": "Arrondissement / commune",
     "scaleCommune": "Commune (arrondissements regroupés)",
     "members": "Regroupe {n} unités :",
-    "aggregate": "déficit marqué ou à surveiller dans {n} unités sur {total} ({pop} de la population)"
+    "aggregate": "déficit marqué ou à surveiller dans {n} unités sur {total} ({pop} de la population)",
+    "notAvailable": "Non disponible"
   }
 }

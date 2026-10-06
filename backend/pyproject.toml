@@ -67,6 +67,7 @@ testpaths = ["tests"]
 "app/services/reports/*.py" = ["E501", "RUF001"]
 "tests/test_anti_invention.py" = ["E501", "RUF001"]
 "tests/test_meaning.py" = ["E501", "RUF001"]
+"tests/test_fictional_contributions.py" = ["RUF001"]
 "tests/test_report_writer.py" = ["E501", "RUF001"]
 
 [tool.ruff.lint.isort]

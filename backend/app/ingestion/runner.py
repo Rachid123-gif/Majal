@@ -7,7 +7,7 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.config_loader.territory import TerritoryConfig
-from app.ingestion import boundaries, facilities, ghsl, hcp_census, roads
+from app.ingestion import boundaries, facilities, ghsl, hcp_census, places, roads
 from app.ingestion.common import ImportContext, ImportFailure, ImportResult
 from app.ingestion.overpass import OverpassError
 from app.models import ImportRun, StudyArea
@@ -21,12 +21,20 @@ IMPORTERS: dict[str, Importer] = {
     "osm_boundaries": boundaries.run,
     "osm_facilities": facilities.run,
     "osm_roads": roads.run,
+    "osm_places": places.run,
     "hcp_census": hcp_census.run,
     "ghsl_grids": ghsl.run,
 }
 EXTERNAL_IMPORTERS = {"basemap_pmtiles"}
 # The census comes right after the boundaries: the population grid is scaled to its totals.
-ORDER = ["osm_boundaries", "hcp_census", "osm_facilities", "osm_roads", "ghsl_grids"]
+ORDER = [
+    "osm_boundaries",
+    "hcp_census",
+    "osm_facilities",
+    "osm_roads",
+    "osm_places",
+    "ghsl_grids",
+]
 
 
 def upsert_study_area(session: Session, config: TerritoryConfig) -> StudyArea:

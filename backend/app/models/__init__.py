@@ -1,4 +1,5 @@
 from app.models.base import Base
+from app.models.citizens import Consultation, Contribution, Place
 from app.models.indicators import (
     Diagnostic,
     IndicatorDefinitionRow,
@@ -20,12 +21,15 @@ from app.models.territory import (
 __all__ = [
     "Badge",
     "Base",
+    "Consultation",
+    "Contribution",
     "DataSource",
     "Diagnostic",
     "Facility",
     "ImportRun",
     "IndicatorDefinitionRow",
     "IndicatorValue",
+    "Place",
     "PopulationCell",
     "RawVariable",
     "Report",

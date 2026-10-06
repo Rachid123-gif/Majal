@@ -1,0 +1,211 @@
+# MAJAL — Taxonomie des contributions citoyennes, profil « urbain » (Rabat)
+# Source : docs/BRIEF.md §9.6 (liste des thèmes). Statut : proposition v0, TODO_REFERENT.
+#
+# Pour chaque thème :
+# - label : nom affiché (français, arabe) ;
+# - description : ce qui relève du thème (sert de consigne à l'IA locale) ;
+# - keywords : mots-clés du classement de repli sans IA, et de comparaison (français, arabe,
+#   darija en alphabet latin). En début de mot pour le français et la darija latine ;
+# - indicators : indicateurs de la grille mis en regard des contributions (croisement).
+#   Liste vide = thème sans indicateur correspondant dans la grille v0.
+# Une contribution peut relever de plusieurs thèmes.
+
+taxonomy_version: "v0"
+status: TODO_REFERENT
+profile: urbain
+label:
+  fr: "Taxonomie urbaine — proposition, à valider"
+  ar: "التصنيف الحضري — مقترح قيد المصادقة"
+
+tonalities:
+  demande: { fr: "Demande", ar: "طلب" }
+  plainte: { fr: "Plainte", ar: "شكاية" }
+  proposition: { fr: "Proposition", ar: "اقتراح" }
+  satisfaction: { fr: "Satisfaction", ar: "رضا" }
+
+themes:
+  - code: mobilite
+    label: { fr: "Mobilité et transport en commun", ar: "التنقل والنقل العمومي" }
+    description: "Bus, tramway, taxis, fréquence, arrêts, desserte, temps de trajet."
+    keywords:
+      fr: [bus, tramway, tram, arrêt, ligne, desserte, transport, taxi, navette, trajet]
+      ar: [حافلة, الحافلات, طوبيس, الترامواي, الطرام, المحطة, النقل, طاكسي, سيارة الأجرة]
+      darija: [tobis, tram, taxi, tran, lmahatta, n9l]
+    indicators: [MOB_TC, MOB_TRAM]
+
+  - code: circulation
+    label: { fr: "Circulation et stationnement", ar: "حركة السير والوقوف" }
+    description: "Embouteillages, vitesse, stationnement, feux, sécurité routière."
+    keywords:
+      fr: [embouteillage, circulation, stationnement, parking, feu rouge, ralentisseur, vitesse, bouchon]
+      ar: [الازدحام, حركة السير, المرور, الوقوف, موقف السيارات, الضوء الأحمر, السرعة]
+      darija: [zham, parking, lparking, sir, lavitesse]
+    indicators: []
+
+  - code: voirie
+    label: { fr: "Voirie et trottoirs", ar: "الطرق والأرصفة" }
+    description: "Chaussée, nids-de-poule, trottoirs, passages piétons, travaux."
+    keywords:
+      fr: [trottoir, chaussée, nid-de-poule, nids-de-poule, route, rue, goudron, passage piéton, travaux]
+      ar: [الرصيف, الأرصفة, الطريق, الحفر, حفرة, الزفت, ممر الراجلين, الأشغال]
+      darija: [trottoir, triq, l7fra, hfra, zeft, chantier]
+    indicators: [MOB_ROUTE]
+
+  - code: logement
+    label: { fr: "Logement et loyers", ar: "السكن والكراء" }
+    description: "Prix des loyers, accès au logement, habitat précaire, copropriété."
+    keywords:
+      fr: [logement, loyer, appartement, location, habitat, immeuble, copropriété, bidonville]
+      ar: [السكن, الكراء, شقة, العمارة, السكن الهش, دور الصفيح]
+      darija: [lkra, kra, dar, chqa, l3imara, bidonville]
+    indicators: [LOG_PREC]
+
+  - code: espaces_verts
+    label: { fr: "Espaces verts et espaces publics", ar: "المساحات الخضراء والفضاءات العمومية" }
+    description: "Parcs, jardins, arbres, places, aires de jeux, bancs."
+    keywords:
+      fr: [parc, jardin, espace vert, espaces verts, arbre, aire de jeux, banc, pelouse, place publique]
+      ar: [حديقة, الحدائق, المساحات الخضراء, مساحة خضراء, الأشجار, فضاء للعب, الكراسي]
+      darija: [jardin, l7di9a, 7di9a, sjar, parc]
+    indicators: [ENV_VERT, ENV_VERT300]
+
+  - code: proprete
+    label: { fr: "Propreté et déchets", ar: "النظافة والنفايات" }
+    description: "Collecte des ordures, bennes, dépôts sauvages, nettoyage des rues."
+    keywords:
+      fr: [ordure, déchet, poubelle, benne, propreté, saleté, sale, collecte, décharge]
+      ar: [الأزبال, النفايات, القمامة, الحاوية, النظافة, الأوساخ, جمع النفايات]
+      darija: [zbel, lazbal, poubelle, lkhanz, mosekh, msekh]
+    indicators: []
+
+  - code: eau_assainissement
+    label: { fr: "Eau et assainissement", ar: "الماء والتطهير" }
+    description: "Eau potable, coupures, égouts, inondations de rue, odeurs."
+    keywords:
+      fr: [eau potable, coupure d'eau, égout, assainissement, inondation, canalisation, fuite]
+      ar: [الماء الصالح للشرب, انقطاع الماء, الواد الحار, التطهير, الفيضان, القنوات, تسرب]
+      darija: [lma, lwad l7ar, wad l7ar, tsrib, lfayadan]
+    indicators: [EAU_RES, EAU_ASS]
+
+  - code: eclairage
+    label: { fr: "Éclairage public", ar: "الإنارة العمومية" }
+    description: "Lampadaires en panne, rues sombres."
+    keywords:
+      fr: [éclairage, lampadaire, lumière, sombre, obscurité]
+      ar: [الإنارة, المصابيح, الضوء, الظلام, مظلمة]
+      darija: [dow, ddaw, dlam, poteau]
+    indicators: []
+
+  - code: sante
+    label: { fr: "Santé", ar: "الصحة" }
+    description: "Centres de santé, hôpitaux, urgences, médecins, médicaments."
+    keywords:
+      fr: [santé, centre de santé, hôpital, urgence, médecin, soins, pharmacie, dispensaire]
+      ar: [الصحة, المركز الصحي, المستشفى, المستعجلات, الطبيب, العلاج, الصيدلية, المستوصف]
+      darija: [sbitar, tbib, lmostaw9af, dwa, ssi7a]
+    indicators: [SAN_ESSP, SAN_PROX, SAN_HOP]
+
+  - code: education
+    label: { fr: "Éducation", ar: "التعليم" }
+    description: "Écoles, collèges, lycées, classes surchargées, transport et sécurité des élèves."
+    keywords:
+      fr: [école, collège, lycée, élève, classe, enseignant, scolaire, crèche, préscolaire]
+      ar: [المدرسة, الإعدادية, الثانوية, التلاميذ, القسم, الأساتذة, التعليم, روض الأطفال]
+      darija: [lmadrasa, mdrasa, tlamd, 9raya]
+    indicators: [EDU_ECOLES, EDU_PROX]
+
+  - code: emploi_jeunesse
+    label: { fr: "Emploi et jeunesse", ar: "التشغيل والشباب" }
+    description: "Chômage, formation, maisons de jeunes, activités pour les jeunes."
+    keywords:
+      fr: [emploi, chômage, travail, jeune, formation, stage, maison de jeunes]
+      ar: [الشغل, البطالة, العمل, الشباب, التكوين, دار الشباب]
+      darija: [khdma, lkhdma, chomage, chabab, drari, takwin]
+    indicators: [EMP_CHOM, EMP_ACTF]
+
+  - code: securite
+    label: { fr: "Sécurité", ar: "الأمن" }
+    description: "Sentiment d'insécurité, vols, éclairage des passages, présence de patrouilles."
+    keywords:
+      fr: [sécurité, insécurité, vol, agression, peur, patrouille]
+      ar: [الأمن, انعدام الأمن, السرقة, الاعتداء, الخوف, الدوريات]
+      darija: [aman, sri9a, khouf, cheffara]
+    indicators: []
+
+  - code: bruit
+    label: { fr: "Bruit et nuisances", ar: "الضجيج والإزعاج" }
+    description: "Bruit des chantiers, de la circulation, des fêtes ; odeurs ; fumées."
+    keywords:
+      fr: [bruit, bruyant, nuisance, vacarme, fumée, odeur]
+      ar: [الضجيج, الإزعاج, الضوضاء, الدخان, الرائحة]
+      darija: [sda3, tsda3, ri7a, dokhan]
+    indicators: []
+
+  - code: commerce_marches
+    label: { fr: "Commerce et marchés", ar: "التجارة والأسواق" }
+    description: "Marchés de quartier, commerces de proximité, vendeurs ambulants."
+    keywords:
+      fr: [marché, commerce, souk, magasin, épicerie, vendeur, ambulant]
+      ar: [السوق, التجارة, المحلات, البقال, الباعة, الباعة المتجولين]
+      darija: [souk, sou9, hanout, l7anout, ferracha, frracha]
+    indicators: [MOB_15MIN]
+
+  - code: culture_sport
+    label: { fr: "Culture, sport et loisirs", ar: "الثقافة والرياضة والترفيه" }
+    description: "Terrains de sport, bibliothèques, salles, activités culturelles."
+    keywords:
+      fr: [sport, terrain, stade, piscine, bibliothèque, culture, loisir, salle]
+      ar: [الرياضة, الملعب, المسبح, المكتبة, الثقافة, الترفيه, القاعة]
+      darija: [terrain, tiran, lkoura, piscine, bibliothèque]
+    indicators: []
+
+  - code: patrimoine
+    label: { fr: "Patrimoine", ar: "التراث" }
+    description: "Médina, remparts, monuments, façades anciennes."
+    keywords:
+      fr: [patrimoine, médina, rempart, monument, kasbah, historique, façade]
+      ar: [التراث, المدينة القديمة, الأسوار, المآثر, القصبة, التاريخية]
+      darija: [lmdina l9dima, swar, l9asba]
+    indicators: []
+
+  - code: administration
+    label: { fr: "Administration et services", ar: "الإدارة والخدمات" }
+    description: "Démarches, guichets, horaires, attente, services en ligne."
+    keywords:
+      fr: [administration, guichet, démarche, dossier, attente, papiers, service en ligne]
+      ar: [الإدارة, الشباك, الوثائق, الملف, الانتظار, الخدمات الإلكترونية]
+      darija: [lidara, l2idara, lwra9, wra9, tsnna, ssf]
+    indicators: []
+
+  - code: accessibilite_pmr
+    label: { fr: "Accessibilité des personnes à mobilité réduite", ar: "ولوجيات الأشخاص في وضعية إعاقة" }
+    description: "Rampes, ascenseurs, trottoirs accessibles, fauteuils roulants, poussettes."
+    keywords:
+      fr: [handicap, fauteuil roulant, rampe, ascenseur, mobilité réduite, poussette, accessible]
+      ar: [الإعاقة, الكرسي المتحرك, المنحدر, المصعد, ذوي الاحتياجات الخاصة, الولوجيات]
+      darija: [m3a9, mo3a9, kursi, l2asanseur]
+    indicators: []
+
+  - code: autres
+    label: { fr: "Autres", ar: "مواضيع أخرى" }
+    description: "Ce qui ne relève d'aucun autre thème."
+    keywords: { fr: [], ar: [], darija: [] }
+    indicators: []
+
+# Croisement « ce que disent les citoyens / ce que montrent les données ».
+# Aucune conclusion en dessous de min_contributions contributions pour une unité et un thème.
+crossing:
+  min_contributions: 3
+  # Part des contributions de l'unité consacrée au thème, au-dessus de laquelle la demande
+  # est dite « forte » (TODO_REFERENT).
+  strong_share: 0.15
+  labels:
+    convergence:
+      fr: "Demande forte et indicateur défavorable"
+      ar: "طلب قوي ومؤشر غير موات"
+    demand_only:
+      fr: "Demande forte sans déficit mesuré — à creuser"
+      ar: "طلب قوي دون خصاص مقيس — يستحق التعمق"
+    data_only:
+      fr: "Déficit mesuré sans demande exprimée"
+      ar: "خصاص مقيس دون طلب معبر عنه"

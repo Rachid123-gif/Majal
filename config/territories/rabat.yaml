@@ -60,6 +60,10 @@ sources:
   roads:
     importer: osm_roads
     highway: [motorway, trunk, primary, secondary, tertiary, unclassified, track]
+  places:
+    importer: osm_places
+    # Lieux nommés servant à localiser les contributions citoyennes (étape 4).
+    place: [suburb, neighbourhood, quarter, square, locality, hamlet, village]
   grids:
     importer: ghsl_grids
     population_epoch: 2020

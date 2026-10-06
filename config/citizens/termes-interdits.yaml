@@ -1,0 +1,32 @@
+# MAJAL — Termes interdits dans les contributions FICTIVES (jeu de démonstration).
+# Vérifié par backend/tests/test_fictional_contributions.py. Liste modifiable.
+#
+# Le jeu fictif ne doit viser aucune personne réelle, aucun élu ou responsable, ni sa fonction ;
+# aucune accusation ; aucun contenu politique, religieux ou injurieux.
+# Correspondance : début de mot, sans tenir compte des majuscules (français, darija latine) ;
+# mot entier avec préfixes و، ف، ب، ل، ك et article (arabe).
+
+fonctions_officielles:
+  fr: [président, présidente, caïd, caid, pacha, wali, gouverneur, maire, élu, élus, élue, conseiller communal, conseillère communale, ministre, député, députée, moqaddem, mokaddem, cheikh, chef d'arrondissement, chef de district, commissaire, préfet, sénateur]
+  ar: [رئيس, رئيسة, القائد, قائد, الباشا, الوالي, العامل, المنتخب, المنتخبين, المستشار الجماعي, الوزير, وزير, البرلماني, المقدم, الشيخ, رئيس المقاطعة, رئيس الجماعة]
+  darija: [l9ayd, lqayd, lqaid, l9aid, mo9dem, mqaddem, lmo9adem, rais, ra2is, lwali, lpacha, lbacha, lwazir, lbarlamani, lmontakhab]
+
+accusations:
+  fr: [corruption, corrompu, pot-de-vin, pots-de-vin, favoritisme, piston, détournement, malversation, magouille, escroc, voleurs, mafia, complice]
+  ar: [رشوة, الرشوة, فساد, الفساد, محسوبية, زبونية, اختلاس, نهب, المفسدين]
+  darija: [rachwa, lfassad, fassad, l9hwa dyal, mhsoubiya, chafar, chfar]
+
+politique:
+  fr: [parti, partis politiques, élection, élections, vote, campagne électorale, gouvernement, opposition, manifestation, parlement]
+  ar: [الحزب, حزب, الأحزاب, الانتخابات, انتخابات, التصويت, الحكومة, المعارضة, البرلمان, مظاهرة, احتجاج]
+  darija: [lhizb, l7izb, lintikhabat, intikhabat, l7okouma, lhokouma, lbarlaman]
+
+religion:
+  fr: [mosquée, imam, prière, religion, religieux, dieu, allah, église, synagogue]
+  ar: [مسجد, المسجد, الإمام, الصلاة, الدين, الله, كنيسة, الكنيسة]
+  darija: [jame3, ljame3, limam, sla, allah, rabbi]
+
+injures:
+  fr: [connard, imbécile, idiot, idiots, crétin, incapable, incompétent, incompétents, nul, nuls, honte]
+  ar: [حمار, الحمير, أغبياء, غبي, فاشلين, عار]
+  darija: [7mar, hmar, mkallakh, mklkh, bhayem, ghbi]

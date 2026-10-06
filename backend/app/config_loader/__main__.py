@@ -50,6 +50,14 @@ def main() -> int:
         templates / "diagnostic_commune.yaml",
     )
     ok &= check("report_templates/controles.yaml", load_controls, templates / "controles.yaml")
+    from app.config_loader.taxonomy import load_taxonomy
+
+    for profile in sorted({t.profiles.taxonomy for t in territories.values()}):
+        path = root / "taxonomy" / f"{profile}.yaml"
+        if path.exists():
+            ok &= check(f"taxonomy/{profile}.yaml", load_taxonomy, path)
+        else:
+            print(f"- taxonomy/{profile}.yaml : pas encore rédigé")
     mappings = {
         source.model_dump().get("mapping")
         for territory in territories.values()

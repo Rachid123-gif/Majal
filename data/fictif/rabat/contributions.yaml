@@ -1,0 +1,1392 @@
+# MAJAL — Contributions citoyennes FICTIVES pour Rabat (étape 4, version de démonstration).
+#
+# Rédigées par Claude (assistant IA) à partir d'un plan tiré au hasard
+# (scripts/plan_fictional_contributions.py → plan.csv), sans lien avec les indicateurs réels.
+# Elles ne reflètent pas l'opinion réelle des habitants. Méthode : docs/citoyens-jeu-fictif.md.
+#
+# Règles : aucune personne réelle, aucun élu ni responsable ni fonction officielle, aucune
+# entreprise, école, clinique ou commerce réel nommé ; aucune accusation, aucun contenu politique,
+# religieux ou injurieux. Lieux réels (OpenStreetMap) cités seulement comme repères neutres.
+# Données personnelles des « pièges » volontairement fictives : téléphones 06 00 00 00 xx,
+# cartes d'identité ZZ0000xx, adresses e-mail @example.com, prénoms seuls.
+#
+# Champs : text (ce qu'importe MAJAL) ; commune_declaree (facultatif, comme dans un vrai
+# formulaire) ; les autres champs sont l'annotation de référence PROVISOIRE de Claude (unit,
+# themes, tonality, place, pii), utilisée pour l'évaluation provisoire et les tests.
+# Les textes en amazighe sont approximatifs et doivent être relus par un locuteur.
+
+consultation:
+  code: rabat-fictif-v0
+  title: "Consultation fictive de démonstration — Rabat"
+  badge: fictitious
+
+contributions:
+  - id: RBT-001
+    unit: Témara
+    commune_declaree: Témara
+    language: ar
+    themes: [voirie]
+    tonality: proposition
+    place: Massira
+    text: "أقترح إعادة تهيئة الأرصفة في حي المسيرة وتوسيعها، لأن الراجلين يضطرون إلى المشي وسط الطريق."
+    pii: []
+
+  - id: RBT-002
+    unit: Témara
+    language: darija_ar
+    themes: [securite]
+    tonality: plainte
+    place: Wifaq
+    text: "فحي الوفاق كنخافو نرجعو بالليل، الزنقة خاوية وما كاين حتى شي حركة. صاحبي يوسف تسرق ليه التيليفون الشهر اللي فات. اتصلو بيا على 0600000001."
+    pii:
+      - { type: person, value: "يوسف" }
+      - { type: phone, value: "0600000001" }
+
+  - id: RBT-003
+    unit: Témara
+    language: fr
+    themes: [commerce_marches]
+    tonality: plainte
+    place: Nahda
+    text: "Le marché de quartier à Nahda est saturé le week-end, les étals débordent sur la chaussée. Je m'appelle Samira, joignable au 06 00 00 00 02 ou samira.contribution@example.com."
+    pii:
+      - { type: person, value: "Samira" }
+      - { type: phone, value: "06 00 00 00 02" }
+      - { type: email, value: "samira.contribution@example.com" }
+
+  - id: RBT-004
+    unit: Témara
+    commune_declaree: Témara
+    language: darija_ar
+    themes: [sante]
+    tonality: plainte
+    place: Firdaous
+    text: "المركز الصحي فالفردوس ديما عامر، كتسنى من الصباح حتى للعشية باش تشوف الطبيب."
+    pii: []
+
+  - id: RBT-005
+    unit: Témara
+    language: darija_latin
+    themes: [autres]
+    tonality: proposition
+    place: null
+    text: "Nqtar7o ydiro chi toilettes publiques f lblassa dyal lmdina, ila bghiti tqdi chi 7aja makaynch fin."
+    pii: []
+
+  - id: RBT-006
+    unit: Témara
+    language: ar
+    themes: [circulation]
+    tonality: demande
+    place: Maghreb El Arabi
+    text: "نطالب بتنظيم حركة السير قرب حي المغرب العربي في أوقات الذروة، فالازدحام يدوم أكثر من نصف ساعة."
+    pii: []
+
+  - id: RBT-007
+    unit: Témara
+    commune_declaree: Témara
+    language: fr
+    themes: [commerce_marches]
+    tonality: plainte
+    place: Jasmin
+    text: "Dans le quartier Jasmin, il n'y a aucun commerce de proximité : il faut prendre la voiture pour acheter du pain."
+    pii: []
+
+  - id: RBT-008
+    unit: Témara
+    language: ar
+    themes: [eclairage]
+    tonality: demande
+    place: Guich Oudaya
+    text: "نطلب إصلاح أعمدة الإنارة في كيش الوداية، فعدة أزقة تبقى مظلمة بعد غروب الشمس."
+    pii: []
+
+  - id: RBT-009
+    unit: Témara
+    language: darija_latin
+    themes: [securite]
+    tonality: demande
+    place: Oulad Mtaa
+    text: "F Oulad Mtaa bghina chwiya dyal l2aman, lbnat kaykhafo ymchiw l9raya bo7dhom f sba7."
+    pii: []
+
+  - id: RBT-010
+    unit: Témara
+    commune_declaree: Témara
+    language: fr
+    themes: [sante]
+    tonality: demande
+    place: Massira
+    text: "Nous demandons des horaires d'ouverture plus larges pour le centre de santé du quartier Massira, notamment le samedi."
+    pii: []
+
+  - id: RBT-011
+    unit: Témara
+    commune_declaree: Témara
+    language: fr
+    themes: [commerce_marches]
+    tonality: plainte
+    place: Wifaq
+    text: "Les vendeurs ambulants occupent tout le trottoir près du rond-point de Wifaq, les poussettes ne passent plus."
+    pii: []
+
+  - id: RBT-012
+    unit: Témara
+    language: darija_ar
+    themes: [espaces_verts]
+    tonality: plainte
+    place: Nahda
+    text: "الجردة لي فالنهضة ولات غير التراب، لا شجر لا كراسي، الدراري ما عندهم فين يلعبو."
+    pii: []
+
+  - id: RBT-013
+    unit: Témara
+    commune_declaree: Témara
+    language: ar
+    themes: [autres]
+    tonality: plainte
+    place: Firdaous
+    text: "تكاثرت الكلاب الضالة في حي الفردوس، ويخاف الأطفال من المرور قرب الأرض الخالية."
+    pii: []
+
+  - id: RBT-014
+    unit: Tabriquet
+    commune_declaree: Tabriquet
+    language: ar
+    themes: [culture_sport]
+    tonality: proposition
+    place: Tabriquet
+    text: "أقترح تحويل الأرض الفارغة في تابريكت إلى ملعب قرب للشباب مع إنارة ليلية."
+    pii: []
+
+  - id: RBT-015
+    unit: Tabriquet
+    commune_declaree: Tabriquet
+    language: ar
+    themes: [espaces_verts, bruit]
+    tonality: plainte
+    place: Hay El-Qods
+    text: "الحديقة الصغيرة في حي القدس مهملة، وتحولت ليلاً إلى مكان للضجيج يزعج السكان المجاورين."
+    pii: []
+
+  - id: RBT-016
+    unit: Tabriquet
+    language: ar
+    themes: [accessibilite_pmr]
+    tonality: plainte
+    place: Avenue de l'Aviation
+    text: "لا توجد منحدرات على أرصفة شارع الطيران، ويستحيل على مستعملي الكراسي المتحركة عبور الطريق."
+    pii: []
+
+  - id: RBT-017
+    unit: Tabriquet
+    commune_declaree: Tabriquet
+    language: darija_latin
+    themes: [emploi_jeunesse]
+    tonality: demande
+    place: null
+    text: "Bghina dar chabab fiha takwin f l'informatique, drari dyal l7ouma ga3 bla khdma."
+    pii: []
+
+  - id: RBT-018
+    unit: Tabriquet
+    language: ar
+    themes: [bruit]
+    tonality: plainte
+    place: null
+    text: "الورشة المجاورة لمنزلي تشتغل حتى منتصف الليل والضجيج لا يطاق. أنا كريم، رقم بطاقتي ZZ000018 إن احتجتم للتواصل."
+    pii:
+      - { type: person, value: "كريم" }
+      - { type: national_id, value: "ZZ000018" }
+
+  - id: RBT-019
+    unit: Tabriquet
+    commune_declaree: Tabriquet
+    language: fr
+    themes: [patrimoine]
+    tonality: demande
+    place: Tabriquet
+    text: "Les anciennes maisons du vieux Tabriquet mériteraient d'être recensées et protégées avant qu'elles ne disparaissent."
+    pii: []
+
+  - id: RBT-020
+    unit: Tabriquet
+    language: ar
+    themes: [commerce_marches]
+    tonality: demande
+    place: Avenue Arryana
+    text: "نطلب سوقاً نموذجياً منظماً قرب شارع الريانة. للتواصل: 0600000020 أو tabriquet.voisins@example.com."
+    pii:
+      - { type: phone, value: "0600000020" }
+      - { type: email, value: "tabriquet.voisins@example.com" }
+
+  - id: RBT-021
+    unit: Tabriquet
+    language: fr
+    themes: [accessibilite_pmr, commerce_marches]
+    tonality: plainte
+    place: Hay El-Qods
+    text: "À Hay El-Qods, les marches devant les commerces et les étals sur le trottoir rendent les courses impossibles en fauteuil roulant."
+    pii: []
+
+  - id: RBT-022
+    unit: Tabriquet
+    language: fr
+    themes: [bruit]
+    tonality: demande
+    place: Avenue de l'Aviation
+    text: "Merci de limiter les klaxons et les travaux de nuit sur l'avenue de l'Aviation, le bruit empêche les enfants de dormir."
+    pii: []
+
+  - id: RBT-023
+    unit: Tabriquet
+    language: darija_ar
+    themes: [accessibilite_pmr]
+    tonality: demande
+    place: Tabriquet
+    text: "بغينا شي مصعد فالمحطة ديال تابريكت، الشيباني والناس لي عندهم إعاقة ما يقدروش يطلعو الدروج."
+    pii: []
+
+  - id: RBT-024
+    unit: Tabriquet
+    language: ar
+    themes: [accessibilite_pmr]
+    tonality: demande
+    place: Avenue Arryana
+    text: "نطالب بتهيئة ممرات آمنة للأشخاص في وضعية إعاقة بشارع الريانة، مع علامات أرضية للمكفوفين."
+    pii: []
+
+  - id: RBT-025
+    unit: Hssaine
+    language: fr
+    themes: [culture_sport]
+    tonality: plainte
+    place: Salé El Jadida
+    text: "À Salé El Jadida, le seul terrain de football est fermé depuis des mois et les jeunes jouent dans la rue."
+    pii: []
+
+  - id: RBT-026
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: darija_latin
+    themes: [logement, circulation]
+    tonality: demande
+    place: Qaria
+    text: "F Qaria lkra wla ghali bzaf, w zid 3liha ma kaynch fin t7et tomobil 9dam dar. Bghina 7al."
+    pii: []
+
+  - id: RBT-027
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: fr
+    themes: [culture_sport, sante]
+    tonality: demande
+    place: Salé El Jadida
+    text: "Un parcours de marche éclairé à Salé El Jadida permettrait aux habitants de faire du sport et de prendre soin de leur santé."
+    pii: []
+
+  - id: RBT-028
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: darija_latin
+    themes: [accessibilite_pmr]
+    tonality: demande
+    place: Qaria
+    text: "Wlidi f kursi roulant, bghina rampe f l'entrée dyal l'idara f Qaria, ma n9drouch ndkhlo."
+    pii: []
+
+  - id: RBT-029
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: darija_ar
+    themes: [eau_assainissement]
+    tonality: demande
+    place: Salé El Jadida
+    text: "الواد الحار كيطلع فالزنقة ديالنا فسلا الجديدة كل ما طاحت الشتا. أنا ساكن فالرقم 00 زنقة الأمل، والتيليفون ديالي 0600000029."
+    pii:
+      - { type: address, value: "الرقم 00 زنقة الأمل" }
+      - { type: phone, value: "0600000029" }
+
+  - id: RBT-030
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: darija_latin
+    themes: [accessibilite_pmr, education]
+    tonality: plainte
+    place: Salé El Jadida
+    text: "Bnti 3andha i3a9a w lmadrasa f Salé El Jadida ma fihach ascenseur, kat9ra f tabe9 tani. Hadchi s3ib bzaf."
+    pii: []
+
+  - id: RBT-031
+    unit: Hssaine
+    language: fr
+    themes: [commerce_marches]
+    tonality: plainte
+    place: Qaria
+    text: "Le souk de Qaria n'a ni toiture ni point d'eau : en été les produits s'abîment et en hiver tout est boueux."
+    pii: []
+
+  - id: RBT-032
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: ar
+    themes: [accessibilite_pmr, culture_sport]
+    tonality: plainte
+    place: Salé El Jadida
+    text: "القاعة الرياضية في سلا الجديدة غير مجهزة لاستقبال الأشخاص في وضعية إعاقة، فلا منحدر ولا مرافق ملائمة."
+    pii: []
+
+  - id: RBT-033
+    unit: Hssaine
+    commune_declaree: Hssaine
+    language: fr
+    themes: [proprete]
+    tonality: plainte
+    place: Qaria
+    text: "Les bennes de Qaria débordent depuis une semaine. Mon voisin Rachid a déjà signalé le problème, vous pouvez le joindre au +212 600 000 033."
+    pii:
+      - { type: person, value: "Rachid" }
+      - { type: phone, value: "+212 600 000 033" }
+
+  - id: RBT-034
+    unit: Hssaine
+    language: ar
+    themes: [sante]
+    tonality: demande
+    place: Salé El Jadida
+    text: "نطلب توفير طبيب للأطفال في المركز الصحي بسلا الجديدة، فأقرب طبيب أطفال بعيد جداً."
+    pii: []
+
+  - id: RBT-035
+    unit: Hssaine
+    language: fr
+    themes: [patrimoine]
+    tonality: satisfaction
+    place: null
+    text: "Bravo pour la restauration des remparts : la promenade le long des murs est devenue très agréable."
+    pii: []
+
+  - id: RBT-036
+    unit: Layayda
+    commune_declaree: Layayda
+    language: darija_latin
+    themes: [eclairage]
+    tonality: plainte
+    place: null
+    text: "Zan9a dyalna mdlma kolha, ddaw ma khdamch chhal hadi, ki nrj3o mn lkhdma kankhafo."
+    pii: []
+
+  - id: RBT-037
+    unit: Layayda
+    language: ar
+    themes: [voirie]
+    tonality: plainte
+    place: Layayda
+    text: "الطريق الرئيسي في العيايدة مليء بالحفر، وتتضرر السيارات كل يوم."
+    pii: []
+
+  - id: RBT-038
+    unit: Layayda
+    language: fr
+    themes: [emploi_jeunesse]
+    tonality: demande
+    place: Secteur Nahda Laayayda
+    text: "Il faudrait des formations courtes pour les jeunes du secteur Nahda. Je suis Hamza, 23 ans, inscrit sous la carte ZZ000038, et je cherche un stage."
+    pii:
+      - { type: person, value: "Hamza" }
+      - { type: national_id, value: "ZZ000038" }
+
+  - id: RBT-039
+    unit: Layayda
+    language: amazigh_latin
+    themes: [circulation]
+    tonality: demande
+    place: Layayda
+    text: "Tumubilin bahra gant ɣ Layayda. Nra yan uḍu azeggaɣ ɣ ubrid amqqran, acku ur nzdar ad nzri."
+    pii: []
+
+  - id: RBT-040
+    unit: Layayda
+    commune_declaree: Layayda
+    language: ar
+    themes: [commerce_marches, emploi_jeunesse]
+    tonality: demande
+    place: Secteur Nahda Laayayda
+    text: "نطلب تنظيم الباعة المتجولين في قطاع النهضة داخل سوق مهيكل، فذلك يوفر عملاً قاراً للشباب."
+    pii: []
+
+  - id: RBT-041
+    unit: Layayda
+    language: fr
+    themes: [proprete]
+    tonality: plainte
+    place: null
+    text: "Les ordures ne sont ramassées qu'une fois par semaine devant chez nous, au n° 00 de la rue des Oliviers. La plaque 00000-ب-99 d'une camionnette qui dépose des gravats revient souvent."
+    pii:
+      - { type: address, value: "n° 00 de la rue des Oliviers" }
+      - { type: plate, value: "00000-ب-99" }
+
+  - id: RBT-042
+    unit: Layayda
+    language: fr
+    themes: [eclairage, circulation]
+    tonality: demande
+    place: Avenue de l'Aviation
+    text: "Un éclairage du carrefour de l'avenue de l'Aviation et des feux de signalisation réduiraient les accrochages le soir."
+    pii: []
+
+  - id: RBT-043
+    unit: Layayda
+    language: darija_ar
+    themes: [accessibilite_pmr]
+    tonality: plainte
+    place: Layayda
+    text: "الطوبيس فالعيايدة ما فيهش بلاصة للكرسي المتحرك، والسائق ما كيقدرش يعاون."
+    pii: []
+
+  - id: RBT-044
+    unit: Layayda
+    language: fr
+    themes: [accessibilite_pmr]
+    tonality: plainte
+    place: null
+    text: "Les trottoirs trop hauts et sans rampe empêchent ma mère âgée de sortir seule."
+    pii: []
+
+  - id: RBT-045
+    unit: Layayda
+    language: darija_ar
+    themes: [bruit]
+    tonality: satisfaction
+    place: Secteur Nahda Laayayda
+    text: "من نهار سدو الورشة لي كانت قدام الدار فقطاع النهضة، ولينا كنعسو مزيان. شكرا."
+    pii: []
+
+  - id: RBT-046
+    unit: Layayda
+    commune_declaree: Layayda
+    language: ar
+    themes: [eau_assainissement]
+    tonality: demande
+    place: Layayda
+    text: "نطلب ربط الأزقة الجديدة في العيايدة بشبكة التطهير، فالمياه العادمة تتجمع أمام المنازل."
+    pii: []
+
+  - id: RBT-047
+    unit: Yacoub El Mansour
+    language: fr
+    themes: [accessibilite_pmr]
+    tonality: proposition
+    place: Hay Al Fath
+    text: "Je propose d'abaisser les bordures de trottoir aux passages piétons de Hay Al Fath pour les fauteuils et les poussettes."
+    pii: []
+
+  - id: RBT-048
+    unit: Yacoub El Mansour
+    language: ar
+    themes: [emploi_jeunesse]
+    tonality: plainte
+    place: Yacoub El Mansour
+    text: "شباب يعقوب المنصور يقضون اليوم في المقاهي بلا عمل ولا تكوين، ولا توجد أي مبادرة قريبة منهم."
+    pii: []
+
+  - id: RBT-049
+    unit: Yacoub El Mansour
+    language: darija_ar
+    themes: [voirie, eclairage]
+    tonality: plainte
+    place: Avenue El Majd
+    text: "شارع المجد مليان بالحفر والضو طافي، البارح طاحت جارتنا فاطمة. إلا بغيتو تفاصيل: 0600000049."
+    pii:
+      - { type: person, value: "فاطمة" }
+      - { type: phone, value: "0600000049" }
+
+  - id: RBT-050
+    unit: Yacoub El Mansour
+    commune_declaree: Yacoub El Mansour
+    language: fr
+    themes: [eau_assainissement]
+    tonality: plainte
+    place: Hay Al Fath
+    text: "Coupures d'eau répétées à Hay Al Fath sans aucune information préalable aux habitants."
+    pii: []
+
+  - id: RBT-051
+    unit: Yacoub El Mansour
+    commune_declaree: Yacoub El Mansour
+    language: darija_latin
+    themes: [emploi_jeunesse]
+    tonality: plainte
+    place: Avenue Al Fadila
+    text: "Drari f Avenue Al Fadila 9raw w ma l9aw walo, khasna chi centre dyal takwin 9rib."
+    pii: []
+
+  - id: RBT-052
+    unit: Yacoub El Mansour
+    language: ar
+    themes: [voirie, proprete]
+    tonality: demande
+    place: Hay Al Fath
+    text: "نطلب إزالة بقايا الأشغال من أرصفة حي الفتح وتنظيفها، فهي متروكة منذ أسابيع."
+    pii: []
+
+  - id: RBT-053
+    unit: Yacoub El Mansour
+    language: ar
+    themes: [emploi_jeunesse]
+    tonality: plainte
+    place: null
+    text: "لا تتوفر فرص للتدريب المهني للنساء في حينا، ونضطر للتنقل بعيداً."
+    pii: []
+
+  - id: RBT-054
+    unit: Yacoub El Mansour
+    commune_declaree: Yacoub El Mansour
+    language: darija_ar
+    themes: [espaces_verts]
+    tonality: demande
+    place: Yacoub El Mansour
+    text: "بغينا جردة فيها الشجر والكراسي فيعقوب المنصور، باش العائلات يتنفسو شوية."
+    pii: []
+
+  - id: RBT-055
+    unit: Bab Lamrissa
+    language: ar
+    themes: [autres]
+    tonality: satisfaction
+    place: Bab Al Bahr
+    text: "نشكر على تنظيم الاحتفالات الصيفية قرب باب البحر، فقد كانت فرصة جميلة للعائلات."
+    pii: []
+
+  - id: RBT-056
+    unit: Bab Lamrissa
+    commune_declaree: Bab Lamrissa
+    language: ar
+    themes: [accessibilite_pmr]
+    tonality: satisfaction
+    place: null
+    text: "أصبح مدخل الإدارة في حينا مجهزاً بمنحدر، وهذا سهّل على والدي قضاء أغراضه. شكراً."
+    pii: []
+
+  - id: RBT-057
+    unit: Bab Lamrissa
+    language: fr
+    themes: [patrimoine]
+    tonality: demande
+    place: Souk Laghzal
+    text: "Les façades anciennes autour de Souk Laghzal se dégradent. Contact : leila.patrimoine@example.com, 06 00 00 00 57."
+    pii:
+      - { type: email, value: "leila.patrimoine@example.com" }
+      - { type: phone, value: "06 00 00 00 57" }
+
+  - id: RBT-058
+    unit: Bab Lamrissa
+    commune_declaree: Bab Lamrissa
+    language: ar
+    themes: [sante]
+    tonality: demande
+    place: Bab Lamrissa
+    text: "نطلب صيدلية حراسة مفتوحة ليلاً في باب لمريسة، فالمرضى يضطرون للتنقل إلى أحياء أخرى."
+    pii: []
+
+  - id: RBT-059
+    unit: Bab Lamrissa
+    language: darija_latin
+    themes: [administration]
+    tonality: proposition
+    place: Bab Lamrissa
+    text: "Nqtar7o ydiro rendez-vous b internet l lwra9 f Bab Lamrissa, bach ma nb9awch ntsnaw f sf mn sba7."
+    pii: []
+
+  - id: RBT-060
+    unit: Bab Lamrissa
+    language: darija_ar
+    themes: [securite, eau_assainissement]
+    tonality: demande
+    place: Bab Lamrissa
+    text: "فباب لمريسة البالوعات مفتوحين بلا غطا، خطر على الدراري بالليل. بغينا يسدوهم."
+    pii: []
+
+  - id: RBT-061
+    unit: Bab Lamrissa
+    language: darija_latin
+    themes: [mobilite]
+    tonality: plainte
+    place: Bab Lamrissa
+    text: "Tobis l Bab Lamrissa kayji mra f sa3a w 3amer, kantsnaw bzaf f lmahatta."
+    pii: []
+
+  - id: RBT-062
+    unit: Bab Lamrissa
+    language: ar
+    themes: [eclairage]
+    tonality: plainte
+    place: Bab Al Bahr
+    text: "الإنارة ضعيفة جداً في الممر المحاذي لباب البحر، ويتجنبه المارة بعد المغرب."
+    pii: []
+
+  - id: RBT-063
+    unit: El Youssoufia
+    language: fr
+    themes: [circulation]
+    tonality: demande
+    place: Takaddoum
+    text: "Un ralentisseur devant le carrefour principal de Takaddoum éviterait des accidents. Mon fils Anas a failli être renversé ; joignable au 0600000063."
+    pii:
+      - { type: person, value: "Anas" }
+      - { type: phone, value: "0600000063" }
+
+  - id: RBT-064
+    unit: El Youssoufia
+    commune_declaree: El Youssoufia
+    language: ar
+    themes: [culture_sport, espaces_verts]
+    tonality: demande
+    place: null
+    text: "نطلب فضاءً أخضر بملاعب صغيرة للأطفال في حينا، فلا يوجد أي مكان للعب قريب."
+    pii: []
+
+  - id: RBT-065
+    unit: El Youssoufia
+    language: ar
+    themes: [commerce_marches, emploi_jeunesse]
+    tonality: plainte
+    place: Douar Hajja
+    text: "أغلق السوق القديم في دوار الحاجة دون بديل، وفقد عدد من الشباب مصدر رزقهم. للتواصل: youssoufia.habitant@example.com."
+    pii:
+      - { type: email, value: "youssoufia.habitant@example.com" }
+
+  - id: RBT-066
+    unit: El Youssoufia
+    commune_declaree: El Youssoufia
+    language: amazigh_latin
+    themes: [autres]
+    tonality: demande
+    place: Nahda
+    text: "Nra ad gin tiɣammi n lḥmmam i middn ɣ Nahda, ur illi kra n wansa."
+    pii: []
+
+  - id: RBT-067
+    unit: El Youssoufia
+    commune_declaree: El Youssoufia
+    language: ar
+    themes: [education, administration]
+    tonality: proposition
+    place: Jnane Nahda
+    text: "أقترح أن يتم التسجيل في المدرسة عن بعد بالنسبة لسكان جنان النهضة، بدل الوقوف لساعات في الطابور."
+    pii: []
+
+  - id: RBT-068
+    unit: El Youssoufia
+    commune_declaree: El Youssoufia
+    language: fr
+    themes: [eau_assainissement]
+    tonality: demande
+    place: Mabella
+    text: "À Mabella, des odeurs d'égout remontent à chaque forte pluie ; une inspection du réseau serait nécessaire."
+    pii: []
+
+  - id: RBT-069
+    unit: El Youssoufia
+    commune_declaree: El Youssoufia
+    language: ar
+    themes: [autres]
+    tonality: proposition
+    place: Aviation
+    text: "أقترح تخصيص لوحات إرشادية بأسماء الأزقة في حي الطيران، فكثير من الزوار يضيعون الطريق."
+    pii: []
+
+  - id: RBT-070
+    unit: El Youssoufia
+    language: fr
+    themes: [securite]
+    tonality: satisfaction
+    place: Takaddoum
+    text: "Depuis l'éclairage des passages de Takaddoum, on se sent bien plus en sécurité le soir."
+    pii: []
+
+  - id: RBT-071
+    unit: Skhirate
+    language: ar
+    themes: [patrimoine]
+    tonality: plainte
+    place: Skhirate
+    text: "المباني القديمة في وسط الصخيرات تتهدم واحدة تلو الأخرى دون أي حماية."
+    pii: []
+
+  - id: RBT-072
+    unit: Skhirate
+    commune_declaree: Skhirate
+    language: fr
+    themes: [circulation]
+    tonality: proposition
+    place: Skhirate
+    text: "Je propose un parking relais à l'entrée de Skhirate pour désengorger le centre en été."
+    pii: []
+
+  - id: RBT-073
+    unit: Skhirate
+    commune_declaree: Skhirate
+    language: darija_latin
+    themes: [education]
+    tonality: plainte
+    place: null
+    text: "L9ism dyal wlidi fih ktar mn 45 tilmid, l2ostad ma y9drch ytab3hom kamlin."
+    pii: []
+
+  - id: RBT-074
+    unit: Skhirate
+    language: fr
+    themes: [logement]
+    tonality: plainte
+    place: Skhirate
+    text: "À Skhirate, les loyers augmentent chaque été avec la location saisonnière, les familles du coin n'arrivent plus à se loger."
+    pii: []
+
+  - id: RBT-075
+    unit: Skhirate
+    language: ar
+    themes: [eclairage]
+    tonality: demande
+    place: Skhirate
+    text: "نطلب إنارة الطريق المؤدية إلى الشاطئ في الصخيرات، فهي مظلمة تماماً ليلاً."
+    pii: []
+
+  - id: RBT-076
+    unit: Skhirate
+    commune_declaree: Skhirate
+    language: darija_latin
+    themes: [voirie]
+    tonality: demande
+    place: Skhirate
+    text: "Triq li katdkhl l Skhirate mn jiht l bhar khassha zeft jdid, kolha 7fari."
+    pii: []
+
+  - id: RBT-077
+    unit: Skhirate
+    commune_declaree: Skhirate
+    language: fr
+    themes: [voirie]
+    tonality: satisfaction
+    place: Skhirate
+    text: "Les nouveaux trottoirs du centre de Skhirate sont larges et propres, merci."
+    pii: []
+
+  - id: RBT-078
+    unit: Sidi Yahya Zaer
+    language: ar
+    themes: [proprete]
+    tonality: demande
+    place: Sidi Yahya Zaer
+    text: "نطلب حاويات إضافية للأزبال في سيدي يحيى زعير. اسمي عائشة ورقمي 0600000078."
+    pii:
+      - { type: person, value: "عائشة" }
+      - { type: phone, value: "0600000078" }
+
+  - id: RBT-079
+    unit: Sidi Yahya Zaer
+    language: darija_latin
+    themes: [eau_assainissement]
+    tonality: satisfaction
+    place: Sidi Yahya Zaer
+    text: "Lma wla kayji mzyan f Sidi Yahya Zaer mn ba3d ma bdlo l9nawat, choukran."
+    pii: []
+
+  - id: RBT-080
+    unit: Sidi Yahya Zaer
+    language: fr
+    themes: [bruit]
+    tonality: demande
+    place: Sidi Yahya Zaer
+    text: "Le bruit des camions qui traversent Sidi Yahya Zaer la nuit est insupportable. Écrivez-moi : zaer.riverain@example.com."
+    pii:
+      - { type: email, value: "zaer.riverain@example.com" }
+
+  - id: RBT-081
+    unit: Sidi Yahya Zaer
+    commune_declaree: Sidi Yahya Zaer
+    language: fr
+    themes: [commerce_marches, education]
+    tonality: demande
+    place: Sidi Yahya Zaer
+    text: "Un marché couvert près de l'école de Sidi Yahya Zaer éviterait aux élèves de traverser au milieu des étals. Je suis Nadia, tél. 06 00 00 00 81."
+    pii:
+      - { type: person, value: "Nadia" }
+      - { type: phone, value: "06 00 00 00 81" }
+
+  - id: RBT-082
+    unit: Sidi Yahya Zaer
+    commune_declaree: Sidi Yahya Zaer
+    language: darija_latin
+    themes: [culture_sport]
+    tonality: demande
+    place: Sidi Yahya Zaer
+    text: "Bghina terrain dyal lkoura f Sidi Yahya Zaer. Smiti Omar, carte ZZ000082, w ana mstaʿd n3awn f tanzim."
+    pii:
+      - { type: person, value: "Omar" }
+      - { type: national_id, value: "ZZ000082" }
+
+  - id: RBT-083
+    unit: Sidi Yahya Zaer
+    commune_declaree: Sidi Yahya Zaer
+    language: fr
+    themes: [voirie]
+    tonality: demande
+    place: Sidi Yahya Zaer
+    text: "La route qui relie les quartiers sud au centre de Sidi Yahya Zaer devrait être goudronnée avant l'hiver."
+    pii: []
+
+  - id: RBT-084
+    unit: Ain El Aouda
+    commune_declaree: Ain El Aouda
+    language: fr
+    themes: [proprete]
+    tonality: plainte
+    place: Ain El Aouda
+    text: "À Ain El Aouda, des dépôts sauvages s'accumulent sur les terrains vagues à l'entrée de la ville."
+    pii: []
+
+  - id: RBT-085
+    unit: Ain El Aouda
+    commune_declaree: Ain El Aouda
+    language: fr
+    themes: [circulation]
+    tonality: plainte
+    place: Route Zaer
+    text: "Sur la route Zaer, les camions roulent trop vite à la traversée d'Ain El Aouda, c'est dangereux pour les piétons."
+    pii: []
+
+  - id: RBT-086
+    unit: Ain El Aouda
+    commune_declaree: Ain El Aouda
+    language: darija_ar
+    themes: [proprete]
+    tonality: plainte
+    place: Ain El Aouda
+    text: "الزبل كيتجمع حدا السوق فعين العودة، والريحة ما كتطاقش فالصيف."
+    pii: []
+
+  - id: RBT-087
+    unit: Ain El Aouda
+    language: fr
+    themes: [proprete]
+    tonality: plainte
+    place: null
+    text: "Il n'y a pas assez de poubelles dans notre rue, les sacs sont posés par terre et éventrés par les chats."
+    pii: []
+
+  - id: RBT-088
+    unit: Ain El Aouda
+    commune_declaree: Ain El Aouda
+    language: fr
+    themes: [administration]
+    tonality: demande
+    place: Ain El Aouda
+    text: "Pourrait-on ouvrir le guichet des documents d'état civil d'Ain El Aouda le samedi matin pour ceux qui travaillent ?"
+    pii: []
+
+  - id: RBT-089
+    unit: Ain El Aouda
+    language: fr
+    themes: [administration]
+    tonality: plainte
+    place: Ain El Aouda
+    text: "Pour un simple certificat, il faut revenir trois fois au guichet d'Ain El Aouda faute d'informations claires."
+    pii: []
+
+  - id: RBT-090
+    unit: Hassan
+    commune_declaree: Hassan
+    language: fr
+    themes: [espaces_verts]
+    tonality: demande
+    place: Océan
+    text: "Le quartier de l'Océan manque d'arbres ; planter des alignements dans les rues donnerait un peu d'ombre l'été."
+    pii: []
+
+  - id: RBT-091
+    unit: Hassan
+    language: fr
+    themes: [espaces_verts, eclairage]
+    tonality: plainte
+    place: Place Bab El Had
+    text: "Le petit jardin près de la place Bab El Had est mal éclairé et peu entretenu, on n'ose plus s'y asseoir le soir."
+    pii: []
+
+  - id: RBT-092
+    unit: Hassan
+    language: ar
+    themes: [culture_sport]
+    tonality: demande
+    place: Océan
+    text: "نطلب مكتبة عمومية في حي المحيط، فالتلاميذ لا يجدون مكاناً هادئاً للمراجعة."
+    pii: []
+
+  - id: RBT-093
+    unit: Hassan
+    language: fr
+    themes: [eau_assainissement]
+    tonality: demande
+    place: null
+    text: "Les caniveaux de notre rue se bouchent à la première pluie ; un curage avant l'hiver est indispensable."
+    pii: []
+
+  - id: RBT-094
+    unit: Hassan
+    commune_declaree: Hassan
+    language: darija_latin
+    themes: [logement]
+    tonality: proposition
+    place: Kasbah des Oudayas
+    text: "Nqtar7o y3awnou nas dyal l9asba f tarmim dyal dyourhom l9dima, kayn chi dyour 9rib ytay7o."
+    pii: []
+
+  - id: RBT-095
+    unit: Hassan
+    language: fr
+    themes: [circulation]
+    tonality: plainte
+    place: Avenue d'Alger
+    text: "Le stationnement en double file sur l'avenue d'Alger bloque la circulation tous les matins."
+    pii: []
+
+  - id: RBT-096
+    unit: Bettana
+    commune_declaree: Bettana
+    language: darija_ar
+    themes: [education]
+    tonality: demande
+    place: null
+    text: "بغينا روض ديال الدراري الصغار قريب، الأمهات لي خدامين ما عندهم فين يخليو ولادهم."
+    pii: []
+
+  - id: RBT-097
+    unit: Bettana
+    language: fr
+    themes: [emploi_jeunesse]
+    tonality: satisfaction
+    place: Bettana
+    text: "Les ateliers d'orientation organisés à Bettana cet été ont aidé plusieurs jeunes à trouver une formation."
+    pii: []
+
+  - id: RBT-098
+    unit: Bettana
+    language: amazigh_latin
+    themes: [education, emploi_jeunesse]
+    tonality: plainte
+    place: Bettana
+    text: "Tarwa nneɣ ur ufin tinml qrib ɣ Bettana, d ilmeẓyen ur ufin axeddim."
+    pii: []
+
+  - id: RBT-099
+    unit: Bettana
+    commune_declaree: Bettana
+    language: fr
+    themes: [bruit, securite]
+    tonality: proposition
+    place: null
+    text: "Je propose que les cafés du quartier ferment leur terrasse plus tôt en semaine : moins de bruit et moins d'attroupements la nuit."
+    pii: []
+
+  - id: RBT-100
+    unit: Bettana
+    commune_declaree: Bettana
+    language: ar
+    themes: [espaces_verts]
+    tonality: plainte
+    place: Avenue du Haut-Atlas
+    text: "قُطعت أشجار شارع الأطلس الكبير ولم تُغرس أشجار جديدة، وأصبح الشارع بلا ظل."
+    pii: []
+
+  - id: RBT-101
+    unit: Ameur
+    commune_declaree: Ameur
+    language: ar
+    themes: [logement, securite]
+    tonality: plainte
+    place: Ameur
+    text: "البنايات غير المكتملة في عامر مهجورة وأصبحت مصدر قلق للسكان ليلاً."
+    pii: []
+
+  - id: RBT-102
+    unit: Ameur
+    commune_declaree: Ameur
+    language: ar
+    themes: [eau_assainissement]
+    tonality: plainte
+    place: Ameur
+    text: "ضعف صبيب الماء في عامر خلال الصيف، ولا يصل الماء إلى الطوابق العليا."
+    pii: []
+
+  - id: RBT-103
+    unit: Ameur
+    language: fr
+    themes: [commerce_marches, mobilite]
+    tonality: plainte
+    place: Ameur
+    text: "Pour aller au marché hebdomadaire d'Ameur, il n'y a aucun bus ; les personnes sans voiture paient des taxis chers."
+    pii: []
+
+  - id: RBT-104
+    unit: Ameur
+    commune_declaree: Ameur
+    language: fr
+    themes: [espaces_verts]
+    tonality: demande
+    place: Ameur
+    text: "Un jardin public avec des jeux pour enfants à Ameur serait le bienvenu, il n'y en a aucun à proximité."
+    pii: []
+
+  - id: RBT-105
+    unit: Ameur
+    commune_declaree: Ameur
+    language: fr
+    themes: [sante]
+    tonality: demande
+    place: null
+    text: "Il faudrait une permanence de soins le week-end. Ma voisine Khadija, diabétique, a dû attendre lundi ; je reste joignable au 06-00-00-01-05."
+    pii:
+      - { type: person, value: "Khadija" }
+      - { type: phone, value: "06-00-00-01-05" }
+
+  - id: RBT-106
+    unit: Aïn Attig
+    language: ar
+    themes: [voirie]
+    tonality: plainte
+    place: null
+    text: "الأزقة الداخلية لحينا غير معبدة، وتتحول إلى أوحال مع أول مطر."
+    pii: []
+
+  - id: RBT-107
+    unit: Aïn Attig
+    commune_declaree: Aïn Attig
+    language: ar
+    themes: [accessibilite_pmr]
+    tonality: satisfaction
+    place: Aïn Attig
+    text: "نشكر على تهيئة الممرات المنحدرة في الساحة الرئيسية بعين عتيق، فقد أصبح التنقل أسهل للكراسي المتحركة."
+    pii: []
+
+  - id: RBT-108
+    unit: Aïn Attig
+    language: fr
+    themes: [administration]
+    tonality: demande
+    place: Aïn Attig
+    text: "Merci de publier en ligne la liste des pièces à fournir pour les démarches à Aïn Attig, on perd beaucoup de temps."
+    pii: []
+
+  - id: RBT-109
+    unit: Aïn Attig
+    commune_declaree: Aïn Attig
+    language: fr
+    themes: [voirie, securite]
+    tonality: satisfaction
+    place: null
+    text: "La nouvelle route goudronnée et les passages piétons devant le collège rendent le trajet des enfants plus sûr."
+    pii: []
+
+  - id: RBT-110
+    unit: Aïn Attig
+    commune_declaree: Aïn Attig
+    language: darija_latin
+    themes: [accessibilite_pmr]
+    tonality: proposition
+    place: Aïn Attig
+    text: "Nqtar7o ydiro blasat dyal parking l nas li 3andhom i3a9a 9dam lidara f Aïn Attig."
+    pii: []
+
+  - id: RBT-111
+    unit: Agdal-Riyad
+    commune_declaree: Agdal-Riyad
+    language: darija_latin
+    themes: [mobilite]
+    tonality: proposition
+    place: Agdal
+    text: "Nqtar7o tram ykoun ktar f l3chiya f Agdal, f sa3a dyal lkhrouj mn lkhdma kayb9a 3amer bzaf."
+    pii: []
+
+  - id: RBT-112
+    unit: Agdal-Riyad
+    language: amazigh_latin
+    themes: [culture_sport]
+    tonality: plainte
+    place: Agdal
+    text: "Ur illi yan wasun n tiddas i ilmeẓyen ɣ Agdal, ttiran ɣ uzniq."
+    pii: []
+
+  - id: RBT-113
+    unit: Agdal-Riyad
+    commune_declaree: Agdal-Riyad
+    language: fr
+    themes: [accessibilite_pmr]
+    tonality: demande
+    place: Avenue de France
+    text: "Les passages piétons de l'avenue de France devraient avoir des bandes podotactiles pour les personnes malvoyantes."
+    pii: []
+
+  - id: RBT-114
+    unit: Agdal-Riyad
+    commune_declaree: Agdal-Riyad
+    language: ar
+    themes: [eau_assainissement]
+    tonality: plainte
+    place: Riad
+    text: "تسرب مستمر للماء من قناة في حي الرياض منذ أيام، والماء يضيع في الشارع."
+    pii: []
+
+  - id: RBT-115
+    unit: Agdal-Riyad
+    commune_declaree: Agdal-Riyad
+    language: fr
+    themes: [mobilite]
+    tonality: satisfaction
+    place: Avenue des Nations Unies
+    text: "Le tramway le long de l'avenue des Nations Unies est ponctuel et confortable, je laisse ma voiture à la maison."
+    pii: []
+
+  - id: RBT-116
+    unit: Sidi Bouknadel
+    language: ar
+    themes: [securite]
+    tonality: plainte
+    place: Sidi Bouknadel
+    text: "الطريق بين الأحياء والشاطئ في سيدي بوقنادل معزولة ومظلمة، ونخاف على أبنائنا عند العودة."
+    pii: []
+
+  - id: RBT-117
+    unit: Sidi Bouknadel
+    language: ar
+    themes: [voirie, circulation]
+    tonality: demande
+    place: null
+    text: "نطلب توسيع الطريق المؤدية إلى حينا وإضافة علامات التشوير، فالحوادث متكررة."
+    pii: []
+
+  - id: RBT-118
+    unit: Sidi Bouknadel
+    language: fr
+    themes: [circulation]
+    tonality: satisfaction
+    place: null
+    text: "Le nouveau rond-point a nettement fluidifié la circulation aux heures de pointe, bravo."
+    pii: []
+
+  - id: RBT-119
+    unit: Sidi Bouknadel
+    commune_declaree: Sidi Bouknadel
+    language: fr
+    themes: [proprete]
+    tonality: proposition
+    place: Sidi Bouknadel
+    text: "Je propose des journées de nettoyage de la plage de Sidi Bouknadel avec les associations et des poubelles de tri."
+    pii: []
+
+  - id: RBT-120
+    unit: Mers El Kheir
+    commune_declaree: Mers El Kheir
+    language: ar
+    themes: [education]
+    tonality: plainte
+    place: Mers El Kheir
+    text: "يقطع التلاميذ في مرس الخير مسافة طويلة سيراً على الأقدام للوصول إلى الإعدادية."
+    pii: []
+
+  - id: RBT-121
+    unit: Mers El Kheir
+    language: ar
+    themes: [culture_sport]
+    tonality: plainte
+    place: Mers El Kheir
+    text: "لا يوجد أي فضاء ثقافي أو رياضي للشباب في مرس الخير. أنا سعيد، بريدي mers.jeunes@example.com."
+    pii:
+      - { type: person, value: "سعيد" }
+      - { type: email, value: "mers.jeunes@example.com" }
+
+  - id: RBT-122
+    unit: Mers El Kheir
+    commune_declaree: Mers El Kheir
+    language: fr
+    themes: [eclairage, sante]
+    tonality: demande
+    place: Mers El Kheir
+    text: "Le chemin vers le centre de santé de Mers El Kheir n'est pas éclairé ; les malades y vont de nuit en urgence. Contact : Mehdi, 06 00 00 01 22."
+    pii:
+      - { type: person, value: "Mehdi" }
+      - { type: phone, value: "06 00 00 01 22" }
+
+  - id: RBT-123
+    unit: Shoul
+    language: fr
+    themes: [eclairage]
+    tonality: plainte
+    place: El Arjate
+    text: "À El Arjate, plusieurs lampadaires sont éteints depuis l'hiver dernier. Je joins mon numéro : 0600000123."
+    pii:
+      - { type: phone, value: "0600000123" }
+
+  - id: RBT-124
+    unit: Shoul
+    commune_declaree: Shoul
+    language: fr
+    themes: [voirie]
+    tonality: demande
+    place: Shoul
+    text: "La piste entre les douars et le centre de Shoul est impraticable après la pluie ; un revêtement est nécessaire."
+    pii: []
+
+  - id: RBT-125
+    unit: Shoul
+    commune_declaree: Shoul
+    language: ar
+    themes: [voirie, accessibilite_pmr]
+    tonality: demande
+    place: Shoul
+    text: "نطلب أرصفة ممهدة في مركز السهول، فكبار السن والأشخاص في وضعية إعاقة يجدون صعوبة كبيرة في التنقل."
+    pii: []
+
+  - id: RBT-126
+    unit: Souissi
+    language: darija_latin
+    themes: [culture_sport]
+    tonality: demande
+    place: Akrach
+    text: "F Akrach bghina chi salle dyal riyada l lbnat w lwlad, kolchi b3id 3lina."
+    pii: []
+
+  - id: RBT-127
+    unit: Souissi
+    language: darija_latin
+    themes: [espaces_verts]
+    tonality: plainte
+    place: null
+    text: "L7di9a li 9rib lina mssdouda mn 3am, ma b9a fin nkhrjo m3a drari."
+    pii: []
+
+  - id: RBT-128
+    unit: Souissi
+    language: amazigh_latin
+    themes: [mobilite]
+    tonality: plainte
+    place: Akrach
+    text: "Tobis ur da itteddu bahra ɣ Akrach, nqqim akud iɣzzifn ɣ lmaḥaṭṭa."
+    pii: []
+
+  - id: RBT-129
+    unit: Harhoura
+    language: darija_latin
+    themes: [accessibilite_pmr]
+    tonality: satisfaction
+    place: Harhoura Centre
+    text: "Choukran 3la l'accès l la plage f Harhoura Centre, daba khti b kursi roulant katnzl l bhar. Smiti Salma, 0600000129."
+    pii:
+      - { type: person, value: "Salma" }
+      - { type: phone, value: "0600000129" }
+
+  - id: RBT-130
+    unit: Harhoura
+    commune_declaree: Harhoura
+    language: fr
+    themes: [mobilite, bruit]
+    tonality: demande
+    place: Miramar
+    text: "Une navette d'été vers Miramar éviterait les embouteillages et le bruit des voitures garées partout. Mon adresse : n° 00, rue des Mouettes, Harhoura."
+    pii:
+      - { type: address, value: "n° 00, rue des Mouettes" }
+
+  - id: RBT-131
+    unit: Harhoura
+    language: ar
+    themes: [accessibilite_pmr, securite]
+    tonality: plainte
+    place: Oued Ykem
+    text: "الممر المؤدي إلى شاطئ وادي إكم بلا حواجز ولا درج آمن، وهو خطير على كبار السن والأطفال."
+    pii: []
+
+  - id: RBT-132
+    unit: Sabbah
+    commune_declaree: Sabbah
+    language: ar
+    themes: [education, proprete]
+    tonality: plainte
+    place: Sabbah
+    text: "تتراكم الأزبال أمام مدرسة صباح، والتلاميذ يمرون يومياً وسط الروائح."
+    pii: []
+
+  - id: RBT-133
+    unit: Sabbah
+    language: fr
+    themes: [eclairage, bruit]
+    tonality: demande
+    place: Sabbah
+    text: "À Sabbah, nous demandons l'éclairage de la route principale et la limitation des engins de chantier la nuit."
+    pii: []
+
+  - id: RBT-134
+    unit: Sabbah
+    commune_declaree: Sabbah
+    language: darija_ar
+    themes: [eau_assainissement]
+    tonality: demande
+    place: Sabbah
+    text: "فصباح بزاف ديال الديور ما مربوطينش بالواد الحار، بغينا يوصلوهم بالشبكة."
+    pii: []
+
+  - id: RBT-135
+    unit: El Menzeh
+    commune_declaree: El Menzeh
+    language: darija_latin
+    themes: [commerce_marches, administration]
+    tonality: proposition
+    place: El Menzeh
+    text: "Nqtar7o souk asboui f El Menzeh w guichet sghir l lwra9 bach ma nmchiwch b3id."
+    pii: []
+
+  - id: RBT-136
+    unit: El Menzeh
+    commune_declaree: El Menzeh
+    language: fr
+    themes: [bruit]
+    tonality: plainte
+    place: El Menzeh
+    text: "Les camions de la carrière traversent El Menzeh dès cinq heures du matin, le bruit réveille tout le village."
+    pii: []
+
+  - id: RBT-137
+    unit: Touarga
+    language: ar
+    themes: [eclairage]
+    tonality: plainte
+    place: Touarga
+    text: "بعض الأزقة الداخلية في التواركة ضعيفة الإنارة، ونرجو تعويض المصابيح المعطلة."
+    pii: []
+
+  - id: RBT-138
+    unit: Touarga
+    commune_declaree: Touarga
+    language: ar
+    themes: [eau_assainissement]
+    tonality: plainte
+    place: Touarga
+    text: "تتجمع مياه الأمطار في بعض أزقة التواركة لأيام بسبب انسداد البالوعات."
+    pii: []
+
+  - id: RBT-139
+    unit: Oumazza
+    commune_declaree: Oumazza
+    language: darija_ar
+    themes: [espaces_verts]
+    tonality: plainte
+    place: Oumazza
+    text: "فأم عزة ما كاين حتى بلاصة خضرا للعائلات، غير الطريق والتراب."
+    pii: []
+
+  - id: RBT-140
+    unit: Oumazza
+    language: fr
+    themes: [education]
+    tonality: plainte
+    place: Oumazza
+    text: "À Oumazza, les enfants des douars marchent longtemps pour rejoindre l'école, surtout par mauvais temps."
+    pii: []

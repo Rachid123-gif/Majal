@@ -38,3 +38,19 @@ avec les indicateurs ; évaluation. Version D : contributions fictives, claireme
 - **Bandeau permanent** « Contributions fictives — illustration du fonctionnement de l'outil.
   Elles ne reflètent pas l'opinion réelle des habitants. » sur toute vue de contributions
   fictives.
+
+## Compléments (2026-10-06, après l'évaluation par un second modèle)
+- **Jeu fictif porté à 400 contributions** (même méthode neutre, 140 textes conservés).
+- **Échelle « commune »** : Rabat et Salé regroupent leurs arrondissements ; les autres unités
+  restent telles quelles. Aucune valeur d'indicateur agrégée n'est calculée : un indicateur est
+  jugé défavorable pour la commune si les unités en « déficit marqué » ou « à surveiller »
+  réunissent au moins la moitié de sa population (`aggregate_unfavourable_share`, TODO_REFERENT).
+- **Tonalité** : mots-clés en priorité, IA locale seulement quand aucun mot-clé ne tranche.
+- **Taxonomie précisée** : eau potable, coupures, égouts et bouches d'égout relèvent toujours
+  de « eau et assainissement » ; crèche et préscolaire de « éducation ».
+- Ces deux derniers points ont été décidés après avoir vu les désaccords avec l'annotation du
+  second modèle d'IA : l'évaluation sur ce classement est donc en partie optimiste (mention
+  affichée avec les résultats).
+- **Section 7 du rapport** : phrase modèle « {{F920}} contributions citoyennes ont été
+  localisées dans l'unité ; les thèmes principaux sont… » ; la tournure « s'établissent à »
+  est refusée.

@@ -170,6 +170,12 @@ SECOND_MODEL_BASE = {
     "fr": "Évaluation indépendante par un second modèle d'IA ({n} contributions fictives, amazighe exclu) — en attente de validation par le professeur",
     "ar": "تقييم مستقل بواسطة نموذج ذكاء اصطناعي ثانٍ ({n} مساهمة افتراضية، باستثناء الأمازيغية) — في انتظار مصادقة الأستاذ",
 }
+# Rules decided after seeing the disagreements with the second model (2026-10-06): taxonomy
+# clarifications (water, sewers, crèches) and tonality by keywords first.
+SECOND_MODEL_NOTE = {
+    "fr": "Attention : la précision de la taxonomie (eau et égouts, crèches) et la règle de tonalité (mots-clés d'abord) ont été décidées après avoir vu les désaccords avec ce classement ; cette évaluation est donc en partie optimiste.",
+    "ar": "تنبيه: توضيحات التصنيف (الماء وقنوات التطهير، دور الحضانة) وقاعدة الطبيعة (الكلمات المفتاحية أولاً) تقررت بعد الاطلاع على أوجه الاختلاف مع هذا التصنيف؛ لذا فهذا التقييم متفائل جزئياً.",
+}
 TITLES = {
     "professor": {"fr": "Évaluation de référence", "ar": "التقييم المرجعي"},
     "second_model": {

@@ -309,3 +309,14 @@ def test_common_word_places_are_protected_from_translation_but_not_located() -> 
     assert restore_places("La route de [LIEU-1] est pleine de trous.", places) == (
         "La route de Nahda est pleine de trous."
     )
+
+
+def test_keywords_decide_the_tonality_before_the_model() -> None:
+    proposal = analyze(
+        "Je propose un jardin.", TAXONOMY, CONFIG, FakeProvider(answer(tonality="plainte"))
+    )
+    assert (proposal.tonality, proposal.tonality_method) == ("proposition", "keywords")
+    undecided = analyze(
+        "Le jardin est fermé.", TAXONOMY, CONFIG, FakeProvider(answer(tonality="plainte"))
+    )
+    assert (undecided.tonality, undecided.tonality_method) == ("plainte", "model")

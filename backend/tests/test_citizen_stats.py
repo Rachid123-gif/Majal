@@ -78,3 +78,26 @@ def test_the_banner_text_is_the_owners() -> None:
         "Contributions fictives — illustration du fonctionnement de l'outil. "
         "Elles ne reflètent pas l'opinion réelle des habitants."
     )
+
+
+def test_commune_scale_groups_units_and_judges_indicators_by_population() -> None:
+    contributions = rows([C("A", ["espaces_verts"], unit=27), C("B", ["espaces_verts"], unit=22)])
+    groups = {26: {"name_fr": "Salé", "name_ar": "سلا", "population": 300, "members": [27, 22]}}
+    summary = stats.summary(contributions, TAXONOMY, groups, group_of={27: 26, 22: 26})
+    assert summary["units"][0]["count"] == 2 and summary["units"][0]["members"] == [27, 22]
+    members = [
+        {
+            "name_fr": "Layayda",
+            "population": 200,
+            "values": {"ENV_VERT": {"status": "deficit_marked"}},
+        },
+        {"name_fr": "Tabriquet", "population": 100, "values": {"ENV_VERT": {"status": "ok"}}},
+    ]
+    result = stats.crossing(
+        contributions, TAXONOMY, {}, {"ENV_VERT": {"label": {"fr": "x"}}}, {}, members=members
+    )
+    row = next(r for r in result["rows"] if r["theme"] == "espaces_verts")
+    aggregate = row["indicators"][0]["aggregate"]
+    assert aggregate["population_share"] == round(200 / 300, 4)  # 67 % ≥ 50 %: unfavourable
+    assert row["indicators"][0]["value"] is None  # no aggregated value is invented
+    assert row["indicators"][0]["unfavourable"] is True

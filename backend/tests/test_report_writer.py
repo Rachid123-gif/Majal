@@ -243,3 +243,23 @@ def test_section_7_without_consultation_or_without_contribution() -> None:
     assert no_consultation.mode == "auto" and "Aucune consultation" in no_consultation.paragraphs[0]
     empty = write_section(None, citizen_sheet(0), CITIZENS_SECTION, TEMPLATE, "ar")
     assert empty.mode == "auto" and "لم يتم تحديد أي مساهمة" in empty.paragraphs[0]
+
+
+def test_section_7_refuses_the_avoided_phrasing() -> None:
+    s = citizen_sheet(11)
+    total = s.citizens["total_fact"]  # type: ignore[index]
+    bad = FakeProvider(
+        [{"paragraphs": [f"Les contributions s'établissent à {{{{{total}}}}}."]}] * 3
+    )
+    result = write_section(bad, s, CITIZENS_SECTION, TEMPLATE, "fr")
+    assert result.mode == "fallback"
+    assert any("tournure à éviter" in issue for issue in result.issues)
+    good_text = f"{{{{{total}}}}} contributions citoyennes ont été localisées dans l'unité."
+    good = write_section(
+        FakeProvider([{"paragraphs": [good_text]}]), s, CITIZENS_SECTION, TEMPLATE, "fr"
+    )
+    assert good.mode == "ai"
+    assert (
+        render(good.paragraphs[0], s, "fr")[0]
+        == "11 contributions citoyennes ont été localisées dans l'unité."
+    )

@@ -165,7 +165,7 @@ DEFINITION = re.compile(
 )
 
 
-MEANING_KINDS = ("trend", "missing", "absence", "adjacent", "subjective", "status")
+MEANING_KINDS = ("trend", "missing", "absence", "adjacent", "subjective", "status", "wording")
 
 
 @dataclass(frozen=True)

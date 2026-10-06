@@ -85,12 +85,17 @@ def classify_themes(text: str, taxonomy: Taxonomy, limit: int = 2) -> list[str]:
     return ranked[:limit] or ["autres"]
 
 
-def classify_tonality(text: str, config: AnalysisConfig) -> str:
+def keyword_tonality(text: str, config: AnalysisConfig) -> str | None:
+    """Tonality given by marker phrases (longest match wins), or None when none is found."""
     arabic = bool(re.search(f"[{AR}]", text))
-    best, best_length = "plainte", 0
+    best, best_length = None, 0
     for tonality, words in config.tonality_keywords.items():
         candidates = words.ar if arabic else words.fr + words.darija
         for word in _hits(candidates, text, arabic):
             if len(word) > best_length:
                 best, best_length = tonality, len(word)
     return best
+
+
+def classify_tonality(text: str, config: AnalysisConfig) -> str:
+    return keyword_tonality(text, config) or "plainte"

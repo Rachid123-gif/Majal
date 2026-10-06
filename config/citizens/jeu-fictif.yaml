@@ -6,7 +6,9 @@
 # Poids proposés par le porteur du projet le 2026-10-06 (en %, total 100).
 
 seed: 2026
-total: 140
+# 2026-10-06 : passage de 140 à 400 contributions ; les 140 existantes sont conservées.
+total: 400
+keep_existing: true
 
 theme_weights:
   mobilite: 14
@@ -34,7 +36,8 @@ languages: { fr: 0.35, ar: 0.25, darija_ar: 0.20, darija_latin: 0.15, amazigh_la
 tonalities: { demande: 0.40, plainte: 0.35, proposition: 0.15, satisfaction: 0.10 }
 place_cited_share: 0.85
 commune_declared_share: 0.50
-pii_traps: 22
+# Pièges des NOUVELLES lignes (les 22 des 140 premières sont conservés).
+pii_traps: 40
 
 # Échantillon de référence : les 30 contributions remises au professeur pour classement
 # (docs/evaluation/annotation-professeur.xlsx). Elles sont conservées telles quelles quand le

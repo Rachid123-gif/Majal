@@ -52,12 +52,16 @@ def filtered(
     language: str | None = None,
     tonality: str | None = None,
     secondary: bool = False,
+    group_of: dict[int, int] | None = None,
 ) -> list[Contribution]:
     out = []
     for c in contributions:
         if theme and theme not in themes_of(c, secondary):
             continue
-        if unit is not None and c.territory_id != unit:
+        located = c.territory_id
+        if group_of is not None and located is not None:
+            located = group_of.get(located, located)
+        if unit is not None and located != unit:
             continue
         if language and c.language != language:
             continue
@@ -77,7 +81,10 @@ def summary(
     taxonomy: Taxonomy,
     units: dict[int, dict[str, Any]],
     secondary: bool = False,
+    group_of: dict[int, int] | None = None,
 ) -> dict[str, Any]:
+    """`units` are the rows to describe (analysis units, or communes when `group_of` maps each
+    unit to its commune)."""
     rules = taxonomy.crossing
     total = len(contributions)
     theme_counts: Counter[str] = Counter(t for c in contributions for t in themes_of(c, secondary))
@@ -95,7 +102,8 @@ def summary(
     by_unit: dict[int, list[Contribution]] = {}
     for c in contributions:
         if c.territory_id is not None:
-            by_unit.setdefault(c.territory_id, []).append(c)
+            key = group_of.get(c.territory_id, c.territory_id) if group_of else c.territory_id
+            by_unit.setdefault(key, []).append(c)
     unit_rows = []
     for unit_id, info in units.items():
         items = by_unit.get(unit_id, [])
@@ -110,6 +118,7 @@ def summary(
                 "per_10k": round(len(items) / population * 10000, 2) if population else None,
                 "main_theme": top[0][0] if top and len(items) >= rules.min_contributions else None,
                 "describe_with_counts": len(items) < rules.percent_min_total,
+                "members": info.get("members", [unit_id]),
             }
         )
     unit_rows.sort(key=lambda row: -row["count"])
@@ -185,6 +194,7 @@ def crossing(
     indicators: dict[str, dict[str, Any]],
     statuses: dict[str, dict[str, str]],
     secondary: bool = False,
+    members: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """« Ce que disent les citoyens / ce que montrent les données » for ONE unit.
 
@@ -202,8 +212,11 @@ def crossing(
         count = counts.get(theme.code, 0)
         linked = []
         for code in theme.indicators:
-            entry = unit_values.get(code) or {}
             meta = indicators.get(code) or {}
+            if members and len(members) > 1:
+                linked.append(aggregate_indicator(code, meta, members, statuses, rules))
+                continue
+            entry = unit_values.get(code) or {}
             status = entry.get("status")
             linked.append(
                 {
@@ -214,9 +227,10 @@ def crossing(
                     "decimals": meta.get("decimals", 1),
                     "status": status,
                     "status_label": statuses.get(status) if status else None,
+                    "unfavourable": status in UNFAVOURABLE,
                 }
             )
-        unfavourable = any(item["status"] in UNFAVOURABLE for item in linked)
+        unfavourable = any(item["unfavourable"] for item in linked)
         if not theme.indicators:
             if count == 0:
                 continue
@@ -272,4 +286,37 @@ def crossing(
             "percent_min_total": rules.percent_min_total,
             "strong_share": rules.strong_share,
         },
+    }
+
+
+def aggregate_indicator(
+    code: str,
+    meta: dict[str, Any],
+    members: list[dict[str, Any]],
+    statuses: dict[str, dict[str, str]],
+    rules: Any,
+) -> dict[str, Any]:
+    """Commune scale: no aggregated value is computed. The indicator is unfavourable for the
+    commune if the units in « déficit marqué » or « à surveiller » gather at least
+    `aggregate_unfavourable_share` of its population."""
+    total_pop = sum(m.get("population") or 0 for m in members)
+    bad = [m for m in members if (m["values"].get(code) or {}).get("status") in UNFAVOURABLE]
+    bad_pop = sum(m.get("population") or 0 for m in bad)
+    pop_share = bad_pop / total_pop if total_pop else None
+    return {
+        "code": code,
+        "label": meta.get("label"),
+        "value": None,
+        "unit": meta.get("unit"),
+        "decimals": meta.get("decimals", 1),
+        "status": None,
+        "status_label": None,
+        "aggregate": {
+            "unfavourable_units": [
+                {"name_fr": m["name_fr"], "name_ar": m.get("name_ar")} for m in bad
+            ],
+            "units": len(members),
+            "population_share": round(pop_share, 4) if pop_share is not None else None,
+        },
+        "unfavourable": pop_share is not None and pop_share >= rules.aggregate_unfavourable_share,
     }

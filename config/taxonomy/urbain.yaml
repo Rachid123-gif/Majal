@@ -80,7 +80,8 @@ themes:
 
   - code: proprete
     label: { fr: "Propreté et déchets", ar: "النظافة والنفايات" }
-    description: "Collecte des ordures, bennes, dépôts sauvages, nettoyage des rues."
+    # Clarification de méthode (2026-10-06) : l'eau et les égouts n'en relèvent jamais.
+    description: "Collecte des ordures, bennes, dépôts sauvages, nettoyage des rues. L'eau potable, les coupures d'eau, les égouts et les bouches d'égout n'en relèvent jamais : voir « eau et assainissement »."
     keywords:
       fr: [ordure, déchet, poubelle, benne, propreté, saleté, sale, collecte, décharge]
       ar: [الأزبال, النفايات, القمامة, الحاوية, النظافة, الأوساخ, جمع النفايات]
@@ -93,10 +94,10 @@ themes:
 
   - code: eau_assainissement
     label: { fr: "Eau et assainissement", ar: "الماء والتطهير" }
-    description: "Eau potable, coupures, égouts, inondations de rue, odeurs."
+    description: "Eau potable, coupures d'eau, égouts, bouches d'égout (ouvertes, bouchées), raccordement au réseau, inondations de rue, odeurs d'égout. Toujours ce thème, jamais « propreté »."
     keywords:
-      fr: [eau potable, coupure d'eau, égout, assainissement, inondation, canalisation, fuite]
-      ar: [الماء الصالح للشرب, انقطاع الماء, الواد الحار, التطهير, الفيضان, القنوات, تسرب]
+      fr: [eau potable, coupure d'eau, coupures d'eau, égout, bouche d'égout, assainissement, inondation, canalisation, fuite, caniveau]
+      ar: [الماء الصالح للشرب, انقطاع الماء, الواد الحار, التطهير, الفيضان, القنوات, تسرب, البالوعات, بالوعة, الماء]
       darija: [lma, lwad l7ar, wad l7ar, tsrib, lfayadan]
     indicators: [EAU_RES, EAU_ASS]
 
@@ -124,10 +125,10 @@ themes:
 
   - code: education
     label: { fr: "Éducation", ar: "التعليم" }
-    description: "Écoles, collèges, lycées, classes surchargées, transport et sécurité des élèves."
+    description: "Écoles, collèges, lycées, crèches et préscolaire, classes surchargées, transport et sécurité des élèves."
     keywords:
-      fr: [école, collège, lycée, élève, classe, enseignant, scolaire, crèche, préscolaire]
-      ar: [المدرسة, الإعدادية, الثانوية, التلاميذ, القسم, الأساتذة, التعليم, روض الأطفال]
+      fr: [école, collège, lycée, élève, classe, enseignant, scolaire, crèche, préscolaire, garderie]
+      ar: [المدرسة, الإعدادية, الثانوية, التلاميذ, القسم, الأساتذة, التعليم, روض الأطفال, روض, الحضانة]
       darija: [lmadrasa, mdrasa, tlamd, 9raya]
     indicators: [EDU_ECOLES, EDU_PROX]
 
@@ -238,6 +239,11 @@ themes:
 crossing:
   min_contributions: 5
   percent_min_total: 20
+  # Échelle « commune » (Rabat, Salé = regroupement de leurs arrondissements) : aucune valeur
+  # agrégée n'est calculée ; un indicateur est jugé défavorable pour la commune si les
+  # arrondissements en « déficit marqué » ou « à surveiller » réunissent au moins cette part de
+  # sa population (TODO_REFERENT).
+  aggregate_unfavourable_share: 0.5
   # Part des contributions de l'unité consacrée au thème, au-dessus de laquelle la demande
   # est dite « forte » (TODO_REFERENT).
   strong_share: 0.15

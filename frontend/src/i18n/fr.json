@@ -220,7 +220,7 @@
     "precision": "Précision des thèmes",
     "recall": "Rappel des thèmes",
     "mainTheme": "Thème principal juste",
-    "tonality": "Tonalité juste",
+    "tonality": "Tonalité juste (mots-clés puis IA)",
     "language": "Langue juste",
     "model": "IA locale",
     "keywords": "Mots-clés (sans IA)",
@@ -244,6 +244,12 @@
     "data": "Ce que montrent les données",
     "verdict": "Constat",
     "askTo": "à demander à :",
-    "chooseUnit": "Choisissez une unité (filtre ou carte) pour afficher le croisement."
+    "chooseUnit": "Choisissez une unité (filtre ou carte) pour afficher le croisement.",
+    "tonalityMethod": "Tonalité : mots-clés en priorité ; l'IA locale seulement quand aucun mot-clé ne tranche. Thèmes : IA locale (second thème seulement s'il est explicitement évoqué).",
+    "scale": "Échelle",
+    "scaleUnit": "Arrondissement / commune",
+    "scaleCommune": "Commune (arrondissements regroupés)",
+    "members": "Regroupe {n} unités :",
+    "aggregate": "déficit marqué ou à surveiller dans {n} unités sur {total} ({pop} de la population)"
   }
 }

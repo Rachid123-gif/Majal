@@ -23,13 +23,13 @@ first_names:
     Anas, Anouar, Asmae, Ayoub, Aziz, Bouchra, Brahim, Chaimae, Driss, Fadma, Fatima, Fatiha,
     Ghita, Hajar, Hakim, Hamid, Hamza, Hanane, Hassan, Hicham, Hind, Houda, Ibrahim, Ilham,
     Ilyas, Imane, Ismail, Jamal, Jawad, Kamal, Karim, Karima, Khadija, Khalid, Laila, Leila,
-    Loubna, Mehdi, Meryem, Mohamed, Mohammed, Mostafa, Mounir, Mustapha, Nabil, Nadia, Naima,
+    Loubna, Mehdi, Mourad, Meryem, Mohamed, Mohammed, Mostafa, Mounir, Mustapha, Nabil, Nadia, Naima,
     Nawal, Omar, Oussama, Rachid, Rachida, Redouane, Saad, Said, Saïd, Salma, Samir, Samira,
     Sanaa, Siham, Soufiane, Souad, Tarik, Wafae, Yasmine, Yassine, Younes, Youssef, Youssra,
     Zakaria, Zineb, Zohra]
   arabic: [عبد الله, عبد القادر, أحمد, عائشة, أمينة, أنس, أيوب, بشرى, إبراهيم, إدريس, فاطمة,
     فتيحة, غيثة, هاجر, حميد, حمزة, حنان, هشام, هند, هدى, إلهام, إلياس, إيمان, إسماعيل, جمال,
-    جواد, كمال, كريمة, خديجة, خالد, ليلى, لبنى, مهدي, مريم, محمد, مصطفى, منير, نبيل, نادية,
+    جواد, كمال, كريمة, مراد, خديجة, خالد, ليلى, لبنى, مهدي, مريم, محمد, مصطفى, منير, نبيل, نادية,
     نعيمة, نوال, عمر, أسامة, رشيد, رشيدة, رضوان, سلمى, سمير, سميرة, سناء, سهام, سفيان, سعاد,
     طارق, ياسمين, ياسين, يونس, يوسف, يسرى, زكرياء, زينب, زهرة]
   # Prénoms qui sont aussi des mots courants : masqués seulement après une tournure de

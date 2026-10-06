@@ -28,6 +28,9 @@ class Section(StrictModel):
     # Meaning checks (trends, missing data…) concern indicators: off for the citizens section.
     meaning_checks: bool = True
     empty_text: FreeText | None = None  # when the unit has no contribution
+    # Section-specific model phrases, and phrasings refused (the section is then rewritten).
+    examples: dict[Literal["fr", "ar"], list[str]] = Field(default_factory=dict)
+    avoid: dict[Literal["fr", "ar"], list[str]] = Field(default_factory=dict)
     words: int = Field(default=100, ge=20, le=400)
     instruction: FreeText | None = None
     auto_text: FreeText | None = None

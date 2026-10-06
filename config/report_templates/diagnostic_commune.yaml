@@ -97,6 +97,14 @@ sections:
     instruction:
       fr: "Résume ce que disent les contributions citoyennes de l'unité à partir des seuls faits fournis : leur nombre et leurs thèmes principaux. Ne cite aucun autre thème, n'interprète pas, ne donne aucun pourcentage. Si les contributions sont trop peu nombreuses, dis qu'elles ne permettent pas de conclure."
       ar: "لخّص ما تقوله مساهمات المواطنين في الوحدة انطلاقاً من الوقائع المقدمة فقط: عددها ومواضيعها الرئيسية. لا تذكر أي موضوع آخر، ولا تؤوّل، ولا تعط أي نسبة مئوية. إذا كانت المساهمات قليلة، فاذكر أنها لا تسمح بالاستنتاج."
+    examples:
+      fr:
+        - "{{F920}} contributions citoyennes ont été localisées dans l'unité ; les thèmes principaux sont le logement et les loyers ({{F921}}) et les espaces verts ({{F922}})."
+      ar:
+        - "تم تحديد {{F920}} من مساهمات المواطنين في الوحدة؛ والمواضيع الرئيسية هي السكن والكراء ({{F921}}) والمساحات الخضراء ({{F922}})."
+    avoid:
+      fr: ["s'établissent à", "s'établit à"]
+      ar: []
     # Aucune consultation importée pour le territoire.
     auto_text:
       fr: "Aucune consultation citoyenne n'a encore été importée pour ce territoire."

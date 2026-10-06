@@ -1,6 +1,6 @@
 """Citizen listening (stage 4): dashboard, verbatims, unit summary, import of contributions."""
 
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 import yaml
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -43,6 +43,37 @@ def _units(session: Session, code: str, area: StudyArea) -> dict[int, dict[str, 
             select(Territory).where(Territory.study_area_id == area.id, Territory.is_analysis_unit)
         )
     }
+
+
+Scale = Literal["unit", "commune"]
+
+
+def _groups(
+    session: Session, area: StudyArea, units: dict[int, dict[str, Any]], scale: Scale
+) -> tuple[dict[int, dict[str, Any]], dict[int, int] | None]:
+    """Rows of the chosen scale, and the map unit → row. « commune »: arrondissements are
+    grouped under their commune (Rabat, Salé); other analysis units stay as they are."""
+    if scale == "unit":
+        return units, None
+    territories = {
+        t.id: t
+        for t in session.scalars(select(Territory).where(Territory.study_area_id == area.id))
+    }
+    group_of: dict[int, int] = {}
+    groups: dict[int, dict[str, Any]] = {}
+    for unit_id, info in units.items():
+        territory = territories[unit_id]
+        parent = territories.get(territory.parent_id) if territory.parent_id else None
+        gid = parent.id if territory.level == "arrondissement" and parent else unit_id
+        group_of[unit_id] = gid
+        target = parent if gid != unit_id and parent else territory
+        row = groups.setdefault(
+            gid,
+            {"name_fr": target.name_fr, "name_ar": target.name_ar, "population": 0, "members": []},
+        )
+        row["members"].append(unit_id)
+        row["population"] = (row["population"] or 0) + (info.get("population") or 0)
+    return groups, group_of
 
 
 def _contributions(
@@ -112,6 +143,7 @@ def _evaluation(
                 **result,
                 "kind": kind,
                 "title": evaluate.TITLES[kind],
+                "note": evaluate.SECOND_MODEL_NOTE if kind == "second_model" else None,
                 "base": {k: v.format(n=result["n"]) for k, v in bases.items()},
             }
     return out
@@ -126,13 +158,16 @@ def dashboard(
     unit: int | None = None,
     language: str | None = None,
     tonality: str | None = None,
+    scale: Scale = "unit",
 ) -> dict[str, Any]:
     with Session(get_engine()) as session:
         area = _area(session, code)
         taxonomy = pipeline.taxonomy_for(area)
         consultations, contributions = _contributions(session, area)
-        units = _units(session, code, area)
-        selected = stats.filtered(contributions, theme, unit, language, tonality, secondary)
+        units, group_of = _groups(session, area, _units(session, code, area), scale)
+        selected = stats.filtered(
+            contributions, theme, unit, language, tonality, secondary, group_of
+        )
         fictitious = any(c.badge == "fictitious" for c in consultations)
         return {
             "territory": code,
@@ -157,7 +192,8 @@ def dashboard(
             "fictitious": fictitious,
             "banner": stats.FICTITIOUS_BANNER if fictitious else None,
             "filters": {"theme": theme, "unit": unit, "language": language, "tonality": tonality},
-            "summary": stats.summary(selected, taxonomy, units, secondary),
+            "scale": scale,
+            "summary": stats.summary(selected, taxonomy, units, secondary, group_of),
             "evaluation": _evaluation(code, contributions, units),
         }
 
@@ -266,8 +302,10 @@ def unit_crossing(
     unit_id: int,
     account: Annotated[Account, Depends(require_account)],
     secondary: bool = False,
+    scale: Scale = "unit",
 ) -> dict[str, Any]:
-    """Citizens / data crossing for one unit (main theme only unless `secondary`)."""
+    """Citizens / data crossing for one unit, or one commune (`scale=commune`, `unit_id` = the
+    commune), main theme only unless `secondary`."""
     with Session(get_engine()) as session:
         area = _area(session, code)
         taxonomy = pipeline.taxonomy_for(area)
@@ -276,20 +314,38 @@ def unit_crossing(
             diagnostic = latest_diagnostic(session, code).result
         except MissingInput as exc:
             raise HTTPException(status_code=409, detail=exc.reason) from None
-        unit = next((u for u in diagnostic["units"] if u["id"] == unit_id), None)
-        if unit is None:
+        units, group_of = _groups(session, area, _units(session, code, area), scale)
+        row = units.get(unit_id)
+        if row is None:
             raise HTTPException(status_code=404, detail="Unité inconnue pour ce territoire.")
+        member_ids = row.get("members", [unit_id])
+        by_id = {u["id"]: u for u in diagnostic["units"]}
+        members = [
+            {
+                "name_fr": by_id[m]["name_fr"],
+                "name_ar": by_id[m].get("name_ar"),
+                "population": (by_id[m]["values"].get("DEM_POP") or {}).get("value"),
+                "values": by_id[m]["values"],
+            }
+            for m in member_ids
+            if m in by_id
+        ]
+        if not members:
+            raise HTTPException(status_code=404, detail="Unité sans diagnostic.")
         result = stats.crossing(
-            stats.filtered(contributions, unit=unit_id),
+            stats.filtered(contributions, unit=unit_id, group_of=group_of),
             taxonomy,
-            unit["values"],
+            members[0]["values"],
             {i["code"]: i for i in diagnostic["indicators"]},
             diagnostic["evaluation"]["statuses"],
             secondary,
+            members,
         )
         fictitious = any(c.badge == "fictitious" for c in consultations)
         return {
-            "unit": {"id": unit_id, "name_fr": unit["name_fr"], "name_ar": unit.get("name_ar")},
+            "unit": {"id": unit_id, "name_fr": row["name_fr"], "name_ar": row.get("name_ar")},
+            "scale": scale,
+            "members": [m["name_fr"] for m in members],
             "fictitious": fictitious,
             "banner": stats.FICTITIOUS_BANNER if fictitious else None,
             "evaluation_label": diagnostic["evaluation"]["label"],

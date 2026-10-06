@@ -167,6 +167,8 @@ def markdown(
             ]
             continue
         lines += [f"Base : {base.format(n=result['n'])}.", ""]
+        if result is reference and second:
+            lines += [f"> {evaluate.SECOND_MODEL_NOTE['fr']}", ""]
         lines += ["| Mesure | IA locale | Mots-clés (sans IA) |", "| --- | --- | --- |"]
         for name, key in (
             ("Thèmes — précision", "precision"),
@@ -183,7 +185,7 @@ def markdown(
                 f"| Thème principal parmi les thèmes annotés | {_pct(main['accuracy'])} | — |"
             )
         lines.append(
-            f"| Tonalité — exactitude | {_pct(result['tonality']['model']['accuracy'])} "
+            f"| Tonalité — exactitude (mots-clés puis IA) | {_pct(result['tonality']['model']['accuracy'])} "
             f"| {_pct(result['tonality']['keywords']['accuracy'])} |"
         )
         if "language" in result:
@@ -200,7 +202,12 @@ def markdown(
                 "que s'il est connu (quartiers, places, avenues d'OpenStreetMap) ou si la commune "
                 "est déclarée ; sinon « lieu non identifié ».",
             ]
-        lines += ["", f"Contributions analysées par l'IA : {result['n_ai']} sur {result['n']}.", ""]
+        lines += [
+            "",
+            f"Contributions analysées par l'IA : {result['n_ai']} sur {result['n']}. "
+            "Tonalité : mots-clés en priorité, IA locale seulement quand aucun mot-clé ne tranche.",
+            "",
+        ]
     return "\n".join(lines) + "\n"
 
 

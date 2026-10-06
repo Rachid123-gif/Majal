@@ -60,15 +60,20 @@ def pick(rng: random.Random, weights: dict[str, float], exclude: set[str] | None
 
 def main() -> None:
     config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
-    rng = random.Random(config["seed"])
-    frozen_ids = set(config["reference_sample"])
+    rng = random.Random(config["seed"] + config["total"])  # a new draw for each size
     previous = {row["id"]: row for row in csv.DictReader(PLAN.open(encoding="utf-8"))}
+    reference = set(config["reference_sample"])
+    # keep_existing: every line already written is kept (its text exists); otherwise only the
+    # reference sample is kept and the rest is drawn again.
+    frozen_ids = set(previous) if config.get("keep_existing") else reference
     frozen = [previous[i] for i in sorted(frozen_ids)]
 
     # Units: the same allocation as before, minus the lines kept from the reference sample.
     needed = Counter(allocate(config["total"]))
     needed.subtract(Counter(row["unit"] for row in frozen))
-    free_ids = sorted(set(previous) - frozen_ids)
+    needed = Counter({unit: max(0, n) for unit, n in needed.items()})
+    all_ids = [f"RBT-{n:03d}" for n in range(1, config["total"] + 1)]
+    free_ids = [i for i in all_ids if i not in frozen_ids][: sum(needed.values())]
     rows = []
     for unit in UNITS:
         for _ in range(needed[unit]):
@@ -94,7 +99,7 @@ def main() -> None:
     for row, new_id in zip(rows, free_ids, strict=True):
         row["id"] = new_id
     for row in frozen:
-        row["reference_sample"] = True
+        row["reference_sample"] = row["id"] in reference
     out = sorted(rows + frozen, key=lambda r: r["id"])
     fields = ["id", "unit", "themes", "language", "tonality", "place_cited",
               "commune_declared", "pii_trap", "reference_sample"]
@@ -102,7 +107,7 @@ def main() -> None:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         writer.writerows({k: r[k] for k in fields} for r in out)
-    print(f"{len(out)} lignes ({len(frozen)} de l'échantillon de référence conservées)")
+    print(f"{len(out)} lignes ({len(frozen)} conservées, {len(rows)} nouvelles)")
 
 
 if __name__ == "__main__":

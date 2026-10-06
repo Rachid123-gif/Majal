@@ -55,7 +55,7 @@ def forbidden_hits(text: str) -> list[str]:
 def test_the_set_is_complete_and_matches_the_random_plan() -> None:
     assert SET["consultation"]["badge"] == "fictitious"
     ids = [c["id"] for c in CONTRIBUTIONS]
-    assert len(ids) == len(set(ids)) == len(PLAN) == 140
+    assert len(ids) == len(set(ids)) == len(PLAN) == 400
     for c in CONTRIBUTIONS:
         plan = PLAN[c["id"]]
         assert c["unit"] == plan["unit"], c["id"]
@@ -100,7 +100,7 @@ def test_traps_are_in_the_text_and_visibly_fictitious() -> None:
                 assert item["value"].startswith("ZZ"), c["id"]
             if item["type"] == "email":
                 assert item["value"].endswith("@example.com"), c["id"]
-    assert sum(len(c["pii"]) for c in CONTRIBUTIONS) >= 30
+    assert sum(len(c["pii"]) for c in CONTRIBUTIONS) >= 80
 
 
 @pytest.mark.parametrize("contribution", CONTRIBUTIONS, ids=lambda c: c["id"])
@@ -172,6 +172,7 @@ ALLOWED_CAPITALISED = {
     "Al",
     "Bab",
     "Hadchi",
+    "CIN",
     "Rabat",
     "Salé",
 }
@@ -194,3 +195,19 @@ def test_no_unknown_proper_name_in_latin_script() -> None:
             if word not in known and word.split("'")[-1] not in known:
                 unknown[f"{c['id']}:{word}"] += 1
     assert not unknown, sorted(unknown)
+
+
+def test_the_annotated_sheet_still_matches_the_set() -> None:
+    """The texts given for annotation (docs/evaluation/annotation-professeur.xlsx) are never
+    rewritten: the annotation stays valid when the set grows."""
+    from openpyxl import load_workbook
+
+    sheet = load_workbook(
+        REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx", read_only=True
+    )["À classer"]
+    by_id = {c["id"]: c for c in CONTRIBUTIONS}
+    rows = [r for r in sheet.iter_rows(min_row=2, values_only=True) if r[1]]
+    assert len(rows) == 30
+    for row in rows:
+        assert by_id[row[1]]["text"] == row[3], row[1]
+        assert by_id[row[1]].get("reference_sample") is True, row[1]

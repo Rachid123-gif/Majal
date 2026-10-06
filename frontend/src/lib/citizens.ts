@@ -10,6 +10,7 @@ export type UnitRow = {
   per_10k: number | null;
   main_theme: string | null;
   describe_with_counts: boolean;
+  members: number[];
 };
 export type Summary = {
   total: number;
@@ -29,6 +30,7 @@ export type EvaluationResult = {
   /** « professor »: reference evaluation; « second_model »: AI annotator, awaiting review. */
   kind?: "professor" | "second_model";
   title?: Localized;
+  note?: Localized | null;
   n: number;
   n_ai: number;
   base: Localized;
@@ -85,6 +87,12 @@ export type CrossingIndicator = {
   decimals: number;
   status: string | null;
   status_label: Localized | null;
+  unfavourable?: boolean;
+  aggregate?: {
+    unfavourable_units: { name_fr: string; name_ar: string | null }[];
+    units: number;
+    population_share: number | null;
+  };
 };
 export type CrossingRow = {
   theme: string;
@@ -96,8 +104,11 @@ export type CrossingRow = {
   verdict_label: Localized | null;
   data_request: { data: Localized; holder: Localized } | null;
 };
+export type Scale = "unit" | "commune";
 export type Crossing = {
   unit: { id: number; name_fr: string; name_ar: string | null };
+  scale: Scale;
+  members: string[];
   fictitious: boolean;
   banner: Localized | null;
   evaluation_label: Localized;
@@ -108,6 +119,7 @@ export type Crossing = {
   rules: { min_contributions: number; percent_min_total: number; strong_share: number };
 };
 export type Filters = {
+  scale?: Scale;
   theme?: string;
   unit?: number;
   language?: string;
@@ -137,6 +149,7 @@ function query(filters: Filters): string {
   if (filters.language) params.set("language", filters.language);
   if (filters.tonality) params.set("tonality", filters.tonality);
   if (filters.secondary) params.set("secondary", "true");
+  if (filters.scale && filters.scale !== "unit") params.set("scale", filters.scale);
   const text = params.toString();
   return text ? `?${text}` : "";
 }
@@ -145,14 +158,17 @@ export const fetchCitizens = (code: string, filters: Filters = {}) =>
   call<Dashboard>(`/api/territories/${code}/citizens${query(filters)}`);
 export const fetchVerbatims = (code: string, filters: Filters = {}) =>
   call<Record<string, Verbatim[]>>(
-    `/api/territories/${code}/citizens/verbatims${query({ ...filters, secondary: false })}`,
+    `/api/territories/${code}/citizens/verbatims${query({ ...filters, secondary: false, scale: undefined, unit: filters.scale === "commune" ? undefined : filters.unit })}`,
   );
 export const fetchUnitCitizens = (code: string, unitId: number) =>
   call<UnitCitizens>(`/api/territories/${code}/units/${unitId}/citizens`);
-export const fetchCrossing = (code: string, unitId: number, secondary = false) =>
-  call<Crossing>(
-    `/api/territories/${code}/units/${unitId}/crossing${secondary ? "?secondary=true" : ""}`,
-  );
+export const fetchCrossing = (
+  code: string,
+  unitId: number,
+  secondary = false,
+  scale: Scale = "unit",
+) =>
+  call<Crossing>(`/api/territories/${code}/units/${unitId}/crossing${query({ secondary, scale })}`);
 export const importContributions = (code: string, file: File) =>
   file
     .arrayBuffer()

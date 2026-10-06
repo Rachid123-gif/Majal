@@ -17,6 +17,7 @@ from app.services.citizens.fallback import (
     classify_themes,
     classify_tonality,
     detect_language,
+    keyword_tonality,
 )
 from app.services.llm.base import LLMError, LLMProvider
 
@@ -87,6 +88,7 @@ class Analysis:
     place_fr: str | None
     names: list[str] = field(default_factory=list)
     mode: str = "ai"  # ai | keywords
+    tonality_method: str = "keywords"  # keywords (priority) | model (no keyword decides)
     model: str | None = None
     duration_s: float = 0.0
     error: str | None = None
@@ -169,7 +171,11 @@ def analyze(
     language = data.get("language") if data.get("language") in config.languages else None
     if baseline["language"] in TRUST_MARKERS or language in (None, "other"):
         language = baseline["language"]
-    tonality = data.get("tonality") if data.get("tonality") in taxonomy.tonalities else None
+    # Rule of the owner: marker phrases decide the tonality; the model only when none decides.
+    keyword_tone = keyword_tonality(text, config)
+    model_tone = data.get("tonality") if data.get("tonality") in taxonomy.tonalities else None
+    tonality = keyword_tone or model_tone
+    tonality_method = "keywords" if keyword_tone else "model"
     translation = data.get("translation_fr")
     return Analysis(
         language=language or baseline["language"],
@@ -178,6 +184,7 @@ def analyze(
         else None,
         themes=themes,
         tonality=tonality or baseline["tonality"],
+        tonality_method=tonality_method if tonality else "keywords",
         place=data.get("place") if isinstance(data.get("place"), str) else None,
         place_fr=data.get("place_fr") if isinstance(data.get("place_fr"), str) else None,
         names=[n for n in data.get("remaining_names") or [] if isinstance(n, str)],

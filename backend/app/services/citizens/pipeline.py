@@ -219,6 +219,7 @@ def process_contribution(
         "duration_s": result.duration_s,
         "error": result.error,
         "location_method": location.method,
+        "tonality_method": result.tonality_method,
         "model_place": result.place,
         "keywords": result.keywords,
         "translation": "automatic" if result.language != "fr" else "original",

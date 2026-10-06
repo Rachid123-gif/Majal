@@ -244,7 +244,9 @@ def write_section(
     if provider is None:
         return fallback_section(sheet, section, lang, title, typology, error="IA désactivée")
 
-    examples = "\n".join(f"- {e}" for e in template.examples.get(lang, []))
+    examples = "\n".join(
+        f"- {e}" for e in section.examples.get(lang, []) + template.examples.get(lang, [])
+    )
     system = SYSTEM[lang].format(style=template.style.model_dump()[lang], examples=examples)
     prompt = build_prompt(sheet, section, template, lang, typology)
     started = time.perf_counter()
@@ -272,6 +274,12 @@ def write_section(
             continue
         paragraphs = [normalize_refs(p) for p in paragraphs]
         issues = check_paragraphs(paragraphs, sheet, lang, meaning=section.meaning_checks)
+        issues += [
+            Issue("wording", f"tournure à éviter : « {phrase} »")
+            for phrase in section.avoid.get(lang, [])
+            for p in paragraphs
+            if phrase.casefold() in p.casefold()
+        ]
         if not issues:
             return SectionResult(
                 section.code,

@@ -59,19 +59,28 @@ Les textes ont été rédigés un par un pour chaque ligne du plan. Les écarts 
 croisement relèvent donc du hasard : **ils ne disent rien des habitants réels**. Ils montrent
 seulement comment l'outil présenterait de vraies contributions.
 
-## Résultat du tirage (140 contributions)
+## Passage à 400 contributions (2026-10-06)
 
-- Langues : français 51, arabe 37, darija en alphabet arabe 25, darija en alphabet latin 18,
-  amazighe 9 (marqués « transcription approximative, à relire par un locuteur »).
-- Tonalité : plaintes 61, demandes 44, propositions 21, satisfactions 14.
-- Thèmes (premier et second) : espaces verts 25, voirie 21, mobilité 17, circulation 13,
-  logement 12, emploi et jeunesse 12, propreté 10, éducation 10, santé 8, eau et
-  assainissement 8, puis moins de 5 pour les autres. 21 contributions ont deux thèmes.
-- 114 contributions citent un lieu ; 71 indiquent une commune ; 16 n'ont ni l'un ni l'autre
-  (elles resteront « lieu non identifié »).
-- 22 contributions contiennent des données personnelles **visiblement fictives** pour tester
-  l'anonymisation : téléphones 06 00 00 0x xx, cartes d'identité ZZ0000xx, adresses e-mail
-  @example.com, adresses « n° 00 », prénoms seuls.
+Avec 140 contributions réparties sur 24 unités, aucune unité n'atteignait le seuil de 5
+contributions par thème : le croisement ne pouvait rien conclure. Le jeu a été porté à
+**400 contributions** avec la même méthode neutre (même script, `total: 400`,
+`keep_existing: true`) : les **140 textes existants sont conservés tels quels** (dont les
+30 contributions du fichier d'annotation) et **260 lignes nouvelles** ont été tirées puis
+rédigées, avec les mêmes règles (termes interdits, pièges, lieux réels comme simples repères).
+
+## Résultat du tirage (400 contributions)
+
+- Langues : français 150, arabe 95, darija en alphabet arabe 79, darija en alphabet latin 52,
+  amazighe 24 (marqués « transcription approximative, à relire par un locuteur »).
+- Tonalité : plaintes 166, demandes 138, propositions 62, satisfactions 34.
+- Thème principal : espaces verts 48, voirie 47, mobilité 45, propreté 39, logement 37,
+  emploi et jeunesse 29, circulation 28, santé 21, éducation 21, eau et assainissement 20,
+  sécurité 15, éclairage 12, puis moins de 10 pour les autres. 74 contributions ont un second
+  thème. Les 140 premières (tirées en partie à poids égaux) pèsent sur ces chiffres.
+- 333 contributions citent un lieu ; 203 indiquent une commune ; 33 n'ont ni l'un ni l'autre.
+- 62 contributions contiennent des données personnelles **visiblement fictives** pour tester
+  l'anonymisation : téléphones 06 00 00 0x xx, cartes d'identité ZZ000xxx, adresses e-mail
+  @example.com, adresses « n° 00 », plaque 00000-ب-99, prénoms seuls.
 
 ## Règles de rédaction (vérifiées automatiquement quand c'est possible)
 

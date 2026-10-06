@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CitizenBanner } from "@/components/app/CitizenBanner";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { fetchCrossing, percent, type Crossing } from "@/lib/citizens";
+import { fetchCrossing, percent, type Crossing, type Scale } from "@/lib/citizens";
 import { formatNumber } from "@/lib/format";
 
 const VERDICT_TONE: Record<string, string> = {
@@ -17,25 +17,40 @@ const VERDICT_TONE: Record<string, string> = {
 };
 
 /** « Ce que disent les citoyens / ce que montrent les données » for one unit. */
-export function CitizenCrossing({ code, unitId }: { code: string; unitId: number }) {
+export function CitizenCrossing({
+  code,
+  unitId,
+  scale = "unit",
+}: {
+  code: string;
+  unitId: number;
+  scale?: Scale;
+}) {
   const { locale, t } = useLocale();
   const [secondary, setSecondary] = useState(false);
   const [data, setData] = useState<Crossing | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetchCrossing(code, unitId, secondary)
+    fetchCrossing(code, unitId, secondary, scale)
       .then((d) => !cancelled && setData(d))
       .catch(() => undefined);
     return () => {
       cancelled = true;
     };
-  }, [code, unitId, secondary]);
+  }, [code, unitId, secondary, scale]);
 
   if (!data) return null;
   return (
     <div>
-      <h3 className="font-heading text-petrol text-2xl">{t("citizens.crossing")}</h3>
+      <h3 className="font-heading text-petrol text-2xl">
+        {t("citizens.crossing")} — {(locale === "ar" && data.unit.name_ar) || data.unit.name_fr}
+      </h3>
+      {data.members.length > 1 && (
+        <p className="text-slate text-xs">
+          {t("citizens.members", { n: String(data.members.length) })} {data.members.join(", ")}
+        </p>
+      )}
       <p className="text-slate mt-1 text-xs">
         {t("citizens.crossingRules", {
           min: String(data.rules.min_contributions),
@@ -83,12 +98,24 @@ export function CitizenCrossing({ code, unitId }: { code: string; unitId: number
                       {row.indicators.map((ind) => (
                         <li key={ind.code} className="text-slate">
                           {ind.label?.[locale] ?? ind.code} :{" "}
-                          <span className="text-petrol tabular-nums">
-                            {ind.value === null
-                              ? t("badge.not_available")
-                              : `${formatNumber(ind.value, locale, ind.decimals)} ${ind.unit?.[locale] ?? ""}`}
-                          </span>
-                          {ind.status_label && <> — {ind.status_label[locale]}</>}
+                          {ind.aggregate ? (
+                            <span className="text-petrol">
+                              {t("citizens.aggregate", {
+                                n: String(ind.aggregate.unfavourable_units.length),
+                                total: String(ind.aggregate.units),
+                                pop: percent(ind.aggregate.population_share) ?? "—",
+                              })}
+                            </span>
+                          ) : (
+                            <>
+                              <span className="text-petrol tabular-nums">
+                                {ind.value === null
+                                  ? t("badge.not_available")
+                                  : `${formatNumber(ind.value, locale, ind.decimals)} ${ind.unit?.[locale] ?? ""}`}
+                              </span>
+                              {ind.status_label && <> — {ind.status_label[locale]}</>}
+                            </>
+                          )}
                         </li>
                       ))}
                     </ul>

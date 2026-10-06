@@ -139,3 +139,263 @@ RBT-137,Touarga,bruit,ar,satisfaction,True,True,True,False
 RBT-138,Touarga,eclairage,fr,demande,True,False,False,False
 RBT-139,Oumazza,proprete|circulation,fr,satisfaction,False,True,False,False
 RBT-140,Oumazza,accessibilite_pmr,darija_latin,proposition,True,True,False,False
+RBT-141,Témara,voirie,ar,plainte,True,True,True,False
+RBT-142,Témara,logement,ar,demande,True,True,False,False
+RBT-143,Témara,eclairage|commerce_marches,darija_ar,proposition,True,True,False,False
+RBT-144,Témara,voirie,darija_ar,proposition,True,False,False,False
+RBT-145,Témara,mobilite,ar,demande,True,True,False,False
+RBT-146,Témara,emploi_jeunesse,darija_latin,demande,True,True,False,False
+RBT-147,Témara,proprete,darija_ar,satisfaction,True,False,False,False
+RBT-148,Témara,securite,ar,demande,True,True,False,False
+RBT-149,Témara,logement,fr,plainte,False,True,False,False
+RBT-150,Témara,circulation,darija_ar,demande,True,False,False,False
+RBT-151,Témara,espaces_verts,fr,plainte,True,True,False,False
+RBT-152,Témara,emploi_jeunesse,fr,plainte,True,True,False,False
+RBT-153,Témara,mobilite,fr,plainte,False,True,False,False
+RBT-154,Témara,espaces_verts|sante,darija_latin,plainte,True,False,False,False
+RBT-155,Témara,espaces_verts,fr,plainte,True,True,False,False
+RBT-156,Témara,voirie,fr,plainte,True,True,False,False
+RBT-157,Témara,logement,darija_ar,demande,True,True,True,False
+RBT-158,Témara,espaces_verts,darija_latin,plainte,False,True,False,False
+RBT-159,Témara,administration,darija_latin,plainte,False,False,False,False
+RBT-160,Témara,voirie,darija_ar,demande,True,True,False,False
+RBT-161,Témara,eclairage|proprete,darija_ar,demande,False,False,False,False
+RBT-162,Témara,emploi_jeunesse|circulation,fr,plainte,True,False,False,False
+RBT-163,Témara,bruit,fr,plainte,True,False,False,False
+RBT-164,Témara,patrimoine,darija_latin,plainte,False,False,False,False
+RBT-165,Témara,espaces_verts,darija_ar,demande,False,False,False,False
+RBT-166,Témara,bruit|eau_assainissement,ar,proposition,True,True,False,False
+RBT-167,Témara,proprete,ar,proposition,True,True,True,False
+RBT-168,Témara,emploi_jeunesse,fr,plainte,False,True,False,False
+RBT-169,Témara,logement,amazigh_latin,plainte,False,False,False,False
+RBT-170,Témara,emploi_jeunesse,fr,plainte,True,True,False,False
+RBT-171,Témara,logement,ar,plainte,False,True,False,False
+RBT-172,Témara,proprete,darija_latin,plainte,True,True,False,False
+RBT-173,Témara,culture_sport,fr,plainte,True,True,False,False
+RBT-174,Tabriquet,espaces_verts,darija_latin,demande,True,True,False,False
+RBT-175,Tabriquet,mobilite,ar,plainte,False,True,True,False
+RBT-176,Tabriquet,proprete,fr,demande,True,False,False,False
+RBT-177,Tabriquet,logement,darija_latin,plainte,True,False,False,False
+RBT-178,Tabriquet,mobilite,fr,demande,False,True,False,False
+RBT-179,Tabriquet,logement,fr,plainte,False,True,True,False
+RBT-180,Tabriquet,mobilite|emploi_jeunesse,ar,satisfaction,True,True,False,False
+RBT-181,Tabriquet,espaces_verts|mobilite,fr,demande,True,False,False,False
+RBT-182,Tabriquet,logement|mobilite,ar,demande,True,False,False,False
+RBT-183,Tabriquet,logement,darija_latin,demande,True,False,False,False
+RBT-184,Tabriquet,mobilite|securite,darija_ar,demande,True,False,False,False
+RBT-185,Tabriquet,proprete,ar,plainte,False,True,False,False
+RBT-186,Tabriquet,circulation,darija_latin,plainte,True,True,False,False
+RBT-187,Tabriquet,mobilite|logement,ar,demande,True,True,False,False
+RBT-188,Tabriquet,circulation,darija_ar,proposition,True,False,False,False
+RBT-189,Tabriquet,eau_assainissement|sante,fr,demande,True,True,False,False
+RBT-190,Tabriquet,eau_assainissement,fr,satisfaction,True,False,False,False
+RBT-191,Tabriquet,mobilite,ar,satisfaction,True,False,False,False
+RBT-192,Tabriquet,proprete,darija_latin,satisfaction,True,False,True,False
+RBT-193,Tabriquet,logement,fr,plainte,True,True,False,False
+RBT-194,Tabriquet,emploi_jeunesse,fr,proposition,True,False,False,False
+RBT-195,Tabriquet,circulation,darija_latin,plainte,True,True,False,False
+RBT-196,Tabriquet,eau_assainissement,fr,proposition,True,True,False,False
+RBT-197,Tabriquet,proprete,darija_latin,demande,True,False,True,False
+RBT-198,Tabriquet,accessibilite_pmr|culture_sport,darija_ar,plainte,True,True,False,False
+RBT-199,Tabriquet,education|logement,amazigh_latin,plainte,True,False,False,False
+RBT-200,Hssaine,sante,fr,demande,True,False,False,False
+RBT-201,Hssaine,espaces_verts,fr,proposition,True,True,True,False
+RBT-202,Hssaine,espaces_verts,fr,demande,True,True,False,False
+RBT-203,Hssaine,proprete,fr,plainte,True,True,False,False
+RBT-204,Hssaine,securite,darija_ar,satisfaction,False,False,False,False
+RBT-205,Hssaine,emploi_jeunesse,amazigh_latin,plainte,True,True,False,False
+RBT-206,Hssaine,espaces_verts|education,fr,demande,True,False,True,False
+RBT-207,Hssaine,emploi_jeunesse|eau_assainissement,ar,plainte,True,True,False,False
+RBT-208,Hssaine,mobilite,ar,demande,True,True,False,False
+RBT-209,Hssaine,circulation,darija_ar,demande,False,True,False,False
+RBT-210,Hssaine,education,amazigh_latin,plainte,True,True,False,False
+RBT-211,Hssaine,bruit|commerce_marches,darija_ar,plainte,True,False,False,False
+RBT-212,Hssaine,education,amazigh_latin,demande,True,False,False,False
+RBT-213,Hssaine,education,fr,plainte,True,False,False,False
+RBT-214,Hssaine,sante,fr,plainte,True,True,False,False
+RBT-215,Hssaine,eau_assainissement,darija_ar,plainte,True,False,True,False
+RBT-216,Hssaine,proprete,darija_ar,plainte,True,False,True,False
+RBT-217,Hssaine,securite,fr,plainte,True,False,False,False
+RBT-218,Hssaine,sante,darija_ar,plainte,True,True,False,False
+RBT-219,Hssaine,administration,ar,satisfaction,True,False,True,False
+RBT-220,Hssaine,mobilite,darija_ar,proposition,True,False,False,False
+RBT-221,Hssaine,mobilite,fr,satisfaction,True,False,False,False
+RBT-222,Hssaine,espaces_verts|logement,ar,plainte,True,False,False,False
+RBT-223,Hssaine,sante,fr,plainte,True,False,False,False
+RBT-224,Hssaine,logement|emploi_jeunesse,fr,plainte,True,True,False,False
+RBT-225,Hssaine,proprete,darija_ar,demande,True,True,False,False
+RBT-226,Layayda,logement,fr,demande,True,False,False,False
+RBT-227,Layayda,patrimoine,fr,demande,True,True,True,False
+RBT-228,Layayda,mobilite,darija_latin,plainte,True,False,False,False
+RBT-229,Layayda,commerce_marches,fr,plainte,True,False,False,False
+RBT-230,Layayda,espaces_verts,ar,plainte,False,False,True,False
+RBT-231,Layayda,sante,ar,demande,True,True,False,False
+RBT-232,Layayda,mobilite,darija_ar,proposition,True,False,False,False
+RBT-233,Layayda,espaces_verts,fr,proposition,True,True,False,False
+RBT-234,Layayda,education,amazigh_latin,plainte,True,False,False,False
+RBT-235,Layayda,logement,darija_ar,proposition,True,False,False,False
+RBT-236,Layayda,mobilite|voirie,fr,demande,True,False,False,False
+RBT-237,Layayda,voirie|circulation,fr,plainte,True,False,False,False
+RBT-238,Layayda,eclairage|eau_assainissement,fr,satisfaction,True,False,False,False
+RBT-239,Layayda,voirie,fr,plainte,True,True,False,False
+RBT-240,Layayda,circulation|espaces_verts,ar,demande,False,True,False,False
+RBT-241,Layayda,proprete,fr,plainte,True,False,False,False
+RBT-242,Layayda,education,ar,demande,True,True,False,False
+RBT-243,Layayda,circulation,fr,demande,True,False,True,False
+RBT-244,Layayda,education,fr,demande,True,False,True,False
+RBT-245,Layayda,logement|circulation,ar,plainte,True,True,False,False
+RBT-246,Layayda,voirie,fr,demande,True,True,False,False
+RBT-247,Layayda,logement,fr,plainte,True,False,False,False
+RBT-248,Layayda,logement,darija_latin,demande,True,True,True,False
+RBT-249,Layayda,voirie,ar,proposition,True,True,False,False
+RBT-250,Layayda,logement,fr,plainte,True,False,False,False
+RBT-251,Yacoub El Mansour,circulation,darija_latin,plainte,True,True,False,False
+RBT-252,Yacoub El Mansour,mobilite,ar,plainte,True,True,False,False
+RBT-253,Yacoub El Mansour,espaces_verts|commerce_marches,fr,demande,True,False,False,False
+RBT-254,Yacoub El Mansour,proprete,darija_ar,demande,True,True,False,False
+RBT-255,Yacoub El Mansour,voirie|espaces_verts,ar,demande,False,True,False,False
+RBT-256,Yacoub El Mansour,commerce_marches,darija_ar,proposition,True,True,False,False
+RBT-257,Yacoub El Mansour,eau_assainissement,fr,plainte,True,False,False,False
+RBT-258,Yacoub El Mansour,voirie,fr,plainte,True,True,False,False
+RBT-259,Yacoub El Mansour,emploi_jeunesse,ar,plainte,True,True,False,False
+RBT-260,Yacoub El Mansour,securite,fr,demande,True,True,False,False
+RBT-261,Yacoub El Mansour,espaces_verts,fr,plainte,True,False,False,False
+RBT-262,Yacoub El Mansour,logement,ar,demande,True,True,False,False
+RBT-263,Yacoub El Mansour,espaces_verts,ar,demande,True,False,False,False
+RBT-264,Yacoub El Mansour,sante,darija_latin,satisfaction,True,False,False,False
+RBT-265,Yacoub El Mansour,mobilite,amazigh_latin,demande,True,False,True,False
+RBT-266,Yacoub El Mansour,proprete|circulation,ar,demande,False,True,False,False
+RBT-267,Yacoub El Mansour,logement,darija_ar,satisfaction,True,False,False,False
+RBT-268,Yacoub El Mansour,espaces_verts,darija_ar,plainte,False,False,True,False
+RBT-269,Yacoub El Mansour,proprete,fr,plainte,True,False,False,False
+RBT-270,Bab Lamrissa,sante,darija_ar,proposition,False,True,False,False
+RBT-271,Bab Lamrissa,espaces_verts,ar,demande,True,True,False,False
+RBT-272,Bab Lamrissa,proprete,ar,demande,True,False,False,False
+RBT-273,Bab Lamrissa,sante,darija_ar,proposition,True,False,False,False
+RBT-274,Bab Lamrissa,proprete|mobilite,ar,plainte,True,False,True,False
+RBT-275,Bab Lamrissa,proprete,darija_ar,satisfaction,True,False,False,False
+RBT-276,Bab Lamrissa,securite,fr,proposition,True,False,True,False
+RBT-277,Bab Lamrissa,administration,fr,plainte,True,True,True,False
+RBT-278,Bab Lamrissa,circulation,fr,demande,True,True,False,False
+RBT-279,Bab Lamrissa,circulation,darija_ar,demande,True,False,False,False
+RBT-280,Bab Lamrissa,mobilite,fr,demande,True,True,False,False
+RBT-281,Bab Lamrissa,eau_assainissement,fr,plainte,True,False,False,False
+RBT-282,Bab Lamrissa,bruit,fr,plainte,True,True,False,False
+RBT-283,Bab Lamrissa,emploi_jeunesse,ar,demande,True,True,False,False
+RBT-284,Bab Lamrissa,eau_assainissement|voirie,darija_ar,proposition,True,False,False,False
+RBT-285,Bab Lamrissa,securite,darija_ar,plainte,True,False,False,False
+RBT-286,Bab Lamrissa,commerce_marches,fr,demande,True,False,False,False
+RBT-287,Bab Lamrissa,voirie,darija_latin,demande,True,True,False,False
+RBT-288,Bab Lamrissa,circulation,fr,proposition,True,False,False,False
+RBT-289,El Youssoufia,proprete,fr,plainte,False,True,False,False
+RBT-290,El Youssoufia,education,fr,plainte,True,True,True,False
+RBT-291,El Youssoufia,mobilite|circulation,darija_ar,plainte,False,True,False,False
+RBT-292,El Youssoufia,emploi_jeunesse,amazigh_latin,plainte,False,False,False,False
+RBT-293,El Youssoufia,voirie,darija_ar,proposition,True,False,False,False
+RBT-294,El Youssoufia,securite,ar,plainte,True,False,False,False
+RBT-295,El Youssoufia,emploi_jeunesse,fr,plainte,True,True,False,False
+RBT-296,El Youssoufia,sante,fr,demande,True,True,True,False
+RBT-297,El Youssoufia,voirie,amazigh_latin,demande,True,True,False,False
+RBT-298,El Youssoufia,logement|mobilite,ar,satisfaction,True,False,False,False
+RBT-299,El Youssoufia,circulation,ar,plainte,True,False,False,False
+RBT-300,El Youssoufia,eau_assainissement,fr,proposition,True,False,False,False
+RBT-301,El Youssoufia,logement,darija_latin,plainte,True,False,False,False
+RBT-302,El Youssoufia,voirie,fr,satisfaction,True,False,False,False
+RBT-303,El Youssoufia,circulation,darija_ar,demande,True,True,False,False
+RBT-304,El Youssoufia,voirie,fr,demande,True,False,False,False
+RBT-305,El Youssoufia,mobilite|espaces_verts,ar,demande,True,False,True,False
+RBT-306,Skhirate,circulation,ar,plainte,True,True,False,False
+RBT-307,Skhirate,proprete,fr,demande,False,True,False,False
+RBT-308,Skhirate,commerce_marches,fr,satisfaction,False,False,False,False
+RBT-309,Skhirate,administration,fr,proposition,True,True,False,False
+RBT-310,Skhirate,circulation,ar,satisfaction,True,False,True,False
+RBT-311,Skhirate,sante,fr,demande,True,True,False,False
+RBT-312,Skhirate,eau_assainissement,darija_ar,demande,True,False,True,False
+RBT-313,Skhirate,voirie,fr,satisfaction,True,False,True,False
+RBT-314,Skhirate,eau_assainissement,darija_latin,demande,True,False,False,False
+RBT-315,Skhirate,proprete,amazigh_latin,plainte,True,True,False,False
+RBT-316,Skhirate,eclairage,ar,proposition,True,True,False,False
+RBT-317,Skhirate,mobilite,ar,proposition,True,False,True,False
+RBT-318,Skhirate,voirie|eau_assainissement,darija_ar,plainte,True,True,False,False
+RBT-319,Sidi Yahya Zaer,emploi_jeunesse,fr,demande,True,False,False,False
+RBT-320,Sidi Yahya Zaer,logement|voirie,darija_ar,demande,True,False,False,False
+RBT-321,Sidi Yahya Zaer,espaces_verts|logement,ar,proposition,True,True,False,False
+RBT-322,Sidi Yahya Zaer,voirie,fr,plainte,True,True,False,False
+RBT-323,Sidi Yahya Zaer,proprete,darija_latin,demande,False,False,False,False
+RBT-324,Sidi Yahya Zaer,mobilite|espaces_verts,darija_latin,demande,False,False,False,False
+RBT-325,Sidi Yahya Zaer,circulation|espaces_verts,ar,proposition,True,False,False,False
+RBT-326,Sidi Yahya Zaer,proprete,ar,demande,True,False,False,False
+RBT-327,Sidi Yahya Zaer,voirie|logement,ar,demande,True,True,False,False
+RBT-328,Sidi Yahya Zaer,administration,darija_ar,demande,True,False,False,False
+RBT-329,Sidi Yahya Zaer,circulation,fr,plainte,True,True,True,False
+RBT-330,Sidi Yahya Zaer,voirie,darija_latin,proposition,True,False,False,False
+RBT-331,Sidi Yahya Zaer,espaces_verts|eau_assainissement,darija_ar,plainte,True,False,False,False
+RBT-332,Ain El Aouda,eau_assainissement,darija_latin,plainte,True,True,False,False
+RBT-333,Ain El Aouda,securite,darija_ar,proposition,True,True,False,False
+RBT-334,Ain El Aouda,eclairage,darija_ar,plainte,True,False,False,False
+RBT-335,Ain El Aouda,emploi_jeunesse,darija_ar,demande,True,False,False,False
+RBT-336,Ain El Aouda,voirie,darija_ar,proposition,True,False,False,False
+RBT-337,Ain El Aouda,proprete,darija_ar,demande,True,True,True,False
+RBT-338,Ain El Aouda,logement,fr,plainte,True,True,False,False
+RBT-339,Ain El Aouda,education,darija_latin,demande,True,False,False,False
+RBT-340,Ain El Aouda,proprete,fr,proposition,True,True,False,False
+RBT-341,Ain El Aouda,logement,amazigh_latin,demande,True,True,False,False
+RBT-342,Hassan,espaces_verts,ar,plainte,True,True,False,False
+RBT-343,Hassan,emploi_jeunesse,ar,demande,True,False,False,False
+RBT-344,Hassan,securite,fr,demande,True,False,True,False
+RBT-345,Hassan,logement,amazigh_latin,satisfaction,True,False,False,False
+RBT-346,Hassan,mobilite|education,ar,plainte,True,False,False,False
+RBT-347,Hassan,sante|espaces_verts,fr,satisfaction,True,True,False,False
+RBT-348,Hassan,mobilite,ar,proposition,True,True,False,False
+RBT-349,Hassan,eau_assainissement,ar,demande,True,True,False,False
+RBT-350,Hassan,sante,amazigh_latin,plainte,True,True,False,False
+RBT-351,Hassan,eclairage,darija_latin,plainte,True,True,False,False
+RBT-352,Bettana,eau_assainissement|espaces_verts,darija_ar,demande,False,False,False,False
+RBT-353,Bettana,education,fr,plainte,True,True,False,False
+RBT-354,Bettana,circulation|emploi_jeunesse,fr,demande,True,True,False,False
+RBT-355,Bettana,culture_sport,ar,plainte,True,False,False,False
+RBT-356,Bettana,proprete,darija_ar,demande,True,True,False,False
+RBT-357,Bettana,voirie,ar,demande,True,False,False,False
+RBT-358,Bettana,eclairage,darija_latin,demande,True,False,False,False
+RBT-359,Bettana,mobilite,fr,plainte,True,True,False,False
+RBT-360,Ameur,mobilite,fr,plainte,True,False,True,False
+RBT-361,Ameur,voirie,darija_ar,plainte,True,False,False,False
+RBT-362,Ameur,education,darija_ar,demande,True,False,False,False
+RBT-363,Ameur,mobilite|logement,darija_latin,plainte,True,True,False,False
+RBT-364,Ameur,culture_sport,darija_ar,satisfaction,True,False,False,False
+RBT-365,Ameur,proprete,ar,plainte,True,True,False,False
+RBT-366,Ameur,mobilite,fr,plainte,True,True,False,False
+RBT-367,Ameur,mobilite,ar,proposition,False,True,False,False
+RBT-368,Aïn Attig,securite|culture_sport,fr,plainte,True,True,False,False
+RBT-369,Aïn Attig,voirie,fr,demande,True,False,False,False
+RBT-370,Aïn Attig,proprete,fr,plainte,True,False,False,False
+RBT-371,Aïn Attig,emploi_jeunesse,darija_latin,demande,True,True,False,False
+RBT-372,Aïn Attig,accessibilite_pmr,ar,plainte,False,False,True,False
+RBT-373,Aïn Attig,logement|emploi_jeunesse,fr,proposition,True,False,True,False
+RBT-374,Aïn Attig,eclairage,fr,proposition,True,True,False,False
+RBT-375,Aïn Attig,logement,darija_ar,plainte,False,False,True,False
+RBT-376,Agdal-Riyad,emploi_jeunesse|voirie,fr,demande,False,True,False,False
+RBT-377,Agdal-Riyad,proprete,fr,plainte,True,False,False,False
+RBT-378,Agdal-Riyad,logement,darija_latin,plainte,True,True,False,False
+RBT-379,Agdal-Riyad,eau_assainissement|espaces_verts,ar,proposition,True,True,False,False
+RBT-380,Agdal-Riyad,eau_assainissement|bruit,fr,proposition,True,True,False,False
+RBT-381,Agdal-Riyad,voirie,fr,proposition,True,False,True,False
+RBT-382,Agdal-Riyad,securite,ar,demande,False,True,False,False
+RBT-383,Sidi Bouknadel,espaces_verts|education,darija_ar,demande,True,True,False,False
+RBT-384,Sidi Bouknadel,mobilite,darija_ar,demande,True,False,False,False
+RBT-385,Sidi Bouknadel,emploi_jeunesse,fr,proposition,True,True,False,False
+RBT-386,Sidi Bouknadel,emploi_jeunesse,darija_latin,proposition,False,False,False,False
+RBT-387,Mers El Kheir,voirie,ar,demande,False,True,False,False
+RBT-388,Mers El Kheir,espaces_verts,fr,plainte,False,False,False,False
+RBT-389,Mers El Kheir,sante,fr,demande,True,False,False,False
+RBT-390,Shoul,securite,amazigh_latin,demande,False,True,True,False
+RBT-391,Shoul,mobilite,fr,plainte,False,True,False,False
+RBT-392,Shoul,accessibilite_pmr,fr,plainte,True,True,True,False
+RBT-393,Souissi,espaces_verts|voirie,darija_latin,demande,True,True,False,False
+RBT-394,Souissi,securite|sante,amazigh_latin,demande,True,True,False,False
+RBT-395,Harhoura,logement|voirie,darija_latin,demande,True,False,True,False
+RBT-396,Harhoura,proprete,darija_ar,plainte,True,False,False,False
+RBT-397,Sabbah,voirie,darija_latin,proposition,True,False,False,False
+RBT-398,El Menzeh,voirie,darija_ar,proposition,False,True,False,False
+RBT-399,Touarga,circulation,fr,plainte,True,True,False,False
+RBT-400,Oumazza,mobilite|logement,fr,demande,True,True,False,False

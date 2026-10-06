@@ -111,6 +111,9 @@ function EvaluationBlock({
           <p className="text-slate mt-1 text-xs">
             {t("citizens.base")} {result.base[locale]}
           </p>
+          {result.note && (
+            <p className="text-terracotta-dark mt-1 text-xs">⚠ {result.note[locale]}</p>
+          )}
           <table className="mt-3 w-full text-xs">
             <thead>
               <tr className="text-slate text-start">
@@ -265,8 +268,9 @@ export function CitizensView({ code }: { code: string }) {
     const breaks = quantileBreaks(values.filter((v) => v > 0));
     const colors: Record<number, string> = {};
     for (const u of data.summary.units) {
-      colors[u.id] =
+      const color =
         !u.count || u.per_10k === null ? NO_DATA : SEQUENTIAL[classOf(u.per_10k, breaks)];
+      for (const member of u.members ?? [u.id]) colors[member] = color; // commune: its units
     }
     return colors;
   }, [data]);
@@ -301,8 +305,33 @@ export function CitizensView({ code }: { code: string }) {
 
         {data && summary && (
           <>
+            {/* Scale */}
+            <div
+              className="mt-6 flex flex-wrap items-center gap-2 text-sm"
+              role="radiogroup"
+              aria-label={t("citizens.scale")}
+            >
+              <span className="text-slate">{t("citizens.scale")} :</span>
+              {(["unit", "commune"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={(filters.scale ?? "unit") === value}
+                  onClick={() => setFilters({ ...filters, scale: value, unit: undefined })}
+                  className={`rounded-full px-3 py-1 ${
+                    (filters.scale ?? "unit") === value
+                      ? "bg-petrol text-cream"
+                      : "bg-cream text-petrol"
+                  }`}
+                >
+                  {value === "unit" ? t("citizens.scaleUnit") : t("citizens.scaleCommune")}
+                </button>
+              ))}
+            </div>
+
             {/* Filters */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <select
                 aria-label={t("citizens.allThemes")}
                 className={select}
@@ -463,9 +492,14 @@ export function CitizensView({ code }: { code: string }) {
                       visibleCategories={[]}
                       colors={{}}
                       unitColors={unitColors}
-                      selectedId={filters.unit ?? null}
+                      selectedId={filters.scale === "commune" ? null : (filters.unit ?? null)}
                       onHover={() => undefined}
-                      onSelect={(id) => setFilters({ ...filters, unit: id ?? undefined })}
+                      onSelect={(id) => {
+                        const row = summary.units.find(
+                          (u) => id !== null && u.members.includes(id),
+                        );
+                        setFilters({ ...filters, unit: row?.id ?? undefined });
+                      }}
                     />
                   )}
                 </div>
@@ -498,7 +532,11 @@ export function CitizensView({ code }: { code: string }) {
             {/* Crossing (one unit) */}
             <section className="border-petrol/10 mt-10 rounded-2xl border bg-white p-6">
               {filters.unit !== undefined ? (
-                <CitizenCrossing code={code} unitId={filters.unit} />
+                <CitizenCrossing
+                  code={code}
+                  unitId={filters.unit}
+                  scale={filters.scale ?? "unit"}
+                />
               ) : (
                 <>
                   <h2 className="font-heading text-petrol text-2xl">{t("citizens.crossing")}</h2>
@@ -529,6 +567,7 @@ export function CitizensView({ code }: { code: string }) {
             {/* Reliability */}
             <section className="mt-10">
               <h2 className="font-heading text-petrol text-3xl">{t("citizens.evaluation")}</h2>
+              <p className="text-slate mt-2 text-sm">{t("citizens.tonalityMethod")}</p>
               {data.evaluation.anonymisation && (
                 <p className="text-petrol mt-2 text-sm">
                   {t("citizens.anonymisation", { rate: pct(data.evaluation.anonymisation.rate) })}{" "}

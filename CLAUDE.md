@@ -158,6 +158,18 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   fiche, croisement, section 7 des rapports, exports). Tout résultat d'anonymisation ou
   d'évaluation affiché précise sa base de mesure (ex. « 100 % sur le jeu de test fictif
   (22 pièges) »). 4.2 (anonymisation, `app/services/citizens/anonymize.py`) validé le 2026-10-06.
+  4.3 à 4.6 validés le 2026-10-06 (analyse, tableau de bord, croisement, section 7) ; 400
+  contributions fictives ; échelle « commune » ; décision 0017 (compléments).
+  `make citizens` = import + analyse + évaluation (`docs/evaluation/resultats.md`).
+  Croisement (`stats.crossing`) : libellé = statut réel (« déficit marqué » / « à surveiller »),
+  « sans demande exprimée » seulement à partir de 30 contributions dans l'unité.
+  File de validation (`app/services/citizens/review.py`, écran `/territoire/<code>/citoyens/verifier`,
+  professeur et admin) : la correction humaine remplace la proposition partout (champs themes /
+  tonality / territory_id), proposition conservée dans `ai_proposal` (migration 0007), jamais
+  écrasée par une nouvelle analyse ; évaluation humaine comptée à part. L'évaluation par Claude
+  (xlsx, onglet « Annotateur ») = « second modèle d'IA », jamais « de référence » avant relecture.
+- Étape 4 — finalisée le 2026-10-06 (en attente de validation du porteur). Prochaine : étape 5
+  (besoins en données et notes de demande).
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

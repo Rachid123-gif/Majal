@@ -89,7 +89,7 @@ export const features: Feature[] = [
   },
   {
     id: "citizens",
-    status: "in_development",
+    status: "available",
     stage: { fr: "Étape 4", ar: "المرحلة 4" },
     title: { fr: "Écoute citoyenne", ar: "الإنصات للمواطنين" },
     summary: {
@@ -100,11 +100,13 @@ export const features: Feature[] = [
       fr: [
         "Anonymisation avant tout traitement",
         "Ce que disent les citoyens, mis en regard de ce que montrent les données",
+        "L'outil propose, l'urbaniste valide : contributions « à vérifier »",
         "Contributions fictives dans le démonstrateur",
       ],
       ar: [
         "إخفاء الهوية قبل أي معالجة",
         "ما يقوله المواطنون في مقابل ما تُظهره المعطيات",
+        "الأداة تقترح والمعمِّر يصادق: مساهمات «للتحقق»",
         "مساهمات افتراضية في النسخة التجريبية",
       ],
     },

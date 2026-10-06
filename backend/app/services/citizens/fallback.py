@@ -30,6 +30,11 @@ class ToneWords(StrictModel):
     darija: list[str] = Field(default_factory=list)
 
 
+class ReviewRules(StrictModel):
+    keywords_silent_is_disagreement: bool = True
+    uncertain_languages: list[str] = Field(default_factory=lambda: ["amazigh_latin", "other"])
+
+
 class AnalysisConfig(StrictModel):
     languages: dict[str, Localized]
     markers: MarkerLists
@@ -37,6 +42,7 @@ class AnalysisConfig(StrictModel):
     glossary: dict[str, dict[str, str]] = Field(default_factory=dict)
     place_common_words: list[str] = Field(default_factory=list)
     place_cues: list[str] = Field(default_factory=list)
+    review: ReviewRules = Field(default_factory=ReviewRules)
 
 
 def load_analysis_config(path: Path) -> AnalysisConfig:

@@ -75,4 +75,9 @@ class Contribution(Base):
     )
     badge: Mapped[str] = mapped_column(String(20))
     analysis: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)  # model, mode, timing
+    # Human review: once validated, themes / tonality / territory hold the human choice and the
+    # tool's proposal is kept here (for the human evaluation set).
+    ai_proposal: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    validated_by: Mapped[str | None] = mapped_column(String(80))
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

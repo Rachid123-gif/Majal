@@ -4,13 +4,14 @@ from typing import Annotated, Any, Literal
 
 import yaml
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_engine
 from app.models import Consultation, Contribution, StudyArea, Territory
 from app.security import Account, Role, require_account
-from app.services.citizens import evaluate, pipeline, stats
+from app.services.citizens import evaluate, pipeline, review, stats
 from app.services.citizens.fallback import cached_analysis_config
 from app.services.citizens.jobs import enqueue
 from app.services.indicators.engine import MissingInput
@@ -146,7 +147,20 @@ def _evaluation(
                 "note": evaluate.SECOND_MODEL_NOTE if kind == "second_model" else None,
                 "base": {k: v.format(n=result["n"]) for k, v in bases.items()},
             }
+    out["human"] = review.human_evaluation(contributions)
     return out
+
+
+def _review_rules() -> Any:
+    return cached_analysis_config(get_settings().config_dir / "citizens" / "analyse.yaml").review
+
+
+def _require_reviewer(account: Account) -> None:
+    if not ({Role.referent, Role.admin} & set(account.roles)):
+        raise HTTPException(
+            status_code=403,
+            detail="La vérification est réservée aux comptes professeur et administrateur.",
+        )
 
 
 @router.get("/api/territories/{code}/citizens")
@@ -195,6 +209,10 @@ def dashboard(
             "scale": scale,
             "summary": stats.summary(selected, taxonomy, units, secondary, group_of),
             "evaluation": _evaluation(code, contributions, units),
+            "review": {
+                "pending": sum(1 for c in contributions if review.pending(c, _review_rules())),
+                "validated": sum(1 for c in contributions if c.validated_by),
+            },
         }
 
 
@@ -351,3 +369,137 @@ def unit_crossing(
             "evaluation_label": diagnostic["evaluation"]["label"],
             **result,
         }
+
+
+REASONS = {
+    "theme": {
+        "fr": "L'IA et les mots-clés ne donnent pas le même thème principal",
+        "ar": "الذكاء الاصطناعي والكلمات المفتاحية لا يعطيان نفس الموضوع الرئيسي",
+    },
+    "theme_unconfirmed": {
+        "fr": "Thème de l'IA non confirmé par les mots-clés",
+        "ar": "موضوع الذكاء الاصطناعي غير مؤكد بالكلمات المفتاحية",
+    },
+    "language": {"fr": "Langue incertaine", "ar": "لغة غير مؤكدة"},
+}
+
+
+def _review_item(c: Contribution, units: dict[int, dict[str, Any]]) -> dict[str, Any]:
+    tool = review.proposed(c)
+    keywords = (c.analysis or {}).get("keywords") or {}
+    unit_of = units.get
+
+    def unit(uid: int | None) -> dict[str, Any] | None:
+        info = unit_of(uid) if uid is not None else None
+        return (
+            {"id": uid, "name_fr": info["name_fr"], "name_ar": info.get("name_ar")}
+            if info
+            else None
+        )
+
+    return {
+        "id": c.id,
+        "external_id": c.external_id,
+        "original": c.anonymized_text,  # anonymised: the raw text is never shown
+        "translation_fr": c.translation_fr if c.language != "fr" else None,
+        "translation_note": stats.TRANSLATION_NOTE if c.language != "fr" else None,
+        "language": c.language,
+        "language_note": stats.AMAZIGH_NOTE if c.language == "amazigh_latin" else None,
+        "reasons": [{"code": r, "label": REASONS[r]} for r in review.reasons(c, _review_rules())],
+        "proposal": {
+            "themes": list(tool.themes or []),
+            "tonality": tool.tonality,
+            "unit": unit(tool.territory_id),
+            "place": tool.place_text,
+        },
+        "keywords": {"themes": keywords.get("themes"), "tonality": keywords.get("tonality")},
+        "current": {
+            "themes": list(c.themes or []),
+            "tonality": c.tonality,
+            "unit": unit(c.territory_id),
+        },
+        "validated_by": c.validated_by,
+        "validated_at": c.validated_at.isoformat() if c.validated_at else None,
+        "badge": c.badge,
+    }
+
+
+@router.get("/api/territories/{code}/citizens/review")
+def review_queue(
+    code: str,
+    account: Annotated[Account, Depends(require_account)],
+    status: Literal["pending", "validated"] = "pending",
+) -> dict[str, Any]:
+    """« À vérifier »: the tool's proposals to check (or those already validated)."""
+    _require_reviewer(account)
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        consultations, contributions = _contributions(session, area)
+        units = _units(session, code, area)
+        rules = _review_rules()
+        if status == "pending":
+            chosen = [c for c in contributions if review.pending(c, rules)]
+            chosen.sort(key=lambda c: c.external_id)
+        else:
+            chosen = [c for c in contributions if c.validated_by]
+            chosen.sort(key=lambda c: c.validated_at or c.created_at, reverse=True)
+        fictitious = any(c.badge == "fictitious" for c in consultations)
+        return {
+            "status": status,
+            "fictitious": fictitious,
+            "banner": stats.FICTITIOUS_BANNER if fictitious else None,
+            "counts": {
+                "pending": sum(1 for c in contributions if review.pending(c, rules)),
+                "validated": sum(1 for c in contributions if c.validated_by),
+            },
+            "themes": [{"code": t.code, "label": t.label.model_dump()} for t in taxonomy.themes],
+            "tonalities": {k: v.model_dump() for k, v in taxonomy.tonalities.items()},
+            "units": sorted(
+                (
+                    {"id": uid, "name_fr": info["name_fr"], "name_ar": info.get("name_ar")}
+                    for uid, info in units.items()
+                ),
+                key=lambda u: str(u["name_fr"]),
+            ),
+            "items": [_review_item(c, units) for c in chosen],
+        }
+
+
+class ReviewChoice(BaseModel):
+    themes: list[str] = Field(min_length=1, max_length=2)
+    tonality: str
+    territory_id: int | None = None
+
+
+@router.post("/api/territories/{code}/citizens/contributions/{contribution_id}/review")
+def review_contribution(
+    code: str,
+    contribution_id: int,
+    choice: ReviewChoice,
+    account: Annotated[Account, Depends(require_account)],
+) -> dict[str, Any]:
+    """Records the human choice; it replaces the tool's proposal everywhere."""
+    _require_reviewer(account)
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        contribution = session.get(Contribution, contribution_id)
+        consultation = (
+            session.get(Consultation, contribution.consultation_id) if contribution else None
+        )
+        if contribution is None or consultation is None or consultation.study_area_id != area.id:
+            raise HTTPException(status_code=404, detail="Contribution inconnue pour ce territoire.")
+        codes = {t.code for t in taxonomy.themes}
+        if any(t not in codes for t in choice.themes):
+            raise HTTPException(status_code=422, detail="Thème inconnu dans la taxonomie.")
+        if choice.tonality not in taxonomy.tonalities:
+            raise HTTPException(status_code=422, detail="Tonalité inconnue.")
+        units = _units(session, code, area)
+        if choice.territory_id is not None and choice.territory_id not in units:
+            raise HTTPException(status_code=422, detail="Unité inconnue pour ce territoire.")
+        review.validate(
+            contribution, choice.themes, choice.tonality, choice.territory_id, account.username
+        )
+        session.commit()
+        return _review_item(contribution, units)

@@ -16,6 +16,7 @@ export type Summary = {
   total: number;
   located: number;
   analysed_by_ai: number;
+  validated?: number;
   secondary_included: boolean;
   secondary_note: Localized | null;
   themes: ThemeRow[];
@@ -40,9 +41,19 @@ export type EvaluationResult = {
   language?: { model: Accuracy; keywords: Accuracy };
   location?: { located: number; correct: number; wrong: number; not_located: number };
 };
+/** Tool's proposal compared with the human corrections made in the « À vérifier » screen. */
+export type HumanEvaluation = {
+  n: number;
+  accounts: string[];
+  main_theme: Accuracy;
+  tonality: Accuracy;
+  location: Accuracy;
+  base: Localized;
+};
 export type Evaluation = {
   provisional: EvaluationResult | null;
   reference: EvaluationResult | null;
+  human?: HumanEvaluation | null;
   anonymisation: { rate: number; masked: number; traps: number; base: Localized } | null;
 };
 export type Dashboard = {
@@ -58,6 +69,7 @@ export type Dashboard = {
   banner: Localized | null;
   summary: Summary;
   evaluation: Evaluation;
+  review?: { pending: number; validated: number };
 };
 export type Verbatim = {
   id: string;
@@ -72,6 +84,8 @@ export type Verbatim = {
   unit: { id: number; name_fr: string; name_ar: string | null } | null;
   sure: { language: boolean; theme: boolean };
   badge: string;
+  validated_by?: string | null;
+  validation_note?: Localized | null;
 };
 export type UnitCitizens = {
   fictitious: boolean;
@@ -102,6 +116,7 @@ export type CrossingRow = {
   share: number | null;
   indicators: CrossingIndicator[];
   verdict: string;
+  severity?: "marked" | "watch" | null;
   verdict_label: Localized | null;
   data_request: { data: Localized; holder: Localized } | null;
 };
@@ -117,7 +132,13 @@ export type Crossing = {
   secondary_included: boolean;
   secondary_note: Localized | null;
   rows: CrossingRow[];
-  rules: { min_contributions: number; percent_min_total: number; strong_share: number };
+  validated?: number;
+  rules: {
+    min_contributions: number;
+    percent_min_total: number;
+    strong_share: number;
+    absence_min_total?: number;
+  };
 };
 export type Filters = {
   scale?: Scale;
@@ -181,6 +202,44 @@ export const importContributions = (code: string, file: File) =>
     );
 export const fetchImportProgress = (id: number) =>
   call<{ total: number; analysed: number }>(`/api/citizens/consultations/${id}/progress`);
+
+export type ReviewUnit = { id: number; name_fr: string; name_ar: string | null };
+export type ReviewItem = {
+  id: number;
+  external_id: string;
+  original: string;
+  translation_fr: string | null;
+  translation_note: Localized | null;
+  language: string;
+  language_note: Localized | null;
+  reasons: { code: string; label: Localized }[];
+  proposal: { themes: string[]; tonality: string; unit: ReviewUnit | null; place: string | null };
+  keywords: { themes: string[] | null; tonality: string | null };
+  current: { themes: string[]; tonality: string; unit: ReviewUnit | null };
+  validated_by: string | null;
+  validated_at: string | null;
+  badge: string;
+};
+export type ReviewQueue = {
+  status: "pending" | "validated";
+  fictitious: boolean;
+  banner: Localized | null;
+  counts: { pending: number; validated: number };
+  themes: { code: string; label: Localized }[];
+  tonalities: Record<string, Localized>;
+  units: ReviewUnit[];
+  items: ReviewItem[];
+};
+export type ReviewChoice = { themes: string[]; tonality: string; territory_id: number | null };
+
+export const fetchReview = (code: string, status: "pending" | "validated" = "pending") =>
+  call<ReviewQueue>(`/api/territories/${code}/citizens/review?status=${status}`);
+export const saveReview = (code: string, id: number, choice: ReviewChoice) =>
+  call<ReviewItem>(`/api/territories/${code}/citizens/contributions/${id}/review`, {
+    method: "POST",
+    body: JSON.stringify(choice),
+    headers: { "Content-Type": "application/json" },
+  });
 
 /** Percentage only when allowed by the rules; otherwise null (show counts). */
 export function percent(value: number | null): string | null {

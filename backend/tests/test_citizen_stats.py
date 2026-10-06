@@ -137,3 +137,60 @@ def test_unknown_indicators_are_not_reported_as_favourable_at_commune_scale() ->
     indicator = next(r for r in result["rows"] if r["theme"] == "sante")["indicators"][0]
     assert indicator["aggregate"]["units"] == 0 and indicator["aggregate"]["missing_units"] == 2
     assert indicator["aggregate"]["population_share"] is None and not indicator["unfavourable"]
+
+
+def test_labels_repeat_the_real_status_of_the_indicator() -> None:
+    items = rows(
+        [C(str(i), ["espaces_verts"]) for i in range(5)]
+        + [C(f"x{i}", ["voirie"]) for i in range(30)]
+    )
+    meta = {"ENV_VERT": {"label": {"fr": "x"}}}
+    marked = {"ENV_VERT": {"value": 0.2, "status": "deficit_marked"}}
+    watch = {"ENV_VERT": {"value": 2.0, "status": "watch"}}
+    row = next(
+        r
+        for r in stats.crossing(items, TAXONOMY, marked, meta, {})["rows"]
+        if r["theme"] == "espaces_verts"
+    )
+    assert row["verdict_label"]["fr"] == "Demande modérée et déficit marqué"
+    row = next(
+        r
+        for r in stats.crossing(items, TAXONOMY, watch, meta, {})["rows"]
+        if r["theme"] == "espaces_verts"
+    )
+    assert row["verdict_label"]["fr"] == "Demande modérée et indicateur à surveiller"
+
+
+def test_absence_of_demand_needs_thirty_contributions_in_the_unit() -> None:
+    watch = {"EMP_CHOM": {"value": 20.8, "status": "watch"}}
+    meta = {"EMP_CHOM": {"label": {"fr": "Chômage"}}}
+
+    def emploi(total: int) -> dict[str, Any]:
+        items = rows([C(f"x{i}", ["voirie"]) for i in range(total)])
+        result = stats.crossing(items, TAXONOMY, watch, meta, {})
+        return next(r for r in result["rows"] if r["theme"] == "emploi_jeunesse")
+
+    few = emploi(25)  # Layayda: 25 contributions
+    assert few["verdict"] == "absence_unknown"
+    assert few["verdict_label"]["fr"] == (
+        "Trop peu de contributions pour juger de l'absence de demande"
+    )
+    enough = emploi(30)
+    assert enough["verdict"] == "data_only"
+    assert enough["verdict_label"]["fr"] == "Indicateur à surveiller, sans demande exprimée"
+
+
+def test_commune_is_in_marked_deficit_only_if_those_units_reach_the_share() -> None:
+    members = [
+        {"name_fr": "A", "population": 60, "values": {"ENV_VERT": {"value": 1, "status": "watch"}}},
+        {
+            "name_fr": "B",
+            "population": 40,
+            "values": {"ENV_VERT": {"value": 1, "status": "deficit_marked"}},
+        },
+    ]
+    items = rows([C(str(i), ["espaces_verts"], unit=1) for i in range(5)])
+    result = stats.crossing(items, TAXONOMY, {}, {"ENV_VERT": {}}, {}, members=members)
+    row = next(r for r in result["rows"] if r["theme"] == "espaces_verts")
+    assert row["indicators"][0]["severity"] == "watch"  # 40 % in marked deficit < 50 %
+    assert "à surveiller" in row["verdict_label"]["fr"]

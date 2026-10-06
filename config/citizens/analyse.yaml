@@ -87,3 +87,13 @@ place_common_words: [عامر, القرية, صباح, المحيط, النهض�
   السفراء, الطيران, الفتح, الياسمين, الفردوس, السلام, الأمل, البريد, السهول, المنزه, الأندلس,
   الحي الصناعي, المغرب العربي, الشاطئ, المركز, الوسط]
 place_cues: [حي, قطاع, دوار, ساحة, منطقة, جماعة, مدينة, مقاطعة, تجزئة, إقامة]
+
+# File de validation (« l'outil propose, l'urbaniste valide ») : une contribution est marquée
+# « à vérifier » quand l'IA et les mots-clés ne donnent pas le même thème principal, ou quand la
+# langue est incertaine (TODO_REFERENT).
+review:
+  # Les mots-clés ne trouvent aucun thème (« autres ») alors que l'IA en propose un : la
+  # proposition n'est pas confirmée, donc à vérifier.
+  keywords_silent_is_disagreement: true
+  # Langues toujours incertaines (transcription approximative, langue non reconnue).
+  uncertain_languages: [amazigh_latin, other]

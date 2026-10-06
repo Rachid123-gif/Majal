@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.config_loader.taxonomy import Taxonomy, load_taxonomy
 from app.models import Consultation, Contribution, StudyArea
+from app.services.citizens import review
 from app.services.citizens.analyze import analyze
 from app.services.citizens.anonymize import Masked, apply, cached_config, find_spans
 from app.services.citizens.fallback import cached_analysis_config
@@ -161,6 +162,8 @@ def process_contribution(
     provider: Any,
 ) -> None:
     settings = get_settings()
+    # A human validation is never overwritten by a new analysis: the new proposal is kept aside.
+    human = review.human_values(contribution) if contribution.validated_by else None
     anon_config = cached_config(settings.config_dir / "citizens" / "anonymisation.yaml")
     analysis_config = cached_analysis_config(settings.config_dir / "citizens" / "analyse.yaml")
     protected = gazetteer.protected_names()
@@ -220,10 +223,14 @@ def process_contribution(
         "error": result.error,
         "location_method": location.method,
         "tonality_method": result.tonality_method,
+        "model_language": result.model_language,
         "model_place": result.place,
         "keywords": result.keywords,
         "translation": "automatic" if result.language != "fr" else "original",
     }
+    if human is not None:
+        contribution.ai_proposal = review.human_values(contribution)
+        review.set_values(contribution, human)
 
 
 def run(

@@ -17,6 +17,7 @@ import {
   percent,
   type Dashboard,
   type EvaluationResult,
+  type HumanEvaluation,
   type Filters,
   type Verbatim,
 } from "@/lib/citizens";
@@ -57,6 +58,11 @@ export function VerbatimCard({
         </span>
         <span aria-hidden>·</span>
         <span>{sure ? `✓ ${t("citizens.sure")}` : `? ${t("citizens.unsure")}`}</span>
+        {verbatim.validation_note && (
+          <span className="bg-petrol/10 text-petrol rounded-full px-2 py-0.5">
+            ✓ {verbatim.validation_note[locale]}
+          </span>
+        )}
       </div>
       <div className={`mt-3 grid gap-3 ${verbatim.translation_fr ? "md:grid-cols-2" : ""}`}>
         <blockquote>
@@ -88,6 +94,40 @@ export function VerbatimCard({
         )}
       </div>
     </figure>
+  );
+}
+
+function HumanEvaluationBlock({ result }: { result: HumanEvaluation | null | undefined }) {
+  const { locale, t } = useLocale();
+  return (
+    <div className="border-petrol/10 rounded-xl border bg-white p-4 text-sm">
+      <h3 className="text-petrol font-semibold">{t("citizens.human")}</h3>
+      {!result ? (
+        <p className="text-slate mt-2">{t("citizens.humanPending")}</p>
+      ) : (
+        <>
+          <p className="text-slate mt-1 text-xs">
+            {t("citizens.base")} {result.base[locale]}
+          </p>
+          <dl className="text-petrol mt-3 grid gap-1 text-xs tabular-nums">
+            {(
+              [
+                ["humanMainTheme", result.main_theme],
+                ["humanTonality", result.tonality],
+                ["humanLocation", result.location],
+              ] as const
+            ).map(([key, value]) => (
+              <div key={key} className="flex justify-between gap-4">
+                <dt>{t(`citizens.${key}`)}</dt>
+                <dd>
+                  {pct(value.accuracy)} ({value.correct}/{value.n})
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -423,6 +463,26 @@ export function CitizensView({ code }: { code: string }) {
                 </div>
               ))}
             </dl>
+            {data.review && (
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
+                <span className="text-2xl font-semibold tabular-nums text-amber-900">
+                  {formatNumber(data.review.pending, locale, 0)}
+                </span>
+                <span className="text-amber-900">
+                  <strong>{t("citizens.toReview")}</strong> — {t("citizens.toReviewHint")}{" "}
+                  {data.review.validated > 0 &&
+                    t("citizens.validatedCount", { n: String(data.review.validated) })}
+                </span>
+                {canImport && (
+                  <Link
+                    href={`/territoire/${code}/citoyens/verifier`}
+                    className="bg-petrol ms-auto rounded-full px-4 py-1.5 text-white"
+                  >
+                    {t("citizens.openReview")}
+                  </Link>
+                )}
+              </div>
+            )}
             {summary.total === 0 && <p className="text-slate mt-6">{t("citizens.noData")}</p>}
 
             <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
@@ -574,7 +634,7 @@ export function CitizensView({ code }: { code: string }) {
                   <span className="text-slate">{data.evaluation.anonymisation.base[locale]}</span>
                 </p>
               )}
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 <EvaluationBlock
                   title={t("citizens.provisional")}
                   result={data.evaluation.provisional}
@@ -584,6 +644,7 @@ export function CitizensView({ code }: { code: string }) {
                   result={data.evaluation.reference}
                   pending={t("citizens.referencePending")}
                 />
+                <HumanEvaluationBlock result={data.evaluation.human} />
               </div>
             </section>
 

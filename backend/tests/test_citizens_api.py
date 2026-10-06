@@ -74,3 +74,14 @@ def test_dashboard_carries_the_fictitious_banner(client: TestClient) -> None:
     assert all(
         t["share"] is None or data["summary"]["total"] >= 20 for t in data["summary"]["themes"]
     )
+
+
+def test_review_is_reserved_to_professor_and_administrator(client: TestClient) -> None:
+    login(client, "presentateur", PRES)
+    assert client.get("/api/territories/rabat/citizens/review").status_code == 403
+    response = client.post(
+        "/api/territories/rabat/citizens/contributions/1/review",
+        json={"themes": ["voirie"], "tonality": "plainte", "territory_id": None},
+    )
+    assert response.status_code == 403
+    assert "professeur et administrateur" in response.json()["detail"]

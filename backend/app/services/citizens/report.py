@@ -32,9 +32,28 @@ def unit_citizens(
         theme = taxonomy.theme(code)
         if theme is not None and code != "autres":
             themes.append({"code": code, "label": theme.label.model_dump(), "count": count})
-    return {
+    out: dict[str, Any] = {
         "total": len(contributions),
         "themes": themes,
         "fictitious": any(c.badge == "fictitious" for c in consultations),
         "too_few": len(contributions) < taxonomy.crossing.min_contributions,
     }
+    # Human corrections (already in `themes`): stated only when there are some, so the reports
+    # written before any validation keep their cache key.
+    validated = [c for c in contributions if c.validated_by]
+    if validated:
+        out["validated"] = {
+            "count": len(validated),
+            "by": sorted({c.validated_by for c in validated if c.validated_by}),
+        }
+    return out
+
+
+def validation_sentence(validated: dict[str, Any], lang: str) -> str:
+    """Closing sentence of section 7 when people corrected the tool's classification."""
+    by = ", ".join(validated["by"])
+    n = validated["count"]
+    if lang == "ar":
+        return f"تم التحقق من تصنيف {n} مساهمة من طرف: {by}."
+    plural = "s" if n > 1 else ""
+    return f"Classement vérifié par une personne pour {n} contribution{plural} (validé par {by})."

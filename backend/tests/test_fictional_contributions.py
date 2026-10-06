@@ -70,6 +70,9 @@ def test_the_set_is_complete_and_matches_the_random_plan() -> None:
             assert "approximative" in c["note"], c["id"]
 
 
+@pytest.mark.skipif(
+    not (REPO_ROOT / "scripts").exists(), reason="scripts/ is not mounted in the container"
+)
 def test_theme_weights_come_from_the_editable_file_and_read_no_indicator() -> None:
     config = yaml.safe_load(
         (REPO_ROOT / "config" / "citizens" / "jeu-fictif.yaml").read_text(encoding="utf-8")

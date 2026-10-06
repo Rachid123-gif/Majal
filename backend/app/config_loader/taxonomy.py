@@ -36,6 +36,7 @@ class CrossingRules(StrictModel):
     percent_min_total: int = Field(default=20, ge=1)
     aggregate_unfavourable_share: float = Field(default=0.5, gt=0, le=1)
     strong_share: float = Field(default=0.15, gt=0, lt=1)
+    absence_min_total: int = Field(default=30, ge=1)
     labels: dict[str, Localized]
 
 

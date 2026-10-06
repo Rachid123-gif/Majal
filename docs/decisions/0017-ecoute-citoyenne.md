@@ -54,3 +54,30 @@ avec les indicateurs ; évaluation. Version D : contributions fictives, claireme
 - **Section 7 du rapport** : phrase modèle « {{F920}} contributions citoyennes ont été
   localisées dans l'unité ; les thèmes principaux sont… » ; la tournure « s'établissent à »
   est refusée.
+
+## Compléments (2026-10-06, après validation du croisement)
+- **Libellés des constats** : ils reprennent le statut réel de l'indicateur. « Déficit marqué »
+  seulement pour ce statut, sinon « indicateur à surveiller » (exemple : « Indicateur à
+  surveiller, sans demande exprimée »). À l'échelle de la commune, « déficit marqué » seulement
+  si les unités dans ce statut réunissent à elles seules la part de population requise.
+- **Absence de demande** : « sans demande exprimée » n'est permis que si l'unité compte au moins
+  30 contributions au total (`absence_min_total`, TODO_REFERENT) ; en dessous : « Trop peu de
+  contributions pour juger de l'absence de demande ».
+- **File de validation — l'outil propose, l'urbaniste valide.** Une contribution est marquée
+  « à vérifier » quand l'IA et les mots-clés ne donnent pas le même thème principal (y compris,
+  réglable, quand les mots-clés ne trouvent aucun thème) ou quand la langue est incertaine
+  (amazighe, langue non reconnue, désaccord IA / repères) — `config/citizens/analyse.yaml`,
+  section `review`. L'écran « À vérifier » (`/territoire/<code>/citoyens/verifier`) est réservé
+  aux comptes professeur et administrateur : original, traduction, propositions de l'outil et
+  des mots-clés, correction du thème, de la tonalité et du lieu en un clic.
+- Une correction humaine est écrite dans les champs que lisent les statistiques, le croisement
+  et la section 7 : elle remplace donc la proposition partout, avec « validé par [compte] ». La
+  proposition de l'outil est conservée à part (`ai_proposal`, migration 0007) : les évaluations
+  de l'IA portent toujours sur sa propre proposition, et une nouvelle analyse n'efface jamais
+  une validation humaine.
+- Les corrections forment progressivement un **jeu d'évaluation humain**, compté à part dans
+  « Fiabilité de l'analyse », avec sa base : surtout des cas difficiles, donc non représentatif
+  de l'ensemble.
+- Section 7 : tant qu'aucune correction n'existe, le rapport est inchangé ; dès qu'une
+  contribution de l'unité est validée, une phrase « Classement vérifié par une personne pour
+  N contributions (validé par …) » est ajoutée et le rapport de l'unité est à régénérer.

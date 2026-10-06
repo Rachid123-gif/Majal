@@ -185,6 +185,14 @@ def build_report(
                     {"text": FICTITIOUS_BANNER[lang], "facts": []},
                     *section_out["paragraphs"],
                 ]
+    if citizens and citizens.get("validated"):
+        from app.services.citizens.report import validation_sentence
+
+        for section_out in sections_out:
+            if any(s.code == section_out["code"] and s.include_citizens for s in template.sections):
+                section_out["paragraphs"].append(
+                    {"text": validation_sentence(citizens["validated"], lang), "facts": []}
+                )
     written = [r for r in results if r.mode in ("ai", "fallback")]
     modes = {r.mode for r in written}
     writing_mode = "ai" if modes == {"ai"} else "fallback" if modes == {"fallback"} else "mixed"

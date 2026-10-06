@@ -247,16 +247,31 @@ crossing:
   # Part des contributions de l'unité consacrée au thème, au-dessus de laquelle la demande
   # est dite « forte » (TODO_REFERENT).
   strong_share: 0.15
+  # Le constat « sans demande exprimée » n'est permis que si l'unité compte au moins ce nombre
+  # de contributions au total ; en dessous, l'absence de demande ne peut pas être jugée
+  # (TODO_REFERENT).
+  absence_min_total: 30
+  # Libellés : quand un indicateur est défavorable, le constat reprend son statut réel
+  # (variantes « _marked » = déficit marqué, « _watch » = à surveiller).
   labels:
-    convergence:
-      fr: "Demande forte et indicateur défavorable"
-      ar: "طلب قوي ومؤشر غير موات"
+    convergence_marked:
+      fr: "Demande forte et déficit marqué"
+      ar: "طلب قوي وخصاص واضح"
+    convergence_watch:
+      fr: "Demande forte et indicateur à surveiller"
+      ar: "طلب قوي ومؤشر يستدعي المتابعة"
     demand_only:
       fr: "Demande forte sans déficit mesuré — à creuser"
       ar: "طلب قوي دون خصاص مقيس — يستحق التعمق"
-    data_only:
-      fr: "Déficit mesuré sans demande exprimée"
-      ar: "خصاص مقيس دون طلب معبر عنه"
+    data_only_marked:
+      fr: "Déficit marqué, sans demande exprimée"
+      ar: "خصاص واضح دون طلب معبر عنه"
+    data_only_watch:
+      fr: "Indicateur à surveiller, sans demande exprimée"
+      ar: "مؤشر يستدعي المتابعة دون طلب معبر عنه"
+    absence_unknown:
+      fr: "Trop peu de contributions pour juger de l'absence de demande"
+      ar: "عدد المساهمات غير كاف للحكم على غياب الطلب"
     no_indicator:
       fr: "Donnée à demander"
       ar: "معطى يتعين طلبه"
@@ -266,9 +281,12 @@ crossing:
     too_few:
       fr: "Trop peu de contributions pour conclure"
       ar: "عدد المساهمات غير كاف للاستنتاج"
-    moderate_deficit:
-      fr: "Demande modérée et indicateur défavorable"
-      ar: "طلب معتدل ومؤشر غير موات"
+    moderate_deficit_marked:
+      fr: "Demande modérée et déficit marqué"
+      ar: "طلب معتدل وخصاص واضح"
+    moderate_deficit_watch:
+      fr: "Demande modérée et indicateur à surveiller"
+      ar: "طلب معتدل ومؤشر يستدعي المتابعة"
     moderate:
       fr: "Demande modérée, sans déficit mesuré"
       ar: "طلب معتدل دون خصاص مقيس"

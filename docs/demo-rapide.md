@@ -1,4 +1,4 @@
-# Démonstration rapide (10 minutes)
+# Démonstration rapide (15 minutes)
 
 1. Ouvrir l'application **Ollama** (icône du lama dans la barre des menus), puis dans le Terminal, dossier MAJAL : `make start`. Le navigateur s'ouvre sur http://localhost:3000 et le Mac ne se met plus en veille (`make stop` à la fin).
 2. **Vitrine** : faire défiler la page d'accueil (enjeu des programmes territoriaux, carte du Maroc entier, fonctions disponibles), puis « Se connecter » avec le compte `professeur` (mot de passe dans `.env`).
@@ -8,5 +8,7 @@
 6. **Rapport** : sur la fiche de Layayda, section « Rapport de diagnostic » : le rapport déjà préparé s'affiche aussitôt (cache) ; montrer « Rédigé par l'IA locale », le filigrane « Document de travail », les sources en fin de rapport.
 7. Basculer sur « en arabe » : même rapport, de droite à gauche ; puis « Télécharger (PDF) » en français pour montrer la carte avec le Royaume entier en médaillon.
 8. Pour montrer la rédaction en direct : « Régénérer » (environ une minute et demie, progression affichée section par section).
-9. Message clé : l'IA n'écrit aucun chiffre ; MAJAL vérifie chaque nombre et le sens des phrases ; l'urbaniste relit et valide (statuts brouillon → relu → validé, validation réservée au professeur).
-10. À la fin : `make stop` (arrête MAJAL et rétablit la mise en veille). Préparer tous les rapports à l'avance : `make reports`.
+9. **Écoute citoyenne** (menu « Écoute citoyenne ») : montrer le bandeau « Contributions fictives », les thèmes (thème principal seul), la carte des contributions, puis l'échelle « Commune » et le croisement sur **Salé** (« Demande modérée et déficit marqué » pour les espaces verts) et sur **Layayda** (emploi : « trop peu de contributions pour juger de l'absence de demande »).
+10. **À vérifier** : bouton « Ouvrir la file de vérification » ; une contribution avec son original, sa traduction automatique et les deux propositions (IA, mots-clés) ; corriger le thème en un clic → « validé par professeur ». Bas de page : « Fiabilité de l'analyse » et ses bases de mesure. Section 7 du rapport de Layayda : « Ce que disent les citoyens ».
+11. Message clé : l'IA n'écrit aucun chiffre ; MAJAL vérifie chaque nombre et le sens des phrases ; l'outil propose, l'urbaniste valide (contributions « à vérifier », rapports brouillon → relu → validé, validation réservée au professeur).
+12. À la fin : `make stop` (arrête MAJAL et rétablit la mise en veille). Préparer tous les rapports à l'avance : `make reports`. Après des corrections dans « À vérifier », relancer `make reports` : seuls les rapports des unités concernées sont réécrits.

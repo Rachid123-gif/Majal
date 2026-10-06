@@ -16,6 +16,7 @@ import yaml
 from openpyxl import load_workbook
 
 from app.models import Contribution
+from app.services.citizens import review
 
 
 def _prf(pairs: Iterable[tuple[set[str], set[str]]]) -> dict[str, Any]:
@@ -45,6 +46,8 @@ def _accuracy(pairs: list[tuple[Any, Any]]) -> dict[str, Any]:
 
 
 def score(contributions: list[Contribution], truth: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    # The model is scored on its OWN proposal, never on a human correction made afterwards.
+    contributions = [review.proposed(c) for c in contributions]
     rows = [(c, truth[c.external_id]) for c in contributions if c.external_id in truth]
     ai_rows = [(c, t) for c, t in rows if c.analysis.get("mode") == "ai"]
     result: dict[str, Any] = {

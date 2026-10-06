@@ -89,6 +89,7 @@ class Analysis:
     names: list[str] = field(default_factory=list)
     mode: str = "ai"  # ai | keywords
     tonality_method: str = "keywords"  # keywords (priority) | model (no keyword decides)
+    model_language: str | None = None  # the model's own answer, before the marker rule
     model: str | None = None
     duration_s: float = 0.0
     error: str | None = None
@@ -169,6 +170,7 @@ def analyze(
         return fallback
     themes = explicit_themes(themes, text, data.get("translation_fr"), taxonomy)
     language = data.get("language") if data.get("language") in config.languages else None
+    model_language = language
     if baseline["language"] in TRUST_MARKERS or language in (None, "other"):
         language = baseline["language"]
     # Rule of the owner: marker phrases decide the tonality; the model only when none decides.
@@ -189,6 +191,7 @@ def analyze(
         place_fr=data.get("place_fr") if isinstance(data.get("place_fr"), str) else None,
         names=[n for n in data.get("remaining_names") or [] if isinstance(n, str)],
         mode="ai",
+        model_language=model_language,
         model=getattr(provider, "model", None),
         duration_s=round(time.perf_counter() - started, 2),
         keywords=baseline,

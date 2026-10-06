@@ -36,11 +36,15 @@ def themes_of(contribution: Contribution, secondary: bool) -> list[str]:
 
 
 def language_sure(contribution: Contribution) -> bool:
+    if getattr(contribution, "validated_by", None):
+        return True
     keywords = (contribution.analysis or {}).get("keywords", {})
     return bool(contribution.language) and contribution.language == keywords.get("language")
 
 
 def theme_sure(contribution: Contribution) -> bool:
+    if getattr(contribution, "validated_by", None):
+        return True  # checked by a person
     keywords = (contribution.analysis or {}).get("keywords", {})
     return bool(contribution.themes) and contribution.themes[0] in (keywords.get("themes") or [])
 
@@ -126,6 +130,7 @@ def summary(
         "total": total,
         "located": sum(1 for c in contributions if c.territory_id is not None),
         "analysed_by_ai": sum(1 for c in contributions if (c.analysis or {}).get("mode") == "ai"),
+        "validated": sum(1 for c in contributions if getattr(c, "validated_by", None)),
         "secondary_included": secondary,
         "secondary_note": SECONDARY_NOTE if secondary else None,
         "themes": themes,
@@ -181,10 +186,18 @@ def verbatim(c: Contribution, units: dict[int, dict[str, Any]]) -> dict[str, Any
         else None,
         "sure": {"language": language_sure(c), "theme": theme_sure(c)},
         "badge": c.badge,
+        "validated_by": getattr(c, "validated_by", None),
+        "validation_note": {
+            "fr": f"Validé par {c.validated_by}",
+            "ar": f"تم التحقق من طرف {c.validated_by}",
+        }
+        if getattr(c, "validated_by", None)
+        else None,
     }
 
 
 UNFAVOURABLE = {"deficit_marked", "watch"}
+SEVERITY = {"deficit_marked": "marked", "watch": "watch"}
 
 
 def crossing(
@@ -228,9 +241,16 @@ def crossing(
                     "status": status,
                     "status_label": statuses.get(status) if status else None,
                     "unfavourable": status in UNFAVOURABLE,
+                    "severity": SEVERITY.get(status) if status else None,
                 }
             )
         unfavourable = any(item["unfavourable"] for item in linked)
+        # The label repeats the real status: « déficit marqué » only for that status.
+        severity = (
+            ("marked" if any(item.get("severity") == "marked" for item in linked) else "watch")
+            if unfavourable
+            else None
+        )
         if not theme.indicators:
             if count == 0:
                 continue
@@ -238,8 +258,9 @@ def crossing(
         elif count < rules.min_contributions:
             if count == 0 and not unfavourable:
                 continue
-            if count == 0 and unfavourable and total >= rules.percent_min_total:
-                verdict = "data_only"
+            if count == 0 and unfavourable:
+                # No demand can only be stated on a large enough base (owner rule, 30).
+                verdict = "data_only" if total >= rules.absence_min_total else "absence_unknown"
             else:
                 verdict = "too_few"
         else:
@@ -252,6 +273,11 @@ def crossing(
                 verdict = "moderate_deficit"  # some demand (not « strong ») and a deficit
             else:
                 verdict = "moderate"
+        key = (
+            f"{verdict}_{severity}"
+            if severity and f"{verdict}_{severity}" in rules.labels
+            else verdict
+        )
         rows.append(
             {
                 "theme": theme.code,
@@ -260,9 +286,8 @@ def crossing(
                 "share": share(count, total, rules.percent_min_total),
                 "indicators": linked,
                 "verdict": verdict,
-                "verdict_label": rules.labels.get(verdict).model_dump()  # type: ignore[union-attr]
-                if verdict in rules.labels
-                else None,
+                "severity": severity,
+                "verdict_label": rules.labels[key].model_dump() if key in rules.labels else None,
                 "data_request": theme.data_request.model_dump() if theme.data_request else None,
             }
         )
@@ -272,6 +297,7 @@ def crossing(
         "demand_only": 2,
         "data_only": 3,
         "moderate": 4,
+        "absence_unknown": 5,
         "too_few": 5,
         "no_indicator": 6,
         "no_indicator_planned": 7,
@@ -279,6 +305,7 @@ def crossing(
     rows.sort(key=lambda r: (order[str(r["verdict"])], -int(r["count"])))
     return {
         "total": total,
+        "validated": sum(1 for c in contributions if getattr(c, "validated_by", None)),
         "secondary_included": secondary,
         "secondary_note": SECONDARY_NOTE if secondary else None,
         "rows": rows,
@@ -286,6 +313,7 @@ def crossing(
             "min_contributions": rules.min_contributions,
             "percent_min_total": rules.percent_min_total,
             "strong_share": rules.strong_share,
+            "absence_min_total": rules.absence_min_total,
         },
     }
 
@@ -306,6 +334,14 @@ def aggregate_indicator(
     bad = [m for m in known if (m["values"].get(code) or {}).get("status") in UNFAVOURABLE]
     bad_pop = sum(m.get("population") or 0 for m in bad)
     pop_share = bad_pop / total_pop if total_pop else None
+    marked_pop = sum(
+        m.get("population") or 0
+        for m in bad
+        if (m["values"].get(code) or {}).get("status") == "deficit_marked"
+    )
+    unfavourable = pop_share is not None and pop_share >= rules.aggregate_unfavourable_share
+    # « Déficit marqué » for the commune only if the units in that status alone reach the share.
+    marked = bool(total_pop) and marked_pop / total_pop >= rules.aggregate_unfavourable_share
     return {
         "code": code,
         "label": meta.get("label"),
@@ -322,5 +358,6 @@ def aggregate_indicator(
             "missing_units": len(members) - len(known),
             "population_share": round(pop_share, 4) if pop_share is not None else None,
         },
-        "unfavourable": pop_share is not None and pop_share >= rules.aggregate_unfavourable_share,
+        "unfavourable": unfavourable,
+        "severity": ("marked" if marked else "watch") if unfavourable else None,
     }

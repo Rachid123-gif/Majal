@@ -252,8 +252,14 @@ export function TerritoryMap({
     const map = mapRef.current;
     if (!ready || !map) return;
     map.setFilter("facilities", ["in", ["get", "category"], ["literal", visibleCategories]]);
+    const entries = Object.entries(colors);
+    if (entries.length === 0) {
+      // No facility category (e.g. the citizen dashboard map): a plain colour, not a « match ».
+      map.setPaintProperty("facilities", "circle-color", PETROL);
+      return;
+    }
     const match: unknown[] = ["match", ["get", "category"]];
-    for (const [category, color] of Object.entries(colors)) match.push(category, color);
+    for (const [category, color] of entries) match.push(category, color);
     match.push(PETROL);
     map.setPaintProperty("facilities", "circle-color", match as ExpressionSpecification);
   }, [ready, visibleCategories, colors]);

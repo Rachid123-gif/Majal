@@ -165,9 +165,10 @@ def process_contribution(
             translation, [original[m.start : m.end] for m in extra], placeholder
         )
 
-    location = gazetteer.locate(
-        masked_text, result.place_fr or result.place, contribution.declared_commune
-    )
+    # The model's place is only a candidate, and only if it is written in the text (a model may
+    # otherwise turn « حينا » (our neighbourhood) into a real place name).
+    model_place = result.place if result.place and result.place in masked_text else None
+    location = gazetteer.locate(masked_text, model_place, contribution.declared_commune)
     counts: dict[str, int] = {}
     for item in spans:
         counts[item.kind] = counts.get(item.kind, 0) + 1

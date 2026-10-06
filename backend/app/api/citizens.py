@@ -1,0 +1,255 @@
+"""Citizen listening (stage 4): dashboard, verbatims, unit summary, import of contributions."""
+
+from typing import Annotated, Any
+
+import yaml
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.db import get_engine
+from app.models import Consultation, Contribution, StudyArea, Territory
+from app.security import Account, Role, require_account
+from app.services.citizens import evaluate, pipeline, stats
+from app.services.citizens.fallback import cached_analysis_config
+from app.services.citizens.jobs import enqueue
+from app.services.indicators.engine import MissingInput
+from app.services.reports.context import latest_diagnostic
+from app.settings import REPO_ROOT, get_settings
+
+router = APIRouter(tags=["citizens"])
+MAX_UPLOAD = 5 * 1024 * 1024
+
+
+def _area(session: Session, code: str) -> StudyArea:
+    area = session.scalars(select(StudyArea).where(StudyArea.code == code)).one_or_none()
+    if area is None:
+        raise HTTPException(status_code=404, detail="Territoire inconnu ou non importé.")
+    return area
+
+
+def _units(session: Session, code: str, area: StudyArea) -> dict[int, dict[str, Any]]:
+    population: dict[int, float] = {}
+    try:
+        for unit in latest_diagnostic(session, code).result["units"]:
+            value = (unit["values"].get("DEM_POP") or {}).get("value")
+            if value:
+                population[unit["id"]] = value
+    except MissingInput:
+        pass
+    return {
+        t.id: {"name_fr": t.name_fr, "name_ar": t.name_ar, "population": population.get(t.id)}
+        for t in session.scalars(
+            select(Territory).where(Territory.study_area_id == area.id, Territory.is_analysis_unit)
+        )
+    }
+
+
+def _contributions(
+    session: Session, area: StudyArea
+) -> tuple[list[Consultation], list[Contribution]]:
+    consultations = list(
+        session.scalars(select(Consultation).where(Consultation.study_area_id == area.id)).all()
+    )
+    ids = [c.id for c in consultations]
+    contributions = (
+        list(
+            session.scalars(select(Contribution).where(Contribution.consultation_id.in_(ids))).all()
+        )
+        if ids
+        else []
+    )
+    return consultations, contributions
+
+
+def _evaluation(
+    code: str, contributions: list[Contribution], units: dict[int, dict[str, Any]]
+) -> dict[str, Any]:
+    fictitious = get_settings().data_dir / "fictif" / code / "contributions.yaml"
+    out: dict[str, Any] = {"provisional": None, "reference": None, "anonymisation": None}
+    if fictitious.exists():
+        ids = {info["name_fr"]: uid for uid, info in units.items()}
+        truth = evaluate.provisional_truth(fictitious, ids)
+        result = evaluate.score(contributions, truth)
+        if result["n"]:
+            out["provisional"] = {
+                **result,
+                "base": {k: v.format(n=result["n"]) for k, v in evaluate.PROVISIONAL_BASE.items()},
+            }
+        # Anonymisation: share of the fictitious traps that are masked in the stored texts.
+        data = yaml.safe_load(fictitious.read_text(encoding="utf-8"))["contributions"]
+        by_id = {c.external_id: c for c in contributions}
+        traps = masked = 0
+        for item in data:
+            stored = by_id.get(item["id"])
+            if stored is None or not item.get("pii"):
+                continue
+            spans = [
+                stored.original_text[i["start"] : i["end"]]
+                for i in stored.anonymization.get("items", [])
+            ]
+            traps += 1
+            masked += all(
+                any(p["value"] in s or s in p["value"] for s in spans) for p in item["pii"]
+            )
+        if traps:
+            out["anonymisation"] = {
+                "rate": masked / traps,
+                "masked": masked,
+                "traps": traps,
+                "base": {k: v.format(n=traps) for k, v in evaluate.ANONYMISATION_BASE.items()},
+            }
+    reference_truth = evaluate.reference_truth(
+        REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx", {"amazigh_latin"}
+    )
+    if reference_truth:
+        result = evaluate.score(contributions, reference_truth)
+        if result["n"]:
+            out["reference"] = {
+                **result,
+                "base": {k: v.format(n=result["n"]) for k, v in evaluate.REFERENCE_BASE.items()},
+            }
+    return out
+
+
+@router.get("/api/territories/{code}/citizens")
+def dashboard(
+    code: str,
+    _: Annotated[Account, Depends(require_account)],
+    secondary: bool = False,
+    theme: str | None = None,
+    unit: int | None = None,
+    language: str | None = None,
+    tonality: str | None = None,
+) -> dict[str, Any]:
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        consultations, contributions = _contributions(session, area)
+        units = _units(session, code, area)
+        selected = stats.filtered(contributions, theme, unit, language, tonality, secondary)
+        fictitious = any(c.badge == "fictitious" for c in consultations)
+        return {
+            "territory": code,
+            "taxonomy": {
+                "label": taxonomy.label.model_dump(),
+                "themes": [
+                    {"code": t.code, "label": t.label.model_dump(), "indicators": t.indicators}
+                    for t in taxonomy.themes
+                ],
+                "tonalities": {k: v.model_dump() for k, v in taxonomy.tonalities.items()},
+            },
+            "languages": {
+                k: v.model_dump()
+                for k, v in cached_analysis_config(
+                    get_settings().config_dir / "citizens" / "analyse.yaml"
+                ).languages.items()
+            },
+            "consultations": [
+                {"id": c.id, "code": c.code, "title": c.title, "badge": c.badge}
+                for c in consultations
+            ],
+            "fictitious": fictitious,
+            "banner": stats.FICTITIOUS_BANNER if fictitious else None,
+            "filters": {"theme": theme, "unit": unit, "language": language, "tonality": tonality},
+            "summary": stats.summary(selected, taxonomy, units, secondary),
+            "evaluation": _evaluation(code, contributions, units),
+        }
+
+
+@router.get("/api/territories/{code}/citizens/verbatims")
+def verbatims(
+    code: str,
+    _: Annotated[Account, Depends(require_account)],
+    theme: Annotated[list[str] | None, Query()] = None,
+    unit: int | None = None,
+    language: str | None = None,
+    tonality: str | None = None,
+) -> dict[str, list[dict[str, Any]]]:
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        contributions = _contributions(session, area)[1]
+        units = _units(session, code, area)
+        selected = stats.filtered(contributions, None, unit, language, tonality)
+        codes = theme or [t.code for t in taxonomy.themes]
+        return {c: rows for c in codes if (rows := stats.verbatims(selected, c, units))}
+
+
+@router.get("/api/territories/{code}/units/{unit_id}/citizens")
+def unit_summary(
+    code: str,
+    unit_id: int,
+    _: Annotated[Account, Depends(require_account)],
+    secondary: bool = False,
+) -> dict[str, Any]:
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        consultations, contributions = _contributions(session, area)
+        units = _units(session, code, area)
+        selected = stats.filtered(contributions, unit=unit_id, secondary=secondary)
+        summary = stats.summary(
+            selected, taxonomy, {unit_id: units[unit_id]} if unit_id in units else {}, secondary
+        )
+        top = [row["code"] for row in summary["themes"][:2]]
+        fictitious = any(c.badge == "fictitious" for c in consultations)
+        return {
+            "fictitious": fictitious,
+            "banner": stats.FICTITIOUS_BANNER if fictitious else None,
+            "summary": summary,
+            "verbatims": [
+                v for code_ in top for v in stats.verbatims(selected, code_, units, limit=1)
+            ],
+        }
+
+
+@router.post("/api/territories/{code}/citizens/import")
+async def import_file(
+    code: str,
+    request: Request,
+    account: Annotated[Account, Depends(require_account)],
+    filename: str,
+    title: str = "Consultation importée",
+) -> dict[str, Any]:
+    if not ({Role.referent, Role.admin} & set(account.roles)):
+        raise HTTPException(
+            status_code=403,
+            detail="L'import est réservé aux comptes professeur et administrateur.",
+        )
+    content = await request.body()
+    if len(content) > MAX_UPLOAD:
+        raise HTTPException(status_code=413, detail="Fichier trop volumineux (5 Mo au plus).")
+    try:
+        rows = pipeline.read_rows(filename, content)
+    except (pipeline.ImportError_, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        slug = "".join(ch if ch.isalnum() else "-" for ch in filename.rsplit(".", 1)[0].casefold())
+        consultation = pipeline.import_contributions(
+            session,
+            area,
+            f"import-{slug}"[:80],
+            title,
+            "official",
+            rows,
+            filename,
+            account.username,
+        )
+        mode = enqueue(consultation.id)
+        return {"consultation_id": consultation.id, "rows": len(rows), "processing": mode}
+
+
+@router.get("/api/citizens/consultations/{consultation_id}/progress")
+def progress(
+    consultation_id: int, _: Annotated[Account, Depends(require_account)]
+) -> dict[str, int]:
+    with Session(get_engine()) as session:
+        rows = session.scalars(
+            select(Contribution).where(Contribution.consultation_id == consultation_id)
+        ).all()
+        return {
+            "total": len(rows),
+            "analysed": sum(1 for c in rows if c.analysis and c.analysis.get("mode")),
+        }

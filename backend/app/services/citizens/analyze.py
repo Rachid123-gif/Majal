@@ -13,6 +13,7 @@ from typing import Any
 from app.config_loader.taxonomy import Taxonomy
 from app.services.citizens.fallback import (
     AnalysisConfig,
+    _hits,
     classify_themes,
     classify_tonality,
     detect_language,
@@ -27,8 +28,12 @@ SYSTEM = (
     "Réponds uniquement en JSON avec :\n"
     "- language : la langue du texte (une des valeurs proposées) ;\n"
     "- translation_fr : la traduction fidèle en français (le texte lui-même s'il est en français),"
-    " sans rien ajouter ni résumer, en gardant les marques [NOM], [TÉLÉPHONE]… ;\n"
-    "- themes : un à trois codes de thèmes de la liste, du plus au moins important ;\n"
+    " sans rien ajouter ni résumer, en gardant les marques [NOM], [TÉLÉPHONE]… ; les noms de "
+    "lieux (quartiers, rues, places, communes) ne se traduisent pas : écris-les en lettres "
+    "latines tels qu'ils se prononcent, sans les traduire ;\n"
+    "- themes : le code du thème PRINCIPAL de la liste, puis un second code SEULEMENT si ce "
+    "second sujet est explicitement évoqué dans le texte (au plus deux codes ; ne déduis "
+    "jamais un thème qui n'est pas écrit) ;\n"
     "- tonality : demande, plainte, proposition ou satisfaction ;\n"
     "- place : le lieu cité (quartier, rue, place, commune) tel qu'il est écrit, ou null ;\n"
     "- place_fr : ce lieu en lettres latines tel qu'il s'écrit en français, ou null ;\n"
@@ -52,7 +57,7 @@ def schema(taxonomy: Taxonomy, languages: list[str]) -> dict[str, Any]:
                 "type": "array",
                 "items": {"type": "string", "enum": codes},
                 "minItems": 1,
-                "maxItems": 3,
+                "maxItems": 2,
             },
             "tonality": {"type": "string", "enum": list(taxonomy.tonalities)},
             "place": {"type": ["string", "null"]},
@@ -85,6 +90,24 @@ class Analysis:
     duration_s: float = 0.0
     error: str | None = None
     keywords: dict[str, Any] = field(default_factory=dict)  # fallback result, for comparison
+
+
+def explicit_themes(
+    themes: list[str], text: str, translation: Any, taxonomy: Taxonomy
+) -> list[str]:
+    """Rule of method: a second theme is kept only if it is explicitly evoked, that is if one of
+    its keywords appears in the text or in its French translation."""
+    if len(themes) < 2:
+        return themes
+    second = taxonomy.theme(themes[1])
+    if second is None:
+        return themes[:1]
+    found = _hits(second.keywords.ar, text, True) or _hits(
+        second.keywords.fr + second.keywords.darija, text, False
+    )
+    if not found and isinstance(translation, str):
+        found = _hits(second.keywords.fr, translation, False)
+    return themes if found else themes[:1]
 
 
 def keywords_only(text: str, taxonomy: Taxonomy, config: AnalysisConfig) -> dict[str, Any]:
@@ -137,10 +160,11 @@ def analyze(
     data = result.data or {}
     codes = {t.code for t in taxonomy.themes}
     themes = [t for t in data.get("themes") or [] if t in codes]
-    themes = list(dict.fromkeys(themes))[:3]
+    themes = list(dict.fromkeys(themes))[:2]  # main theme, then an explicit second one
     if not themes:
         fallback.error = "Réponse sans thème valide"
         return fallback
+    themes = explicit_themes(themes, text, data.get("translation_fr"), taxonomy)
     language = data.get("language") if data.get("language") in config.languages else None
     if baseline["language"] in TRUST_MARKERS or language in (None, "other"):
         language = baseline["language"]

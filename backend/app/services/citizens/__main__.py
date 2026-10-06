@@ -143,6 +143,11 @@ def markdown(provisional: dict[str, Any], reference: dict[str, Any] | None) -> s
                 f"| {name} | {_pct(result['themes']['model'][key])} "
                 f"| {_pct(result['themes']['keywords'][key])} |"
             )
+        main = result.get("main_theme", {}).get("model")
+        if main:
+            lines.append(
+                f"| Thème principal parmi les thèmes annotés | {_pct(main['accuracy'])} | — |"
+            )
         lines.append(
             f"| Tonalité — exactitude | {_pct(result['tonality']['model']['accuracy'])} "
             f"| {_pct(result['tonality']['keywords']['accuracy'])} |"

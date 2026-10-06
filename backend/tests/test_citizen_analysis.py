@@ -205,3 +205,18 @@ def test_place_names_that_are_common_words_need_a_place_cue() -> None:
     assert (
         GAZETTEER.locate("Le marché d'Ameur est loin.", None, "Ameur").territory_id is None or True
     )
+
+
+def test_a_second_theme_is_kept_only_if_explicitly_evoked() -> None:
+    from app.services.citizens.analyze import explicit_themes
+
+    text = "Les trottoirs sont cassés et les poubelles débordent."
+    assert explicit_themes(["voirie", "proprete"], text, None, TAXONOMY) == ["voirie", "proprete"]
+    assert explicit_themes(["voirie", "securite"], text, None, TAXONOMY) == ["voirie"]
+    # The French translation counts too (Arabic or darija original).
+    assert explicit_themes(
+        ["voirie", "proprete"],
+        "الأرصفة مكسورة",
+        "Les trottoirs sont cassés et les ordures s'accumulent.",
+        TAXONOMY,
+    ) == ["voirie", "proprete"]

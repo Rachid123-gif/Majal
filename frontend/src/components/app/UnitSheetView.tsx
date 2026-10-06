@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
 import { ConfidenceBadge } from "@/components/app/ConfidenceBadge";
 import { GridBanner } from "@/components/app/GridBanner";
+import { CitizenUnitCard } from "@/components/app/CitizenUnitCard";
 import { ReportPanel } from "@/components/app/ReportPanel";
 import { StatusChip } from "@/components/app/StatusChip";
 import { useLocale } from "@/i18n/LocaleProvider";
@@ -456,6 +457,8 @@ function SheetBody({
           </section>
         );
       })}
+
+      <CitizenUnitCard code={code} unitId={unit.id} />
 
       <ReportPanel code={code} unitId={unit.id} />
     </>

@@ -10,10 +10,11 @@ Base : sur le jeu de test fictif (140 contributions annotées par Claude, qui le
 
 | Mesure | IA locale | Mots-clés (sans IA) |
 | --- | --- | --- |
-| Thèmes — précision | 64 % | 62 % |
-| Thèmes — rappel | 84 % | 70 % |
-| Thèmes — F1 | 73 % | 66 % |
-| Tonalité — exactitude | 79 % | 85 % |
+| Thèmes — précision | 83 % | 62 % |
+| Thèmes — rappel | 81 % | 70 % |
+| Thèmes — F1 | 82 % | 66 % |
+| Thème principal parmi les thèmes annotés | 86 % | — |
+| Tonalité — exactitude | 80 % | 85 % |
 | Langue — exactitude | 94 % | 94 % |
 
 Localisation (unité d'analyse) : 116 justes, 0 fausses, 24 non localisées sur 140. Un lieu n'est rattaché que s'il est connu (quartiers, places, avenues d'OpenStreetMap) ou si la commune est déclarée ; sinon « lieu non identifié ».

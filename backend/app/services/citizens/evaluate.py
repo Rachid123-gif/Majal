@@ -57,6 +57,20 @@ def score(contributions: list[Contribution], truth: dict[str, dict[str, Any]]) -
                 for c, t in rows
             ),
         },
+        # Main theme (the one the statistics count): is it among the annotated themes?
+        "main_theme": {
+            "model": _accuracy(
+                [
+                    (
+                        t["themes"][0] if c.themes and c.themes[0] in t["themes"] else None,
+                        t["themes"][0],
+                    )
+                    for c, t in rows
+                ]
+            )
+            if all(t["themes"] for _, t in rows)
+            else None,
+        },
         "tonality": {
             "model": _accuracy([(c.tonality, t.get("tonality")) for c, t in rows]),
             "keywords": _accuracy(

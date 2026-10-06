@@ -61,6 +61,19 @@ export function AppHeader({ territory }: { territory?: string }) {
             })}
           </nav>
         )}
+        {territory && (
+          <nav aria-label={t("citizens.nav")} className="flex gap-4 text-sm">
+            <Link href={`/territoire/${territory}`} className="text-petrol hover:underline">
+              {t("citizens.navMap")}
+            </Link>
+            <Link
+              href={`/territoire/${territory}/citoyens`}
+              className="text-petrol hover:underline"
+            >
+              {t("citizens.nav")}
+            </Link>
+          </nav>
+        )}
         <div className="ms-auto flex items-center gap-3">
           <Link
             href="/tableau-de-bord"

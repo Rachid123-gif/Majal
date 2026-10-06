@@ -69,6 +69,7 @@ testpaths = ["tests"]
 "tests/test_meaning.py" = ["E501", "RUF001"]
 "tests/test_fictional_contributions.py" = ["RUF001"]
 "tests/test_anonymization.py" = ["E501", "RUF001"]
+"tests/test_citizen_analysis.py" = ["E501", "RUF001"]
 "app/services/citizens/*.py" = ["E501", "RUF001"]
 "tests/test_report_writer.py" = ["E501", "RUF001"]
 

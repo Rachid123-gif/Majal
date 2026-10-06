@@ -49,3 +49,20 @@ cues:
     fr: [mon voisin, ma voisine, mon fils, ma fille, mon frère, ma sœur, mon ami, mon amie, mon mari, ma femme, madame, monsieur]
     ar: [أنا, صاحبي, صاحبتي, جاري, جارتي, جارنا, جارتنا, ولدي, بنتي, أخي, أختي, السيد, السيدة]
     darija: [ana, sa7bi, jari, jarti, wldi, bnti, khoya, khti]
+
+# Mots qui suivent souvent « je suis » / « أنا » sans être un nom : gentilés et métiers courants.
+# Jamais masqués après une tournure de présentation (« Je suis Rbati depuis 30 ans »).
+not_names:
+  fr: [Marocain, Marocaine, Marocains, Rbati, Rbatia, Rbatie, Slaoui, Slaouia, Témarani,
+    Témaria, Tétouani, Tétouania, Casaoui, Casaouia, Fassi, Fassia, Amazigh, Berbère, Arabe,
+    étudiant, étudiante, commerçant, commerçante, enseignant, enseignante, professeur,
+    retraité, retraitée, chauffeur, artisan, ouvrier, ouvrière, infirmier, infirmière, médecin,
+    agriculteur, agricultrice, fonctionnaire, employé, employée, mère, père, habitant,
+    habitante, riverain, riveraine, parent, jeune, chômeur, chômeuse, handicapé, handicapée,
+    propriétaire, locataire, membre, bénévole, Responsable]
+  ar: [مغربي, مغربية, رباطي, رباطية, سلاوي, سلاوية, تماري, تمارية, تطواني, تطوانية, أمازيغي,
+    طالب, طالبة, تاجر, تاجرة, أستاذ, أستاذة, معلم, معلمة, متقاعد, متقاعدة, سائق, حرفي, عامل,
+    عاملة, ممرض, ممرضة, طبيب, طبيبة, فلاح, موظف, موظفة, أم, أب, ساكن, ساكنة, مقيم, مقيمة,
+    شاب, شابة, عاطل, عاطلة, مكتري, مالك, عضو, متطوع]
+  darija: [mghribi, mghribia, rbati, rbatia, slaoui, slaouia, tetouani, talib, talba, tajer,
+    ostad, oustad, motaqa3id, chauffeur, khddam, khddama, fella7, mwddaf, sakn, sakna, chab]

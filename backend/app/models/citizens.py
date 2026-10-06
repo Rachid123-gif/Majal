@@ -1,10 +1,10 @@
 """Citizen listening (stage 4): place gazetteer, consultations and contributions."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from geoalchemy2 import Geometry, WKBElement
-from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint, func
+from sqlalchemy import Date, DateTime, ForeignKey, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -59,6 +59,9 @@ class Contribution(Base):
     external_id: Mapped[str] = mapped_column(String(80))
     original_text: Mapped[str] = mapped_column(Text)
     declared_language: Mapped[str | None] = mapped_column(String(20))
+    declared_commune: Mapped[str | None] = mapped_column(String(200))
+    channel: Mapped[str | None] = mapped_column(String(80))
+    submitted_on: Mapped[date | None] = mapped_column(Date)
     language: Mapped[str | None] = mapped_column(String(20))  # detected
     anonymized_text: Mapped[str | None] = mapped_column(Text)
     anonymization: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)  # what was masked

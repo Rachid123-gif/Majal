@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local start awake stop logs dev dev-local down indicators reports migrate data demo test test-backend \
+.PHONY: help setup setup-local start awake stop logs dev dev-local down indicators reports citizens migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -97,6 +97,11 @@ indicators: ## Recalcule les indicateurs (après une modification de la grille)
 
 reports: ## Pré-génère les rapports de toutes les unités (cache pour les démonstrations)
 	docker compose run --rm -T backend python -m app.services.reports pregenerate $(or $(TERRITORY),rabat) $(if $(FORCE),--force,)
+
+citizens: ## Importe et analyse les contributions fictives (IA locale), puis évalue
+	docker compose run --rm -T backend python -m app.services.citizens import-fictif $(or $(TERRITORY),rabat)
+	docker compose run --rm -T backend python -u -m app.services.citizens analyze $(or $(TERRITORY),rabat) $(if $(FORCE),--force,)
+	docker compose run --rm -T backend python -m app.services.citizens evaluate $(or $(TERRITORY),rabat)
 
 demo: ## Lance le mode démonstration hors ligne — disponible à l'étape 7
 	@echo "Pas encore disponible : le mode démonstration arrive à l'étape 7."

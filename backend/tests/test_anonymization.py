@@ -89,6 +89,11 @@ def test_difficult_cases_are_masked(text: str, kind: str, value: str) -> None:
         "حسن التنظيم مطلوب في السوق",
         "زنقة الأمل مظلمة",
         "Je suis inquiet pour la sécurité des enfants.",
+        "Je suis Rbati depuis 30 ans et je n'ai jamais vu ça.",
+        "Je suis Marocaine, enseignante, et je demande un jardin.",
+        "أنا طالب في الجامعة",
+        "أنا رباطي منذ صغري",
+        "ana tajer f souk",
         "شارع محمد الخامس مزدحم",
     ],
 )

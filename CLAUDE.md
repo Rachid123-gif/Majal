@@ -155,7 +155,9 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   de l'évaluation de référence. Taxonomie `config/taxonomy/urbain.yaml` : `data_request` des thèmes
   sans indicateur = entrées du futur module « Besoins en données » (étape 5). Bandeau obligatoire
   « Contributions fictives — illustration du fonctionnement de l'outil… » partout (tableau de bord,
-  fiche, croisement, section 7 des rapports, exports).
+  fiche, croisement, section 7 des rapports, exports). Tout résultat d'anonymisation ou
+  d'évaluation affiché précise sa base de mesure (ex. « 100 % sur le jeu de test fictif
+  (22 pièges) »). 4.2 (anonymisation, `app/services/citizens/anonymize.py`) validé le 2026-10-06.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

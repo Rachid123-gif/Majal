@@ -1,0 +1,89 @@
+# MAJAL — Analyse des contributions citoyennes (étape 4).
+# L'IA locale détecte la langue, traduit en français, classe (thèmes de la taxonomie), donne la
+# tonalité et le lieu cité. Ce fichier sert au REPLI sans IA (et à la comparaison) : marqueurs de
+# langue et mots de la tonalité. Les thèmes de repli sont les mots-clés de la taxonomie.
+# Statut : proposition v0, modifiable.
+
+languages:
+  fr: { fr: "Français", ar: "الفرنسية" }
+  ar: { fr: "Arabe", ar: "العربية" }
+  darija_ar: { fr: "Darija (alphabet arabe)", ar: "الدارجة (حروف عربية)" }
+  darija_latin: { fr: "Darija (alphabet latin)", ar: "الدارجة (حروف لاتينية)" }
+  amazigh_latin: { fr: "Amazighe (transcription latine)", ar: "الأمازيغية (حروف لاتينية)" }
+  other: { fr: "Autre", ar: "أخرى" }
+
+# Mots typiques, pour distinguer la darija de l'arabe standard et du français, et l'amazighe.
+markers:
+  darija_ar: [ديال, ديالنا, ديالي, كاين, كاينة, ماكاينش, ما كاينش, بغينا, بغيت, دابا, مزيان, بزاف, فين, واش, كي, كنقترحو, كنخافو, كيتسناو, حتى, شي, ولات, ولا, الزبل, الطوبيس, الدراري, الديور, زنقة, هادشي, غير, خاص, خاصنا]
+  darija_latin: [dyal, dyalna, kayn, makaynch, bghina, bghit, daba, mzyan, bzaf, fin, wach, drari, zbel, tobis, khdma, chi, ghir, l7, 3la, nqtar7o, kan, kay, ma, hadchi, smiti, f]
+  amazigh_latin: [ur, nra, illi, ɣ, tamazirt, abrid, aman, tgmmi, tigmmi, tarwa, ilmeẓyen, axeddim, tinml, nneɣ, ufin, bahra, ad, gin, yan, yat]
+
+# Tonalité de repli : premier groupe trouvé dans cet ordre, sinon « plainte ».
+tonality_keywords:
+  satisfaction:
+    fr: [merci, bravo, félicit, satisfait, agréable, a changé la vie, plus sûr]
+    ar: [نشكر, شكرا, شكراً, أحسنتم, أصبح أسهل, سهّل]
+    darija: [choukran, chokran, mzyan, شكرا]
+  proposition:
+    fr: [je propose, nous proposons, proposition, il faudrait, suggère, permettrait, serait utile]
+    ar: [أقترح, نقترح, اقتراح, كنقترحو]
+    darija: [nqtar7o, n9tar7o, kanqtar7o]
+  demande:
+    fr: [nous demandons, je demande, demandons, merci de, pourrait-on, nous voulons, il faut, devrait, devraient, serait le bienvenu, besoin]
+    ar: [نطلب, نطالب, نرجو, بغينا, نريد, نحتاج]
+    darija: [bghina, bghit, khassna, 3afakom]
+
+# Petit glossaire général (darija, amazighe) donné à l'IA locale pour l'aider à traduire.
+# Vocabulaire courant, sans lien avec un texte particulier ; à compléter par un locuteur.
+glossary:
+  darija:
+    "ديال / dyal": "de (appartenance)"
+    "بغينا / bghina": "nous voulons"
+    "كاين / kayn": "il y a"
+    "ماكاينش / makaynch": "il n'y a pas"
+    "حفرة، حفاري / 7fra, 7fari": "trou, nids-de-poule"
+    "كيتخسر / kaytkhssr": "s'abîme"
+    "الطوبيس / tobis": "le bus"
+    "الزبل / zbel": "les ordures"
+    "الدراري / drari": "les enfants, les jeunes"
+    "الضو / ddaw": "la lumière, l'éclairage"
+    "الواد الحار / lwad l7ar": "les égouts"
+    "الكرا / lkra": "le loyer"
+    "الخدمة / khdma": "le travail, l'emploi"
+    "الزنقة / zan9a": "la rue"
+    "الجردة / jardin": "le jardin public"
+    "السبيطار / sbitar": "l'hôpital"
+    "المستوصف / lmostaw9af": "le dispensaire, centre de santé"
+    "الفراشة / ferracha": "les vendeurs ambulants (étals au sol)"
+    "دابا / daba": "maintenant"
+    "بزاف / bzaf": "beaucoup, trop"
+    "مزيان / mzyan": "bien"
+    "نقترحو / nqtar7o": "nous proposons"
+    "خاصنا / khassna": "il nous faut"
+    "الطوموبيلات / tomobilat": "les voitures"
+  amazigh:
+    "aman": "eau"
+    "abrid": "route, chemin"
+    "tigmmi (pl. tigmmi)": "maison"
+    "tinml": "école"
+    "axeddim": "travail"
+    "ilmeẓyen": "les jeunes"
+    "tarwa": "les enfants"
+    "tumubilin": "les voitures"
+    "uḍu azeggaɣ": "feu rouge"
+    "ur illi": "il n'y a pas"
+    "nra": "nous voulons"
+    "bahra": "beaucoup, très"
+    "izbal": "ordures"
+    "lmaḥaṭṭa": "la station, l'arrêt"
+    "akud": "le temps"
+    "ɣ": "dans, à"
+    "tanmmirt": "merci"
+
+# Noms de lieux qui sont aussi des mots courants en arabe ou en darija (« عامر » = plein,
+# « القرية » = le village, « صباح » = matin…). En alphabet arabe, ils ne désignent un lieu que
+# précédés d'un mot de lieu (place_cues). Mieux vaut un lieu non identifié qu'un lieu faux.
+place_common_words: [عامر, القرية, صباح, المحيط, النهضة, التقدم, الرياض, الوفاق, المسيرة,
+  السفراء, الطيران, الفتح, الياسمين, الفردوس, السلام, الأمل, البريد, السهول, المنزه, الأندلس,
+  الحي الصناعي, المغرب العربي, الشاطئ, المركز, الوسط]
+place_cues: [حي, قطاع, دوار, ساحة, منطقة, جماعة, مدينة, مقاطعة, تجزئة, إقامة]

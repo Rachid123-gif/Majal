@@ -56,6 +56,8 @@ class AnonymisationConfig(StrictModel):
     placeholders: dict[Kind, Placeholder]
     first_names: FirstNames
     cues: Cues
+    # Demonyms and occupations: never a name after « je suis » / « أنا ».
+    not_names: CueLists = Field(default_factory=CueLists)
 
 
 def load_anonymisation(path: Path) -> AnonymisationConfig:
@@ -164,6 +166,7 @@ def find_spans(
     blocked = shielded + [(m.start, m.end) for m in found]
     names = config.first_names
     ambiguous = set(names.ambiguous)
+    not_names = {w.casefold() for w in config.not_names.all()}
 
     # 1. Names after a cue.
     lower = source.casefold()
@@ -177,6 +180,8 @@ def find_spans(
                 if not token:
                     continue
                 word = token.group(1)
+                if word.casefold() in not_names:
+                    continue
                 start = match.end() + token.start(1)
                 end = start + len(word)
                 listed = word in names.latin or word in names.arabic or word in ambiguous

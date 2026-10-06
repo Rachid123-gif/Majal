@@ -20,7 +20,11 @@ sans que les données quittent l'ordinateur pendant l'utilisation.
 - **Contrôles du sens** (`config/report_templates/controles.yaml`) : un mot de tendance doit
   suivre le signe de la valeur (aucun pour un indicateur observé à une seule date) ; rien n'est
   affirmé sur une donnée manquante ; un statut cité doit être le statut calculé ; pas de jugement
-  subjectif ; en arabe, jamais deux nombres collés. Même traitement qu'un chiffre inventé.
+  subjectif ; en arabe, jamais deux nombres collés ; pas de « fausse absence » (dire qu'une
+  donnée manque alors que l'indicateur est connu). Même traitement qu'un chiffre inventé.
+- **Recontrôle** : quand les contrôles ou le plan changent, `make reports` repasse les contrôles
+  sur les rapports existants (mêmes données, même modèle) ; seuls ceux qui échouent sont
+  réécrits, les autres gardent leur texte et reçoivent la nouvelle clé de cache.
 - **Ton institutionnel** : consignes et phrases modèles dans le plan du rapport
   (`style`, `examples`), identifiants d'exemple fictifs (F9xx).
 - **Modèle de repli** : `OLLAMA_FALLBACK_MODEL=gemma3:4b`, choisi à la demande si

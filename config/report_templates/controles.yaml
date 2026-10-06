@@ -10,6 +10,8 @@
 # 2. Données manquantes : pour un indicateur « non disponible » ou « non évaluable », le texte ne
 #    peut rien affirmer sur son thème, sauf que la donnée manque.
 # 3. Ton : aucun jugement subjectif (liste « subjective »). En arabe, jamais deux nombres collés.
+# 4. Fausse absence : une phrase qui dit qu'une donnée manque doit parler d'un indicateur
+#    réellement non disponible ou non évaluable (mêmes marques et mêmes mots-clés de thème).
 #
 # Les mots sont cherchés en début de mot (« augment » couvre augmente, augmentation…) pour le
 # français, et sous leur forme exacte (avec و، ب، ل، ال… devant) pour l'arabe.
@@ -46,7 +48,7 @@ missing:
   # Marques sûres que la phrase dit seulement que la donnée manque.
   strong_markers:
     fr: ["non disponible", "pas disponible", "indisponible", "non calculé", "non évaluable", "à demander", "besoins en données", "ne permet pas", "ne permettent pas", "sans qu'on puisse", "impossible d'"]
-    ar: ["غير محتسب", "يطلب من", "يُطلب من", "غير قابل للتقييم", "الحاجيات من المعطيات", "لا تسمح", "لا يسمح", "يتعذر", "تعذر"]
+    ar: ["غير محتسب", "يطلب من", "يُطلب من", "يتعين طلب", "غير قابل للتقييم", "الحاجيات من المعطيات", "لا تسمح", "لا يسمح", "يتعذر", "تعذر"]
   # Marques ambiguës (« absence de centres de santé » est une affirmation) : acceptées seulement
   # si la phrase parle aussi de données.
   weak_markers:
@@ -96,6 +98,7 @@ topics:
   MOB_CHEF: { fr: [chef-lieu], ar: [مركز الإقليم] }
   ENV_VERT: { fr: [espaces verts, espace vert], ar: [المساحات الخضراء, مساحة خضراء, مساحات خضراء] }
   ENV_VERT300: { fr: [espaces verts, espace vert], ar: [المساحات الخضراء, مساحة خضراء, مساحات خضراء] }
+  URB_BATI: { fr: [surface bâtie, bâti, urbanisation, urbanisé], ar: [المساحة المبنية, المبني, التعمير] }
   URB_CROIS: { fr: [surface bâtie, bâti, construction], ar: [المساحة المبنية, البناء, المبني] }
   URB_CONSO: { fr: [consommation foncière, consommation d'espace, étalement, densification], ar: [الاستهلاك العقاري, التوسع العمراني, التكثيف] }
   URB_DOC: { fr: [document d'urbanisme, plan d'aménagement, plan d'urbanisme, schéma directeur], ar: [وثيقة تعمير, وثائق التعمير, تصميم التهيئة, المخطط المديري] }

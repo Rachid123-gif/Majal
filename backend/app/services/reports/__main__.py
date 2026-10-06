@@ -3,11 +3,14 @@
     python -m app.services.reports pregenerate rabat [--langs fr ar] [--force]
 
 Reports already in the cache (same data, model and outline) are skipped unless --force.
+After a change of controls or outline, a stored report whose data and model are unchanged is
+checked again with today's controls: kept if it passes, written again otherwise.
 """
 
 import argparse
 import sys
 import time
+from datetime import UTC, datetime
 from typing import cast
 
 from sqlalchemy import select
@@ -16,7 +19,7 @@ from sqlalchemy.orm import Session
 from app.db import get_engine
 from app.models import Territory
 from app.services.reports.context import latest_diagnostic
-from app.services.reports.generate import request_report, run_report
+from app.services.reports.generate import request_report, run_report, stored_issues
 from app.services.reports.writer import Lang
 
 
@@ -30,6 +33,7 @@ def pregenerate(code: str, langs: list[str], force: bool) -> int:
             .order_by(Territory.name_fr)
         ).all()
         total = len(units) * len(langs)
+        started_at = datetime.now(UTC).isoformat()
         done = 0
         for unit in units:
             for lang in langs:
@@ -44,8 +48,17 @@ def pregenerate(code: str, langs: list[str], force: bool) -> int:
                     force,
                 )
                 label = f"[{done}/{total}] {unit.name_fr} ({lang})"
+                if cached and stored_issues(session, report, diagnostic.result):
+                    # Cached, but written before today's controls and refused by them.
+                    report, cached = request_report(
+                        session, code, unit.id, cast(Lang, lang), "make-reports", True
+                    )
                 if cached:
-                    print(f"{label} : déjà en cache")
+                    rechecked = (
+                        report.content.get("rechecks")
+                        and report.content["rechecks"][-1]["at"] >= started_at
+                    )
+                    print(f"{label} : {'recontrôlé, conservé' if rechecked else 'déjà en cache'}")
                     continue
                 try:
                     report = run_report(session, report.id, code)

@@ -13,6 +13,7 @@ from app.models import Report, StudyArea
 from app.services.llm.base import LLMError, LLMResult
 from app.services.reports import generate
 from app.services.reports.context import find_unit, latest_diagnostic
+from app.services.reports.numbers import Issue
 
 pytestmark = pytest.mark.skipif(not check_database().ok, reason="base PostGIS non disponible")
 
@@ -89,3 +90,28 @@ def test_reports_are_cached(session: Session, monkeypatch: pytest.MonkeyPatch) -
     forced, cached = generate.request_report(session, "rabat", uid, "fr", "test", force=True)
     assert not cached and forced.id != report.id
     assert session.get(Report, report.id).state == "done"  # type: ignore[union-attr]
+
+
+def test_new_controls_recheck_stored_reports(
+    session: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """After a change of controls or outline, a stored report is kept if it passes today's
+    controls (same data, same model), and written again if it does not."""
+    monkeypatch.setattr(generate, "get_provider", lambda settings, model=None: EchoProvider())
+    monkeypatch.setattr(generate, "provider_identity", lambda: ("test", "fake"))
+    uid = unit_id(session)
+    report, _ = generate.request_report(session, "rabat", uid, "fr", "test")
+    generate.run_report(session, report.id, "rabat")
+
+    # Controls changed (another template hash): the stored text passes, the report is kept.
+    monkeypatch.setattr(generate, "template_hash", lambda template: "controls-v2")
+    kept, cached = generate.request_report(session, "rabat", uid, "fr", "test")
+    assert cached and kept.id == report.id
+    assert kept.content["rechecks"][-1]["result"] == "passed"
+
+    # Stricter controls that the stored text fails: a new report is written.
+    monkeypatch.setattr(generate, "template_hash", lambda template: "controls-v3")
+    refused = [Issue("trend", "refusé")]
+    monkeypatch.setattr(generate, "check_paragraphs", lambda *args, **kwargs: refused)
+    fresh, cached = generate.request_report(session, "rabat", uid, "fr", "test")
+    assert not cached and fresh.id != report.id

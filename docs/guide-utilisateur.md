@@ -83,7 +83,8 @@ Bon à savoir :
 - **Si Ollama est fermé**, le rapport est rédigé quand même, sans IA, à partir de phrases-types
   (l'écran l'indique).
 - Les rapports sont gardés en mémoire : un rapport déjà rédigé s'affiche immédiatement. Pour tout
-  préparer avant une présentation :
+  préparer avant une présentation (les rapports existants sont recontrôlés ; seuls ceux qui ne
+  passent plus les contrôles sont réécrits ; `FORCE=1 make reports` réécrit tout) :
 
 ```bash
 make reports
@@ -91,3 +92,9 @@ make reports
 
 - Changer de modèle : ligne `OLLAMA_MODEL=` dans `.env`, puis `make start`. Si ce modèle n'est
   pas installé, MAJAL utilise `OLLAMA_FALLBACK_MODEL` (gemma3:4b).
+
+## Mise en veille du Mac
+
+`make start` empêche le Mac et l'écran de se mettre en veille (commande macOS `caffeinate`),
+pour 12 heures au plus. `make stop` rétablit la mise en veille. Si MAJAL a été arrêté autrement,
+redémarrer le Mac ou taper `pkill caffeinate` la rétablit aussi.

@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local start stop logs dev dev-local down indicators reports migrate data demo test test-backend \
+.PHONY: help setup setup-local start awake stop logs dev dev-local down indicators reports migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -43,9 +43,27 @@ start: .env ## ★ Lance MAJAL en arrière-plan et ouvre le navigateur
 	@curl -sf -o /dev/null http://localhost:3000 \
 		&& { echo "✓ MAJAL est prêt : http://localhost:3000"; open http://localhost:3000 2>/dev/null || true; } \
 		|| { echo "MAJAL ne répond pas encore. Voir les messages : make logs"; exit 1; }
+	@$(MAKE) --no-print-directory awake
 
-stop: ## ★ Arrête MAJAL
+# Empêche la mise en veille du Mac (et de l'écran) tant que MAJAL tourne : caffeinate
+# (commande de macOS) est lancé en arrière-plan, au plus 12 heures, et arrêté par make stop.
+CAFFEINATE_PID := .majal-caffeinate.pid
+awake:
+	@if command -v caffeinate >/dev/null 2>&1; then \
+		if [ -f $(CAFFEINATE_PID) ] && kill -0 $$(cat $(CAFFEINATE_PID)) 2>/dev/null; then \
+			echo "✓ Mise en veille déjà empêchée"; \
+		else \
+			nohup caffeinate -dims -t 43200 >/dev/null 2>&1 & echo $$! > $(CAFFEINATE_PID); \
+			echo "✓ Mise en veille du Mac empêchée tant que MAJAL tourne (12 h au plus ; make stop la rétablit)"; \
+		fi; \
+	fi
+
+stop: ## ★ Arrête MAJAL (et rétablit la mise en veille du Mac)
 	docker compose down
+	@if [ -f $(CAFFEINATE_PID) ]; then \
+		kill $$(cat $(CAFFEINATE_PID)) 2>/dev/null || true; rm -f $(CAFFEINATE_PID); \
+		echo "✓ Mise en veille du Mac rétablie"; \
+	fi
 
 logs: ## Affiche les messages de MAJAL (Ctrl+C pour quitter l'affichage)
 	docker compose logs -f --tail 50

@@ -13,14 +13,20 @@ from typing import Any, cast
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Report, Territory
+from app.models import Diagnostic, Report, Territory
 from app.services.llm import LLMError, get_provider
 from app.services.llm.ollama import OllamaProvider
 from app.services.reports.context import latest_diagnostic, unit_identity
 from app.services.reports.facts import FactSheet, build_fact_sheet
 from app.services.reports.numbers import check_rendered, definitional_phrases
 from app.services.reports.template import ReportTemplate, load_template
-from app.services.reports.writer import Lang, SectionResult, render, write_section
+from app.services.reports.writer import (
+    Lang,
+    SectionResult,
+    check_paragraphs,
+    render,
+    write_section,
+)
 from app.settings import get_settings
 
 METHOD_NOTE = {
@@ -241,6 +247,63 @@ def current_cache_key(
     )
 
 
+def stored_issues(session: Session, report: Report, diagnostic: dict[str, Any]) -> list[str]:
+    """Today's controls applied to the text of a stored report (its raw, cited form)."""
+    unit_id, lang = report.territory_id, cast(Lang, report.language)
+    sheet = build_fact_sheet(diagnostic, unit_id, dict(unit_identity(session, unit_id)))
+    return [
+        issue.describe()
+        for section in report.content.get("sections", [])
+        if section["mode"] in ("ai", "fallback")
+        for issue in check_paragraphs(section.get("raw", []), sheet, lang)
+    ]
+
+
+def recheck_stored(
+    session: Session,
+    diagnostic: dict[str, Any],
+    unit_id: int,
+    lang: Lang,
+    provider: str,
+    model: str,
+    key: str,
+) -> Report | None:
+    """After a change of controls or outline, keep a stored report when nothing it depends on
+    has changed (same unit data, same model) and its text passes today's controls: it gets the
+    current cache key. Otherwise None, and the report is written again."""
+    stored = session.scalars(
+        select(Report)
+        .where(
+            Report.territory_id == unit_id,
+            Report.language == lang,
+            Report.state == "done",
+            Report.provider == provider,
+            Report.model == model,
+        )
+        .order_by(Report.created_at.desc())
+        .limit(1)
+    ).one_or_none()
+    if stored is None:
+        return None
+    previous = session.get(Diagnostic, stored.diagnostic_id)
+    if previous is None or unit_data_hash(previous.result, unit_id) != unit_data_hash(
+        diagnostic, unit_id
+    ):
+        return None
+    if stored_issues(session, stored, diagnostic):
+        return None
+    stored.cache_key = key
+    stored.content = {
+        **stored.content,
+        "rechecks": [
+            *stored.content.get("rechecks", []),
+            {"at": datetime.now(UTC).isoformat(), "result": "passed"},
+        ],
+    }
+    session.commit()
+    return stored
+
+
 def find_cached(session: Session, key: str) -> Report | None:
     return session.scalars(
         select(Report)
@@ -308,6 +371,9 @@ def request_report(
         cached = find_cached(session, key)
         if cached is not None:
             return cached, True
+        rechecked = recheck_stored(session, diagnostic.result, unit_id, lang, provider, model, key)
+        if rechecked is not None:
+            return rechecked, True
     report = Report(
         territory_id=unit_id,
         diagnostic_id=diagnostic.id,

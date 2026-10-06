@@ -104,11 +104,15 @@ def normalize(text: str, lang: Lang) -> str:
 
 
 def word_pattern(word: str, lang: Lang) -> re.Pattern[str]:
-    w = re.escape(normalize(word, lang).strip())
+    w = normalize(word, lang).strip()
     if lang == "ar":
+        # Article optional, and « لِ + ال » contracts to « لل » (للعلاجات = لـ + العلاجات).
+        stem = re.escape(w[2:] if w.startswith("ال") and len(w) > 3 else w)
         return re.compile(
-            rf"(?<![{_AR_LETTER}])[وفبلك]?(?:ال)?{w}(?:ه|ها|ة|ت|ا|ات|ان|ين)?(?![{_AR_LETTER}])"
+            rf"(?<![{_AR_LETTER}])[وف]?(?:[بك]?ال|لل|[بلك])?{stem}"
+            rf"(?:ه|ها|ة|ت|ا|ات|ان|ين)?(?![{_AR_LETTER}])"
         )
+    w = re.escape(w)
     # French: start of word, any ending (« augment » covers augmente, augmentation…).
     return re.compile(rf"(?<!\w){w}")
 
@@ -193,7 +197,14 @@ WORDING = {"up": "en hausse", "down": "en baisse", "stable": "stable"}
 def check_trends(text: str, sheet: FactSheet, controls: Controls, lang: Lang) -> list[Issue]:
     issues: list[Issue] = []
     trend = controls.trend
-    for sentence in SENTENCE.split(normalize(text, lang)):
+    clauses = [
+        clause
+        for sentence in SENTENCE.split(normalize(text, lang))
+        for clause in _clauses(sentence, controls, lang)
+        # « les données ne permettent pas de qualifier la croissance » asserts no trend.
+        if not says_missing(clause, controls, lang)
+    ]
+    for sentence in clauses:
         found, masked = mentions(sentence, sheet, controls, lang)
         for phrase in trend.neutral_phrases.get(lang):
             for start, end, _ in _find([phrase], masked, lang):
@@ -290,6 +301,35 @@ def check_missing(text: str, sheet: FactSheet, controls: Controls, lang: Lang) -
     return issues
 
 
+# ------------------------------------------------------------------ 4. false absence
+
+
+def check_false_absence(text: str, sheet: FactSheet, controls: Controls, lang: Lang) -> list[Issue]:
+    """A clause saying that data is missing must be about an indicator that is really missing
+    (« les informations sur son niveau d'urbanisation ne sont pas disponibles » while the
+    built-up area is known is refused)."""
+    missing = missing_codes(sheet)
+    issues: list[Issue] = []
+    for sentence in SENTENCE.split(normalize(text, lang)):
+        for clause in _clauses(sentence, controls, lang):
+            if not says_missing(clause, controls, lang):
+                continue
+            found, _ = mentions(clause, sheet, controls, lang)
+            # Only when every theme named is measured: one missing theme justifies the clause.
+            if found and all(not (m.codes & missing) for m in found):
+                mention = found[0]
+                code = sorted(mention.codes)[0]
+                label = sheet.briefs[code].label["fr"] if code in sheet.briefs else code
+                issues.append(
+                    Issue(
+                        "absence",
+                        f"« {mention.token} » est présenté comme non disponible, alors que "
+                        f"« {label} » est connu : cite le fait au lieu de dire qu'il manque",
+                    )
+                )
+    return issues
+
+
 # ------------------------------------------------------------------ Arabic: numbers side by side
 
 _NUMERIC = r"(?:\{\{F\d{3}\}\}|(?<![\w])\d{4}(?![\w]))"
@@ -363,6 +403,7 @@ def check_meaning(text: str, sheet: FactSheet, controls: Controls, lang: Lang) -
     return (
         check_trends(text, sheet, controls, lang)
         + check_missing(text, sheet, controls, lang)
+        + check_false_absence(text, sheet, controls, lang)
         + check_statuses(text, sheet, controls, lang)
         + check_subjective(text, controls, lang)
         + check_adjacent(text, lang)

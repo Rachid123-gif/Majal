@@ -141,8 +141,11 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   Le modèle ne voit que des identifiants de faits `{{F012}}` ; jamais de chiffre écrit par l'IA.
   Modèle : qwen3:8b par défaut, gemma3:4b en repli (choix du porteur, 2026-10-05).
   Contrôles du sens (`meaning.py` + `config/report_templates/controles.yaml`) : tendances,
-  données manquantes, statuts, jugements subjectifs, nombres collés en arabe — à garder verts
-  (`tests/test_meaning.py`).
+  données manquantes, fausse absence, statuts, jugements subjectifs, nombres collés en arabe —
+  à garder verts (`tests/test_meaning.py`). `make reports` recontrôle les rapports existants et
+  ne réécrit que ceux qui échouent.
+- Étape 3 — validée le 2026-10-06. `make start` lance `caffeinate` (Mac éveillé, 12 h au plus),
+  arrêté par `make stop`. Démonstration : `docs/demo-rapide.md`.
   Banc d'essai : `docs/benchmarks/` ; décisions 0014-0016.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).

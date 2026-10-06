@@ -57,6 +57,7 @@ INDICATORS = [
         ("%", "%"),
         "change",
     ),
+    indicator("URB_BATI", "Surface bâtie", "المساحة المبنية", ("km²", "كلم²"), "built_up"),
     indicator("EMP_CHOM", "Taux de chômage", "معدل البطالة", ("%", "%"), "raw"),
     indicator(
         "SAN_ESSP",
@@ -98,6 +99,7 @@ VALUES = {
     "DEM_POP": 168391,
     "DEM_TCAM": -1.43,
     "URB_CROIS": 0.9,
+    "URB_BATI": 2.33,
     "EMP_CHOM": 20.6,
     "SAN_ESSP": None,
     "SAN_HOP": 1.43,
@@ -175,14 +177,14 @@ GOOD = [
         "fr",
         "Les données disponibles ne permettent pas d'évaluer l'offre de soins de santé primaires. La carte sanitaire est à demander à la délégation de la Santé.",
     ),
-    ("ar", f"يبلغ عدد سكان المقاطعة {POP} سنة 2024، ويتراجع بمعدل {TCAM} في المتوسط منذ 2014."),
+    ("ar", f"يبلغ عدد سكان المقاطعة {POP} نسمة سنة 2024، ويتراجع بمعدل {TCAM} سنوياً منذ سنة 2014."),
     (
         "ar",
-        f"يبلغ معدل البطالة {CHOM}، مقابل {CHOM_REF}؛ وتندرج المقاطعة ضمن فئة «يستدعي المتابعة».",
+        f'يصل معدل البطالة إلى {CHOM}، مقابل {CHOM_REF}، وتندرج المقاطعة ضمن فئة "تستدعي المتابعة".',
     ),
     (
         "ar",
-        "لا تسمح المعطيات المتوفرة بتقييم العرض من العلاجات الصحية الأولية. ويُطلب الحصول على الخريطة الصحية من المندوبية الإقليمية للصحة.",
+        "لا تسمح المعطيات المتوفرة بتقييم عرض مؤسسات الرعاية الصحية الأولية، ويتعين طلب الخريطة الصحية من المندوبية الإقليمية للصحة.",
     ),
     # Label words are not trend words; « en baisse » follows the sign.
     (
@@ -244,6 +246,13 @@ BAD = [
         "مؤسسات تعليمية",
     ),
     ("fr", "L'absence de centres de santé pénalise les habitants.", "centres de santé"),
+    # False absence: the theme is measured (qwen3:8b).
+    (
+        "fr",
+        "L'unité fait partie d'un territoire urbain, mais les informations sur son niveau d'urbanisation ne sont pas disponibles.",
+        "présenté comme non disponible",
+    ),
+    ("ar", "لا تتوفر معطيات عن معدل البطالة في المقاطعة.", "présenté comme non disponible"),
     # Arabic: two numbers side by side (qwen3:8b).
     ("ar", f"يبلغ عدد سكانها في سنة 2024 {POP}.", "deux nombres collés"),
 ]
@@ -334,3 +343,14 @@ def test_sign_is_dropped_when_the_decrease_verb_is_a_few_words_before() -> None:
     assert "بمعدل 1,4 %" in text
     text, _ = render(f"La population recule. Elle atteint {TCAM}.", SHEET, "fr")
     assert "-1,4 %" in text  # another sentence: the sign stays
+
+
+def test_arabic_contracted_article_is_recognised() -> None:
+    # « للعلاجات » = لـ + العلاجات : the missing theme is recognised, the sentence passes.
+    text = "ولا تتوفر المعطيات لتقييم نسبة السكان القريبين من مؤسسة للعلاجات الأولية."
+    assert issues(text, "ar") == []
+
+
+def test_a_trend_word_inside_a_missing_data_statement_is_not_a_trend() -> None:
+    text = "ولا تتوفر المعطيات اللازمة لتحديد النمط الدقيق للنمو."
+    assert not any("aucune évolution" in i or "est faux" in i for i in issues(text, "ar"))

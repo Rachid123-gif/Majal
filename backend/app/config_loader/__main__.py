@@ -51,6 +51,13 @@ def main() -> int:
     )
     ok &= check("report_templates/controles.yaml", load_controls, templates / "controles.yaml")
     from app.config_loader.taxonomy import load_taxonomy
+    from app.services.citizens.anonymize import load_anonymisation
+
+    ok &= check(
+        "citizens/anonymisation.yaml",
+        load_anonymisation,
+        root / "citizens" / "anonymisation.yaml",
+    )
 
     for profile in sorted({t.profiles.taxonomy for t in territories.values()}):
         path = root / "taxonomy" / f"{profile}.yaml"

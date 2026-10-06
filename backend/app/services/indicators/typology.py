@@ -12,6 +12,8 @@ from pydantic import Field
 from app.config_loader.territory import Localized, Slug, StrictModel, Text
 from app.config_loader.validation import load_model
 
+GROUP_LETTERS = {"fr": "ABCDEFGH", "ar": "أبجدهوزح"}
+
 
 class TypologyVariable(StrictModel):
     code: str
@@ -149,8 +151,9 @@ def compute_typology(
                 "label": profile.label.model_dump()
                 if profile
                 else {
-                    "fr": f"Groupe {g + 1} — profil à nommer",
-                    "ar": f"المجموعة {g + 1} — صنف يتعين تسميته",
+                    # Letters, not numbers: a report may never show a number that is not a fact.
+                    "fr": f"Groupe {GROUP_LETTERS['fr'][g]} — profil à nommer",
+                    "ar": f"المجموعة ({GROUP_LETTERS['ar'][g]}) — صنف يتعين تسميته",
                 },
                 "description": profile.description.model_dump() if profile else None,
                 "traits": traits[:4],

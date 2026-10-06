@@ -46,3 +46,10 @@ def test_groups_without_convincing_resemblance_stay_unnamed() -> None:
     strict = CONFIG.model_copy(update={"min_match_score": 1000})
     result = compute_typology(strict, UNITS, LABELS)
     assert all("profil à nommer" in g["label"]["fr"] for g in result["groups"])
+    # No digit in a group name: reports may only show numbers that are facts.
+    for group in result["groups"]:
+        assert not any(c.isdigit() for lang in ("fr", "ar") for c in group["label"][lang])
+    assert result["groups"][0]["label"] == {
+        "fr": "Groupe A — profil à nommer",
+        "ar": "المجموعة (أ) — صنف يتعين تسميته",
+    }

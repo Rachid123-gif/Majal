@@ -26,6 +26,9 @@ export type Summary = {
 export type Prf = { precision: number | null; recall: number | null; f1: number | null };
 export type Accuracy = { accuracy: number | null; n: number; correct: number };
 export type EvaluationResult = {
+  /** « professor »: reference evaluation; « second_model »: AI annotator, awaiting review. */
+  kind?: "professor" | "second_model";
+  title?: Localized;
   n: number;
   n_ai: number;
   base: Localized;
@@ -74,6 +77,36 @@ export type UnitCitizens = {
   summary: Summary;
   verbatims: Verbatim[];
 };
+export type CrossingIndicator = {
+  code: string;
+  label: Localized | null;
+  value: number | null;
+  unit: Localized | null;
+  decimals: number;
+  status: string | null;
+  status_label: Localized | null;
+};
+export type CrossingRow = {
+  theme: string;
+  label: Localized;
+  count: number;
+  share: number | null;
+  indicators: CrossingIndicator[];
+  verdict: string;
+  verdict_label: Localized | null;
+  data_request: { data: Localized; holder: Localized } | null;
+};
+export type Crossing = {
+  unit: { id: number; name_fr: string; name_ar: string | null };
+  fictitious: boolean;
+  banner: Localized | null;
+  evaluation_label: Localized;
+  total: number;
+  secondary_included: boolean;
+  secondary_note: Localized | null;
+  rows: CrossingRow[];
+  rules: { min_contributions: number; percent_min_total: number; strong_share: number };
+};
 export type Filters = {
   theme?: string;
   unit?: number;
@@ -116,6 +149,10 @@ export const fetchVerbatims = (code: string, filters: Filters = {}) =>
   );
 export const fetchUnitCitizens = (code: string, unitId: number) =>
   call<UnitCitizens>(`/api/territories/${code}/units/${unitId}/citizens`);
+export const fetchCrossing = (code: string, unitId: number, secondary = false) =>
+  call<Crossing>(
+    `/api/territories/${code}/units/${unitId}/crossing${secondary ? "?secondary=true" : ""}`,
+  );
 export const importContributions = (code: string, file: File) =>
   file
     .arrayBuffer()

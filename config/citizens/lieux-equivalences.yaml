@@ -1,0 +1,18 @@
+# MAJAL — Équivalences de noms de lieux (ajoutées par MAJAL, à vérifier).
+#
+# Certains lieux d'OpenStreetMap n'ont pas de nom en arabe (ou en lettres latines). Ces
+# équivalences permettent de les reconnaître dans une contribution écrite dans l'autre alphabet.
+# Elles ne créent AUCUN lieu : la clé doit être le nom exact d'un lieu, d'une unité ou d'une
+# avenue déjà présent dans la liste des lieux (sinon elle est ignorée).
+# latin : forme officielle en lettres latines, utilisée après traduction (jamais traduite).
+
+places:
+  "Hay El-Qods": { ar: [حي القدس], latin: "Hay El Qods" }
+  "Bab Al Bahr": { ar: [باب البحر] }
+  "Souk Laghzal": { ar: [سوق الغزل] }
+  "Mabella": { ar: [مابيلا] }
+  "Place Bab El Had": { ar: [ساحة باب الحد, باب الحد] }
+  "Oulad Mtaa": { ar: [أولاد مطاع] }
+  "Bir Kacem": { ar: [بير قاسم] }
+  "Krouz": { ar: [كروز] }
+  "ساحة أودادن": { latin: "Place Oudaden" }

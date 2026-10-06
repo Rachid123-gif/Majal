@@ -17,7 +17,12 @@ from app.services.indicators.engine import MissingInput
 from app.services.llm import LLMError, get_provider
 from app.services.llm.ollama import OllamaProvider
 from app.services.reports.context import latest_diagnostic
-from app.services.reports.generate import current_cache_key, provider_identity, request_report
+from app.services.reports.generate import (
+    citizens_for,
+    current_cache_key,
+    provider_identity,
+    request_report,
+)
 from app.services.reports.jobs import enqueue
 from app.settings import get_settings
 
@@ -103,8 +108,11 @@ def latest(
         if reports:
             diagnostic = latest_diagnostic(session, code)
             provider, model = provider_identity()
+            citizens = citizens_for(session, diagnostic.study_area_id, unit_id)
             current = {
-                lang: current_cache_key(diagnostic.result, unit_id, lang, provider, model)
+                lang: current_cache_key(
+                    diagnostic.result, unit_id, lang, provider, model, citizens=citizens
+                )
                 for lang in ("fr", "ar")
             }
         for report in reports:

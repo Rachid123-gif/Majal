@@ -23,6 +23,11 @@ class Section(StrictModel):
     indicators: list[str] | Literal["attention"] = Field(default_factory=list)
     include_identity: bool = False
     include_typology: bool = False
+    # Section 7: counts of citizen contributions by main theme (facts), fictitious banner.
+    include_citizens: bool = False
+    # Meaning checks (trends, missing data…) concern indicators: off for the citizens section.
+    meaning_checks: bool = True
+    empty_text: FreeText | None = None  # when the unit has no contribution
     words: int = Field(default=100, ge=20, le=400)
     instruction: FreeText | None = None
     auto_text: FreeText | None = None

@@ -9,7 +9,10 @@ ambiguous: it is resolved by the declared commune when there is one, otherwise n
 import re
 import unicodedata
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
+import yaml
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -26,6 +29,25 @@ def fold(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip().casefold()
 
 
+def fold_with_map(value: str) -> tuple[str, list[int]]:
+    """Folded text (as `fold`, without collapsing spaces) and, for each folded character, the
+    index of the original character it comes from."""
+    out: list[str] = []
+    index: list[int] = []
+    for i, char in enumerate(value):
+        if re.match("[\u064b-\u0652\u0640]", char):
+            continue
+        piece = "".join(
+            c for c in unicodedata.normalize("NFKD", char) if not unicodedata.combining(c)
+        )
+        piece = piece.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ى", "ي")
+        piece = piece.replace("’", "'").replace("-", " ").casefold()
+        for c in piece:
+            out.append(c)
+            index.append(i)
+    return "".join(out), index
+
+
 @dataclass
 class Entry:
     label: str  # folded
@@ -33,6 +55,14 @@ class Entry:
     kind: str  # unit | place | road
     territory_ids: set[int] = field(default_factory=set)
     place_id: int | None = None
+    latin: str | None = None  # official form in Latin letters (never translated)
+
+
+@dataclass
+class Span:
+    entry: Entry
+    start: int  # in the original text
+    end: int
 
 
 @dataclass
@@ -70,30 +100,40 @@ class Gazetteer:
         """Names never to be masked as a person by the anonymisation."""
         return [e.name for e in self.entries]
 
-    def find(self, text_: str) -> list[Entry]:
-        source = f" {fold(text_)} "
-        found: list[Entry] = []
-        for entry in self.entries:
-            arabic = bool(re.search(f"[{AR}]", entry.label))
-            prefix = (
-                rf"(?<![{AR}])(?:[وفبلك]?(?:ال)?)"
-                if arabic and not entry.label.startswith("ال")
-                else (rf"(?<![{AR}])[وفبلك]?" if arabic else r"(?<![\w])")
+    def _pattern(self, entry: Entry, loose: bool = False) -> re.Pattern[str]:
+        label = re.escape(entry.label)
+        if not re.search(f"[{AR}]", entry.label):
+            return re.compile(rf"(?<![\w])(?P<n>{label})(?![\w])")
+        article = "" if entry.label.startswith("ال") else "(?:ال)?"
+        if entry.label in self.common and loose:
+            # For translation only: also after a place preposition (« في النهضة », « فالنهضة »).
+            return re.compile(
+                rf"(?:(?<![{AR}])(?:{self.cues})\s+|(?<![{AR}])في\s+|(?<![{AR}])[وفب]?[فب])"
+                rf"(?P<n>{article}{label})(?![{AR}])"
             )
-            if arabic and entry.label in self.common:
-                prefix = rf"(?<![{AR}])[وفبل]?(?:{self.cues})\s+(?:[وفبلك]?(?:ال)?)?"
-                if entry.label.startswith("ال"):
-                    prefix = rf"(?<![{AR}])[وفبل]?(?:{self.cues})\s+"
-            pattern = prefix + re.escape(entry.label) + (rf"(?![{AR}])" if arabic else r"(?![\w])")
-            match = re.search(pattern, source)
-            if match:
-                found.append(entry)
-                source = (
-                    source[: match.start()]
-                    + " " * (match.end() - match.start())
-                    + source[match.end() :]
-                )
-        return found
+        if entry.label in self.common:  # also a common word: only after « حي », « دوار »…
+            return re.compile(
+                rf"(?<![{AR}])[وفبل]?(?P<n>(?:{self.cues})\s+{article}{label})(?![{AR}])"
+            )
+        return re.compile(rf"(?<![{AR}])[وفبلك]?(?P<n>{article}{label})(?![{AR}])")
+
+    def find_spans(self, text_: str, loose: bool = False) -> list[Span]:
+        """Places of the gazetteer written in the text, with their position (longest first,
+        no overlap)."""
+        source, index = fold_with_map(text_)
+        spans: list[Span] = []
+        for entry in self.entries:
+            for match in self._pattern(entry, loose).finditer(source):
+                start, end = match.span("n")
+                if any(start < s.end and s.start < end for s in spans):
+                    continue
+                spans.append(Span(entry, start, end))
+                break
+        out = [Span(s.entry, index[s.start], index[s.end - 1] + 1) for s in spans]
+        return sorted(out, key=lambda s: s.start)
+
+    def find(self, text_: str) -> list[Entry]:
+        return [s.entry for s in sorted(self.find_spans(text_), key=lambda s: -len(s.entry.label))]
 
     def unit_by_name(self, name: str | None) -> int | None:
         if not name:
@@ -123,11 +163,23 @@ class Gazetteer:
         return Location(None, None, None, "none")
 
 
+def _latin(value: str | None) -> str | None:
+    return value if value and not re.search(f"[{AR}]", value) else None
+
+
+def load_equivalences(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None or not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return dict(data.get("places") or {})
+
+
 def load_gazetteer(
     session: Session,
     study_area_id: int,
     common_words: list[str] | None = None,
     place_cues: list[str] | None = None,
+    equivalences: dict[str, dict[str, Any]] | None = None,
 ) -> Gazetteer:
     entries: list[Entry] = []
     for tid, name_fr, name_ar in session.execute(
@@ -139,7 +191,7 @@ def load_gazetteer(
     ):
         for name in (name_fr, name_ar):
             if name:
-                entries.append(Entry(fold(name), name, "unit", {tid}))
+                entries.append(Entry(fold(name), name, "unit", {tid}, latin=name_fr))
     for pid, tid, name, name_ar, alt in session.execute(
         text(
             "SELECT id, territory_id, name, name_ar, alt_names FROM places "
@@ -147,9 +199,10 @@ def load_gazetteer(
         ),
         {"sa": study_area_id},
     ):
+        latin = _latin(name) or next((a for a in alt or [] if _latin(a)), None)
         for value in [name, name_ar, *(alt or [])]:
             if value:
-                entries.append(Entry(fold(value), value, "place", {tid}, pid))
+                entries.append(Entry(fold(value), value, "place", {tid}, pid, latin))
     # Named roads: every unit they cross (a long avenue is ambiguous without a commune).
     for name, tids in session.execute(
         text(
@@ -160,5 +213,27 @@ def load_gazetteer(
         ),
         {"sa": study_area_id},
     ):
-        entries.append(Entry(fold(name), name, "road", set(tids)))
+        entries.append(Entry(fold(name), name, "road", set(tids), latin=_latin(name)))
+    # Equivalences (config/citizens/lieux-equivalences.yaml): other spellings of EXISTING places.
+    by_name: dict[str, list[Entry]] = {}
+    for entry in entries:
+        by_name.setdefault(entry.name, []).append(entry)
+    for key, extra in (equivalences or {}).items():
+        for entry in by_name.get(key, []):
+            if extra.get("latin"):
+                entry.latin = extra["latin"]
+            for alias in extra.get("ar") or []:
+                entries.append(
+                    Entry(
+                        fold(alias),
+                        alias,
+                        entry.kind,
+                        set(entry.territory_ids),
+                        entry.place_id,
+                        entry.latin,
+                    )
+                )
+    for entry in entries:  # aliases and original names share the official Latin form
+        if entry.name in (equivalences or {}) and (equivalences or {})[entry.name].get("latin"):
+            entry.latin = (equivalences or {})[entry.name]["latin"]
     return Gazetteer(entries, common_words, place_cues)

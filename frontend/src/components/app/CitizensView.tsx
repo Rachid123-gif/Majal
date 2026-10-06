@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
 import { CitizenBanner } from "@/components/app/CitizenBanner";
+import { CitizenCrossing } from "@/components/app/CitizenCrossing";
 import { TerritoryMap } from "@/components/app/TerritoryMap";
 import type { Localized } from "@/content/types";
 import { useLocale } from "@/i18n/LocaleProvider";
@@ -494,6 +495,18 @@ export function CitizensView({ code }: { code: string }) {
               </div>
             </section>
 
+            {/* Crossing (one unit) */}
+            <section className="border-petrol/10 mt-10 rounded-2xl border bg-white p-6">
+              {filters.unit !== undefined ? (
+                <CitizenCrossing code={code} unitId={filters.unit} />
+              ) : (
+                <>
+                  <h2 className="font-heading text-petrol text-2xl">{t("citizens.crossing")}</h2>
+                  <p className="text-slate mt-2 text-sm">{t("citizens.chooseUnit")}</p>
+                </>
+              )}
+            </section>
+
             {/* Verbatims */}
             <section className="mt-10">
               <h2 className="font-heading text-petrol text-3xl">{t("citizens.verbatims")}</h2>
@@ -528,7 +541,7 @@ export function CitizensView({ code }: { code: string }) {
                   result={data.evaluation.provisional}
                 />
                 <EvaluationBlock
-                  title={t("citizens.reference")}
+                  title={data.evaluation.reference?.title?.[locale] ?? t("citizens.reference")}
                   result={data.evaluation.reference}
                   pending={t("citizens.referencePending")}
                 />

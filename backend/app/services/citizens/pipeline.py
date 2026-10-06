@@ -19,7 +19,7 @@ from app.models import Consultation, Contribution, StudyArea
 from app.services.citizens.analyze import analyze
 from app.services.citizens.anonymize import Masked, apply, cached_config, find_spans
 from app.services.citizens.fallback import cached_analysis_config
-from app.services.citizens.gazetteer import Gazetteer, load_gazetteer
+from app.services.citizens.gazetteer import Gazetteer, load_equivalences, load_gazetteer
 from app.services.llm import LLMError, get_provider
 from app.settings import get_settings
 
@@ -128,6 +128,32 @@ def _mask_names(text_: str, names: list[str], placeholder: str) -> str:
     return text_
 
 
+PLACE_MARK = "[LIEU-{n}]"
+
+
+def mark_places(text_: str, gazetteer: Gazetteer) -> tuple[str, dict[str, tuple[str, str]]]:
+    """Replace each known place by [LIEU-n]; return the text and {marker: (as written, Latin)}."""
+    places: dict[str, tuple[str, str]] = {}
+    out = text_
+    spans = gazetteer.find_spans(text_, loose=True)  # protect every possible place name
+    for number, span in reversed(list(enumerate(spans, start=1))):
+        written = text_[span.start : span.end]
+        marker = PLACE_MARK.format(n=number)
+        places[marker] = (written, span.entry.latin or written)
+        out = out[: span.start] + marker + out[span.end :]
+    return out, places
+
+
+def restore_places(
+    text_: str | None, places: dict[str, tuple[str, str]], latin: bool = True
+) -> str | None:
+    if text_ is None:
+        return None
+    for marker, (written, latin_form) in places.items():
+        text_ = text_.replace(marker, latin_form if latin else written)
+    return text_
+
+
 def process_contribution(
     contribution: Contribution,
     gazetteer: Gazetteer,
@@ -142,7 +168,13 @@ def process_contribution(
     spans = find_spans(original, anon_config, protected)
     masked_text = apply(original, spans, anon_config)
 
-    result = analyze(masked_text, taxonomy, analysis_config, provider)
+    # Place names are never translated: each known place is replaced by a marker before the
+    # model sees the text, and put back after translation in its official Latin form.
+    llm_text, places = mark_places(masked_text, gazetteer)
+    result = analyze(llm_text, taxonomy, analysis_config, provider)
+    result.translation_fr = restore_places(result.translation_fr, places)
+    if result.place:
+        result.place = restore_places(result.place, places, latin=False)
     # Names the rules missed, reported by the model: masked if found verbatim, outside places.
     placeholder = anon_config.placeholders["person"].fr
     extra: list[Masked] = []
@@ -198,6 +230,7 @@ def run(
     consultation: Consultation,
     force: bool = False,
     progress: Callable[[int, int, Contribution], None] | None = None,
+    only_with_places: bool = False,
 ) -> dict[str, int]:
     study_area = session.get(StudyArea, consultation.study_area_id)
     assert study_area is not None
@@ -206,7 +239,11 @@ def run(
         get_settings().config_dir / "citizens" / "analyse.yaml"
     )
     gazetteer = load_gazetteer(
-        session, study_area.id, analysis_config.place_common_words, analysis_config.place_cues
+        session,
+        study_area.id,
+        analysis_config.place_common_words,
+        analysis_config.place_cues,
+        load_equivalences(get_settings().config_dir / "citizens" / "lieux-equivalences.yaml"),
     )
     try:
         provider = get_provider(get_settings())
@@ -220,6 +257,9 @@ def run(
     ).all()
     stats = {"total": len(contributions), "processed": 0, "skipped": 0, "ai": 0, "keywords": 0}
     for index, contribution in enumerate(contributions, start=1):
+        if only_with_places and not gazetteer.find_spans(contribution.original_text):
+            stats["skipped"] += 1
+            continue
         done = contribution.analysis.get("mode") if contribution.analysis else None
         if not force and done == "ai" and contribution.analysis.get("model") == model:
             stats["skipped"] += 1

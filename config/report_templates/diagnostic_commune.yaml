@@ -91,11 +91,20 @@ sections:
 
   - code: citoyens
     title: { fr: "Ce que disent les citoyens", ar: "ما يقوله المواطنون" }
-    mode: auto
-    words: 40
+    include_citizens: true
+    meaning_checks: false
+    words: 70
+    instruction:
+      fr: "Résume ce que disent les contributions citoyennes de l'unité à partir des seuls faits fournis : leur nombre et leurs thèmes principaux. Ne cite aucun autre thème, n'interprète pas, ne donne aucun pourcentage. Si les contributions sont trop peu nombreuses, dis qu'elles ne permettent pas de conclure."
+      ar: "لخّص ما تقوله مساهمات المواطنين في الوحدة انطلاقاً من الوقائع المقدمة فقط: عددها ومواضيعها الرئيسية. لا تذكر أي موضوع آخر، ولا تؤوّل، ولا تعط أي نسبة مئوية. إذا كانت المساهمات قليلة، فاذكر أنها لا تسمح بالاستنتاج."
+    # Aucune consultation importée pour le territoire.
     auto_text:
-      fr: "L'analyse des contributions citoyennes sera intégrée lorsque le module d'écoute citoyenne sera disponible."
-      ar: "سيتم إدراج تحليل مساهمات المواطنين عندما تصبح وحدة الإنصات للمواطنين متاحة."
+      fr: "Aucune consultation citoyenne n'a encore été importée pour ce territoire."
+      ar: "لم يتم بعد استيراد أي استشارة للمواطنين بالنسبة لهذا المجال."
+    # Consultation importée, mais aucune contribution localisée dans l'unité.
+    empty_text:
+      fr: "Aucune contribution n'a été localisée dans cette unité."
+      ar: "لم يتم تحديد أي مساهمة في هذه الوحدة."
 
   - code: synthese
     title: { fr: "Synthèse des enjeux et pistes de réflexion", ar: "خلاصة الرهانات ومسارات التفكير" }

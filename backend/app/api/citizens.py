@@ -99,15 +99,20 @@ def _evaluation(
                 "traps": traps,
                 "base": {k: v.format(n=traps) for k, v in evaluate.ANONYMISATION_BASE.items()},
             }
-    reference_truth = evaluate.reference_truth(
-        REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx", {"amazigh_latin"}
-    )
+    sheet = REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx"
+    reference_truth = evaluate.reference_truth(sheet, {"amazigh_latin"})
     if reference_truth:
         result = evaluate.score(contributions, reference_truth)
         if result["n"]:
+            kind = evaluate.annotator_kind(sheet)
+            bases = (
+                evaluate.SECOND_MODEL_BASE if kind == "second_model" else evaluate.REFERENCE_BASE
+            )
             out["reference"] = {
                 **result,
-                "base": {k: v.format(n=result["n"]) for k, v in evaluate.REFERENCE_BASE.items()},
+                "kind": kind,
+                "title": evaluate.TITLES[kind],
+                "base": {k: v.format(n=result["n"]) for k, v in bases.items()},
             }
     return out
 
@@ -252,4 +257,41 @@ def progress(
         return {
             "total": len(rows),
             "analysed": sum(1 for c in rows if c.analysis and c.analysis.get("mode")),
+        }
+
+
+@router.get("/api/territories/{code}/units/{unit_id}/crossing")
+def unit_crossing(
+    code: str,
+    unit_id: int,
+    account: Annotated[Account, Depends(require_account)],
+    secondary: bool = False,
+) -> dict[str, Any]:
+    """Citizens / data crossing for one unit (main theme only unless `secondary`)."""
+    with Session(get_engine()) as session:
+        area = _area(session, code)
+        taxonomy = pipeline.taxonomy_for(area)
+        consultations, contributions = _contributions(session, area)
+        try:
+            diagnostic = latest_diagnostic(session, code).result
+        except MissingInput as exc:
+            raise HTTPException(status_code=409, detail=exc.reason) from None
+        unit = next((u for u in diagnostic["units"] if u["id"] == unit_id), None)
+        if unit is None:
+            raise HTTPException(status_code=404, detail="Unité inconnue pour ce territoire.")
+        result = stats.crossing(
+            stats.filtered(contributions, unit=unit_id),
+            taxonomy,
+            unit["values"],
+            {i["code"]: i for i in diagnostic["indicators"]},
+            diagnostic["evaluation"]["statuses"],
+            secondary,
+        )
+        fictitious = any(c.badge == "fictitious" for c in consultations)
+        return {
+            "unit": {"id": unit_id, "name_fr": unit["name_fr"], "name_ar": unit.get("name_ar")},
+            "fictitious": fictitious,
+            "banner": stats.FICTITIOUS_BANNER if fictitious else None,
+            "evaluation_label": diagnostic["evaluation"]["label"],
+            **result,
         }

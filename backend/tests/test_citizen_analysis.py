@@ -220,3 +220,92 @@ def test_a_second_theme_is_kept_only_if_explicitly_evoked() -> None:
         "Les trottoirs sont cassés et les ordures s'accumulent.",
         TAXONOMY,
     ) == ["voirie", "proprete"]
+
+
+class TranslatingProvider(FakeProvider):
+    """Translates like a model would: it sees only the marker, never the place name."""
+
+    def __init__(self) -> None:
+        super().__init__(None)
+        self.prompts: list[str] = []
+
+    def generate_json(
+        self, system: str, prompt: str, schema: dict[str, Any], temperature: float = 0.2
+    ) -> LLMResult:
+        self.prompts.append(prompt)
+        return LLMResult(
+            answer(
+                language="ar",
+                translation_fr="La petite aire de jeu du quartier [LIEU-1] est négligée.",
+                place="[LIEU-1]",
+            ),
+            "",
+            0.01,
+            10,
+        )
+
+
+def test_place_names_are_never_translated() -> None:
+    from app.models import Contribution
+    from app.services.citizens.pipeline import process_contribution
+
+    gazetteer = Gazetteer(
+        [
+            Entry(fold("Hay El-Qods"), "Hay El-Qods", "place", {22}, 9, "Hay El Qods"),
+            Entry(fold("حي القدس"), "حي القدس", "place", {22}, 9, "Hay El Qods"),
+        ],
+        common_words=CONFIG.place_common_words,
+        place_cues=CONFIG.place_cues,
+    )
+    contribution = Contribution(
+        external_id="T-1",
+        original_text="الحديقة الصغيرة في حي القدس مهملة.",
+        badge="fictitious",
+        declared_commune=None,
+    )
+    provider = TranslatingProvider()
+    process_contribution(contribution, gazetteer, TAXONOMY, provider)
+    assert "القدس" not in provider.prompts[0]  # the model never sees the place name
+    assert (
+        contribution.translation_fr == "La petite aire de jeu du quartier Hay El Qods est négligée."
+    )
+    assert "Jérusalem" not in (contribution.translation_fr or "")
+    assert contribution.territory_id == 22
+    assert contribution.anonymized_text == "الحديقة الصغيرة في حي القدس مهملة."  # original kept
+
+
+def test_an_ai_annotation_is_never_called_the_reference_evaluation(tmp_path: Any) -> None:
+    from app.services.citizens.evaluate import SECOND_MODEL_BASE, annotator_kind
+
+    book = Workbook()
+    book.worksheets[0].title = "À classer"
+    path = tmp_path / "sheet.xlsx"
+    book.save(path)
+    assert annotator_kind(path) == "professor"  # no « Annotateur » sheet: the professor's file
+    sheet = book.create_sheet("Annotateur")
+    sheet.append(
+        ["Annotateur", "Claude (assistant IA d'Anthropic), à la demande du porteur du projet"]
+    )
+    book.save(path)
+    assert annotator_kind(path) == "second_model"
+    assert SECOND_MODEL_BASE["fr"].format(n=28) == (
+        "Évaluation indépendante par un second modèle d'IA (28 contributions fictives, "
+        "amazighe exclu) — en attente de validation par le professeur"
+    )
+
+
+def test_common_word_places_are_protected_from_translation_but_not_located() -> None:
+    gazetteer = Gazetteer(
+        [Entry(fold("النهضة"), "النهضة", "place", {4}, 1, "Nahda")],
+        common_words=CONFIG.place_common_words,
+        place_cues=CONFIG.place_cues,
+    )
+    text = "الطريق فالنهضة كلها حفاري"
+    assert gazetteer.locate(text, None, None).territory_id is None  # « la renaissance » ?
+    from app.services.citizens.pipeline import mark_places, restore_places
+
+    marked, places = mark_places(text, gazetteer)
+    assert "النهضة" not in marked
+    assert restore_places("La route de [LIEU-1] est pleine de trous.", places) == (
+        "La route de Nahda est pleine de trous."
+    )

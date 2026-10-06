@@ -237,6 +237,13 @@
     "seeAll": "Voir le tableau de bord citoyen",
     "count": "{n} contributions",
     "mainThemeOf": "thème principal : {theme}",
-    "tooFew": "Trop peu de contributions pour conclure"
+    "tooFew": "Trop peu de contributions pour conclure",
+    "crossing": "Croisement : ce que disent les citoyens / ce que montrent les données",
+    "crossingRules": "Thème principal seulement par défaut. Aucune conclusion en dessous de {min} contributions ; en dessous de {pct} contributions dans l'unité, des nombres et non des pourcentages.",
+    "theme": "Thème",
+    "data": "Ce que montrent les données",
+    "verdict": "Constat",
+    "askTo": "à demander à :",
+    "chooseUnit": "Choisissez une unité (filtre ou carte) pour afficher le croisement."
   }
 }

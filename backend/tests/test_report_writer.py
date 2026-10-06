@@ -198,3 +198,48 @@ def test_render_drops_a_unit_repeated_after_the_value() -> None:
     assert text == "soit 168 391 habitants au total" and used == ["F001"]
     text, _ = render("يبلغ {{F001}} نسمة", sheet, "ar")
     assert text == "يبلغ 168 391 نسمة"
+
+
+CITIZENS_SECTION = next(s for s in TEMPLATE.sections if s.code == "citoyens")
+
+
+def citizen_sheet(total: int) -> FactSheet:
+    from app.services.reports.facts import add_citizen_facts
+
+    s = sheet()
+    themes = (
+        [
+            {
+                "code": "voirie",
+                "label": {"fr": "Voirie et trottoirs", "ar": "الطرق والأرصفة"},
+                "count": 3,
+            }
+        ]
+        if total
+        else []
+    )
+    add_citizen_facts(
+        s, {"total": total, "themes": themes, "fictitious": True, "too_few": total < 5}
+    )
+    return s
+
+
+def test_section_7_counts_are_facts_and_the_fallback_cites_them() -> None:
+    s = citizen_sheet(4)
+    result = write_section(None, s, CITIZENS_SECTION, TEMPLATE, "fr")
+    text = " ".join(result.paragraphs)
+    assert result.mode == "fallback"
+    assert (
+        "Contributions localisées dans l'unité : {{" in text and "Voirie et trottoirs ({{" in text
+    )
+    assert "trop peu nombreuses pour conclure" in text
+    assert check_paragraphs(result.paragraphs, s, "fr", meaning=False) == []
+    rendered = render(result.paragraphs[0], s, "fr")[0]
+    assert "4 contributions" in rendered and "3 contributions" in rendered
+
+
+def test_section_7_without_consultation_or_without_contribution() -> None:
+    no_consultation = write_section(None, sheet(), CITIZENS_SECTION, TEMPLATE, "fr")
+    assert no_consultation.mode == "auto" and "Aucune consultation" in no_consultation.paragraphs[0]
+    empty = write_section(None, citizen_sheet(0), CITIZENS_SECTION, TEMPLATE, "ar")
+    assert empty.mode == "auto" and "لم يتم تحديد أي مساهمة" in empty.paragraphs[0]

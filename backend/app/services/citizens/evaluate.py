@@ -112,8 +112,32 @@ def provisional_truth(path: Path, unit_ids: dict[str, int]) -> dict[str, dict[st
     }
 
 
+def annotator_kind(path: Path) -> str:
+    """« professor » unless the « Annotateur » sheet says the classification was made by an AI
+    model: then « second_model » (never called the reference evaluation before the professor
+    has reviewed it)."""
+    if not path.exists():
+        return "professor"
+    book = load_workbook(path, read_only=True, data_only=True)
+    if "Annotateur" not in book.sheetnames:
+        return "professor"
+    text_ = " ".join(
+        str(value)
+        for row in book["Annotateur"].iter_rows(values_only=True)
+        for value in row
+        if value
+    ).casefold()
+    if any(
+        word in text_
+        for word in ("claude", "assistant ia", "modèle", "réalisée par une ia", " ia ")
+    ):
+        return "second_model"
+    return "professor"
+
+
 def reference_truth(path: Path, excluded_languages: set[str]) -> dict[str, dict[str, Any]]:
-    """The professor's classification. Rows left empty (or in an excluded language) are ignored."""
+    """The classification of the annotation sheet. Rows left empty (or in an excluded language)
+    are ignored."""
     if not path.exists():
         return {}
     sheet = load_workbook(path, read_only=True, data_only=True)["À classer"]
@@ -141,6 +165,17 @@ PROVISIONAL_BASE = {
 REFERENCE_BASE = {
     "fr": "sur {n} contributions fictives classées par le professeur (amazighe exclu) : évaluation de référence",
     "ar": "على {n} مساهمة افتراضية صنّفها الأستاذ (باستثناء الأمازيغية): التقييم المرجعي",
+}
+SECOND_MODEL_BASE = {
+    "fr": "Évaluation indépendante par un second modèle d'IA ({n} contributions fictives, amazighe exclu) — en attente de validation par le professeur",
+    "ar": "تقييم مستقل بواسطة نموذج ذكاء اصطناعي ثانٍ ({n} مساهمة افتراضية، باستثناء الأمازيغية) — في انتظار مصادقة الأستاذ",
+}
+TITLES = {
+    "professor": {"fr": "Évaluation de référence", "ar": "التقييم المرجعي"},
+    "second_model": {
+        "fr": "Évaluation indépendante par un second modèle d'IA",
+        "ar": "تقييم مستقل بواسطة نموذج ذكاء اصطناعي ثانٍ",
+    },
 }
 ANONYMISATION_BASE = {
     "fr": "sur le jeu de test fictif ({n} pièges)",

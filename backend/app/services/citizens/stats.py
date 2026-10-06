@@ -173,3 +173,103 @@ def verbatim(c: Contribution, units: dict[int, dict[str, Any]]) -> dict[str, Any
         "sure": {"language": language_sure(c), "theme": theme_sure(c)},
         "badge": c.badge,
     }
+
+
+UNFAVOURABLE = {"deficit_marked", "watch"}
+
+
+def crossing(
+    contributions: list[Contribution],
+    taxonomy: Taxonomy,
+    unit_values: dict[str, dict[str, Any]],
+    indicators: dict[str, dict[str, Any]],
+    statuses: dict[str, dict[str, str]],
+    secondary: bool = False,
+) -> dict[str, Any]:
+    """« Ce que disent les citoyens / ce que montrent les données » for ONE unit.
+
+    Main theme only unless `secondary`. No conclusion below `min_contributions`; a « strong »
+    demand is a share of the unit's contributions above `strong_share` (used internally; shown as
+    a count below `percent_min_total`). Themes without indicator: data to ask for, and who holds it.
+    """
+    rules = taxonomy.crossing
+    total = len(contributions)
+    counts: Counter[str] = Counter(t for c in contributions for t in themes_of(c, secondary))
+    rows: list[dict[str, Any]] = []
+    for theme in taxonomy.themes:
+        if theme.code == "autres":
+            continue
+        count = counts.get(theme.code, 0)
+        linked = []
+        for code in theme.indicators:
+            entry = unit_values.get(code) or {}
+            meta = indicators.get(code) or {}
+            status = entry.get("status")
+            linked.append(
+                {
+                    "code": code,
+                    "label": meta.get("label"),
+                    "value": entry.get("value"),
+                    "unit": meta.get("unit"),
+                    "decimals": meta.get("decimals", 1),
+                    "status": status,
+                    "status_label": statuses.get(status) if status else None,
+                }
+            )
+        unfavourable = any(item["status"] in UNFAVOURABLE for item in linked)
+        if not theme.indicators:
+            if count == 0:
+                continue
+            verdict = "no_indicator" if theme.data_request else "no_indicator_planned"
+        elif count < rules.min_contributions:
+            if count == 0 and not unfavourable:
+                continue
+            if count == 0 and unfavourable and total >= rules.percent_min_total:
+                verdict = "data_only"
+            else:
+                verdict = "too_few"
+        else:
+            strong = count / total >= rules.strong_share if total else False
+            if strong and unfavourable:
+                verdict = "convergence"
+            elif strong:
+                verdict = "demand_only"
+            elif unfavourable:
+                verdict = "data_only"
+            else:
+                verdict = "moderate"
+        rows.append(
+            {
+                "theme": theme.code,
+                "label": theme.label.model_dump(),
+                "count": count,
+                "share": share(count, total, rules.percent_min_total),
+                "indicators": linked,
+                "verdict": verdict,
+                "verdict_label": rules.labels.get(verdict).model_dump()  # type: ignore[union-attr]
+                if verdict in rules.labels
+                else None,
+                "data_request": theme.data_request.model_dump() if theme.data_request else None,
+            }
+        )
+    order = {
+        "convergence": 0,
+        "demand_only": 1,
+        "data_only": 2,
+        "moderate": 3,
+        "too_few": 4,
+        "no_indicator": 5,
+        "no_indicator_planned": 6,
+    }
+    rows.sort(key=lambda r: (order[str(r["verdict"])], -int(r["count"])))
+    return {
+        "total": total,
+        "secondary_included": secondary,
+        "secondary_note": SECONDARY_NOTE if secondary else None,
+        "rows": rows,
+        "rules": {
+            "min_contributions": rules.min_contributions,
+            "percent_min_total": rules.percent_min_total,
+            "strong_share": rules.strong_share,
+        },
+    }

@@ -57,7 +57,7 @@ def consultations(session: Session, area: StudyArea) -> list[Consultation]:
     )
 
 
-def cmd_analyze(code: str, force: bool) -> None:
+def cmd_analyze(code: str, force: bool, places: bool = False) -> None:
     with Session(get_engine()) as session:
         area = study_area(session, code)
         started = time.perf_counter()
@@ -70,7 +70,7 @@ def cmd_analyze(code: str, force: bool) -> None:
             )
 
         for consultation in consultations(session, area):
-            stats = pipeline.run(session, consultation, force, progress)
+            stats = pipeline.run(session, consultation, force, progress, only_with_places=places)
             print(f"✓ {consultation.code} : {stats} en {time.perf_counter() - started:.0f} s")
 
 
@@ -95,14 +95,17 @@ def cmd_evaluate(code: str) -> None:
         provisional = evaluate.score(
             contributions, evaluate.provisional_truth(FICTIF / code / "contributions.yaml", units)
         )
-        reference_truth = evaluate.reference_truth(
-            REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx", {"amazigh_latin"}
-        )
+        sheet = REPO_ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx"
+        reference_truth = evaluate.reference_truth(sheet, {"amazigh_latin"})
         reference = evaluate.score(contributions, reference_truth) if reference_truth else None
-        out = {"provisional": provisional, "reference": reference}
+        kind = evaluate.annotator_kind(sheet)
+        out = {"provisional": provisional, "reference": reference, "annotator": kind}
         print(json.dumps(out, indent=2, ensure_ascii=False, default=str))
         path = REPO_ROOT / "docs" / "evaluation" / "resultats.md"
-        path.write_text(markdown(provisional, reference), encoding="utf-8")
+        path.write_text(
+            markdown(provisional, reference, kind) + disagreements(contributions, reference_truth),
+            encoding="utf-8",
+        )
         print(f"→ {path.relative_to(REPO_ROOT)}")
 
 
@@ -110,7 +113,33 @@ def _pct(value: float | None) -> str:
     return "—" if value is None else f"{round(100 * value)} %"
 
 
-def markdown(provisional: dict[str, Any], reference: dict[str, Any] | None) -> str:
+def disagreements(contributions: list[Contribution], truth: dict[str, dict[str, Any]]) -> str:
+    """Contributions where the annotation sheet and the local model disagree."""
+    if not truth:
+        return ""
+    lines = [
+        "## Désaccords entre la fiche d'annotation et l'IA locale",
+        "",
+        "| Contribution | Thèmes (fiche) | Thèmes (IA locale) | Tonalité (fiche) | Tonalité (IA locale) |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for c in sorted(contributions, key=lambda x: x.external_id):
+        t = truth.get(c.external_id)
+        if not t:
+            continue
+        themes_differ = set(t["themes"]) != set(c.themes)
+        tone_differ = bool(t.get("tonality")) and t["tonality"] != c.tonality
+        if themes_differ or tone_differ:
+            lines.append(
+                f"| {c.external_id} | {', '.join(t['themes'])} | {', '.join(c.themes)} "
+                f"| {t.get('tonality') or '—'} | {c.tonality} |"
+            )
+    return "\n".join(lines) + "\n"
+
+
+def markdown(
+    provisional: dict[str, Any], reference: dict[str, Any] | None, kind: str = "professor"
+) -> str:
     lines = [
         "# Évaluation de l'analyse des contributions citoyennes",
         "",
@@ -120,9 +149,14 @@ def markdown(provisional: dict[str, Any], reference: dict[str, Any] | None) -> s
         "Généré par `make citizens` (`python -m app.services.citizens evaluate rabat`).",
         "",
     ]
+    second = kind == "second_model"
     for title, result, base in (
         ("Évaluation provisoire", provisional, evaluate.PROVISIONAL_BASE["fr"]),
-        ("Évaluation de référence", reference, evaluate.REFERENCE_BASE["fr"]),
+        (
+            evaluate.TITLES[kind]["fr"],
+            reference,
+            (evaluate.SECOND_MODEL_BASE if second else evaluate.REFERENCE_BASE)["fr"],
+        ),
     ):
         lines += [f"## {title}", ""]
         if not result:
@@ -177,12 +211,15 @@ def main() -> None:
     analyze = sub.add_parser("analyze")
     analyze.add_argument("territory")
     analyze.add_argument("--force", action="store_true")
+    analyze.add_argument(
+        "--places", action="store_true", help="seulement les contributions qui citent un lieu connu"
+    )
     sub.add_parser("evaluate").add_argument("territory")
     args = parser.parse_args()
     if args.command == "import-fictif":
         cmd_import(args.territory)
     elif args.command == "analyze":
-        cmd_analyze(args.territory, args.force)
+        cmd_analyze(args.territory, args.force, args.places)
     else:
         cmd_evaluate(args.territory)
 

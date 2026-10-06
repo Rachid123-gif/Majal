@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CitizenBanner } from "@/components/app/CitizenBanner";
+import { CitizenCrossing } from "@/components/app/CitizenCrossing";
 import { VerbatimCard } from "@/components/app/CitizensView";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { fetchUnitCitizens, percent, type UnitCitizens } from "@/lib/citizens";
@@ -55,6 +56,9 @@ export function CitizenUnitCard({ code, unitId }: { code: string; unitId: number
           </div>
         </>
       )}
+      <div className="mt-6">
+        <CitizenCrossing code={code} unitId={unitId} />
+      </div>
       <Link
         href={`/territoire/${code}/citoyens`}
         className="text-petrol mt-4 inline-block text-sm underline"

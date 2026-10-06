@@ -11,7 +11,9 @@ from app.services.reports.facts import FactSheet, IndicatorBrief
 from app.services.reports.meaning import (
     Controls,
     cached_controls,
+    check_adjacent,
     check_meaning,
+    check_subjective,
     normalize,
     word_pattern,
 )
@@ -83,6 +85,10 @@ LABELS = {
         "years": "Années que tu peux citer",
         "area": "surface",
         "typology": "Profil-type (proposition)",
+        "contributions": "Contributions citoyennes localisées dans l'unité",
+        "main_theme": "Thème principal",
+        "fictitious": "Ne parle pas du caractère fictif des contributions : MAJAL l'indique dans un bandeau au-dessus du texte.",
+        "too_few": "Trop peu de contributions pour conclure : dis-le dans le texte.",
         "retry": (
             "Ta réponse précédente ne respecte pas les règles : {issues}. Réécris la section "
             "sans aucun nombre : remplace chaque valeur par l'identifiant de son fait."
@@ -105,6 +111,10 @@ LABELS = {
         "years": "السنوات التي يمكنك ذكرها",
         "area": "المساحة",
         "typology": "الصنف النموذجي (مقترح)",
+        "contributions": "مساهمات المواطنين المحددة في الوحدة",
+        "main_theme": "الموضوع الرئيسي",
+        "fictitious": "لا تتحدث عن الطابع الافتراضي للمساهمات: يشير «مجال» إلى ذلك في شريط فوق النص.",
+        "too_few": "عدد المساهمات غير كاف للاستنتاج: اذكر ذلك في النص.",
         "retry": (
             "إجابتك السابقة لا تحترم القواعد: {issues}. أعد كتابة القسم دون أي عدد، "
             "وعوّض كل قيمة بمعرّف الواقعة الخاصة بها."
@@ -170,6 +180,15 @@ def build_prompt(
     lines += [_brief_line(sheet.briefs[code], lang) for code in section_codes(section, sheet)]
     if section.include_typology and typology:
         lines.append(f"- {t['typology']} : {typology}")
+    if section.include_citizens and sheet.citizens and sheet.citizens["total_fact"]:
+        citizens = sheet.citizens
+        lines.append(f"- {t['contributions']} : {{{{{citizens['total_fact']}}}}}")
+        for label, fact_id in citizens["themes"]:
+            lines.append(f"- {t['main_theme']} « {label[lang]} » : {{{{{fact_id}}}}}")
+        if citizens["fictitious"]:
+            lines.append(f"- {t['fictitious']}")
+        if citizens["too_few"]:
+            lines.append(f"- {t['too_few']}")
     # Only the years that name the data (census, built-up epochs), not extraction dates: the
     # models otherwise comment on them. The check still accepts every year of the sheet.
     labels = " ".join(b.label["fr"] for b in sheet.briefs.values())
@@ -179,7 +198,11 @@ def build_prompt(
 
 
 def check_paragraphs(
-    paragraphs: list[str], sheet: FactSheet, lang: Lang = "fr", controls: Controls | None = None
+    paragraphs: list[str],
+    sheet: FactSheet,
+    lang: Lang = "fr",
+    controls: Controls | None = None,
+    meaning: bool = True,
 ) -> list[Issue]:
     """Numbers first (nothing written by the model), then meaning (trends, missing data)."""
     known = {f.id for f in sheet.facts}
@@ -191,7 +214,10 @@ def check_paragraphs(
     issues: list[Issue] = []
     for paragraph in paragraphs:
         issues += check_text(paragraph, known, sheet.years, definitional)
-        issues += check_meaning(paragraph, sheet, controls, lang)
+        if meaning:
+            issues += check_meaning(paragraph, sheet, controls, lang)
+        else:  # citizens section: no indicator claims, but tone and Arabic layout still checked
+            issues += check_subjective(paragraph, controls, lang) + check_adjacent(paragraph, lang)
     return issues
 
 
@@ -209,8 +235,11 @@ def write_section(
     max_retries: int = 2,
 ) -> SectionResult:
     title = section.title.model_dump()[lang]
-    if section.mode == "auto":
+    if section.mode == "auto" or (section.include_citizens and not sheet.citizens):
         text = section.auto_text.model_dump()[lang] if section.auto_text else ""
+        return SectionResult(section.code, title, [text] if text else [], "auto")
+    if section.include_citizens and sheet.citizens and not sheet.citizens["total"]:
+        text = section.empty_text.model_dump()[lang] if section.empty_text else ""
         return SectionResult(section.code, title, [text] if text else [], "auto")
     if provider is None:
         return fallback_section(sheet, section, lang, title, typology, error="IA désactivée")
@@ -242,7 +271,7 @@ def write_section(
             prompt = f"{build_prompt(sheet, section, template, lang, typology)}\n\n{prompt_retry}"
             continue
         paragraphs = [normalize_refs(p) for p in paragraphs]
-        issues = check_paragraphs(paragraphs, sheet, lang)
+        issues = check_paragraphs(paragraphs, sheet, lang, meaning=section.meaning_checks)
         if not issues:
             return SectionResult(
                 section.code,
@@ -280,6 +309,9 @@ FALLBACK = {
         "attention_intro": "Points d'attention, du plus marqué au moins marqué :",
         "question": "Quels facteurs expliquent la situation observée pour « {label} », et quelles pistes pourraient être étudiées avec les acteurs concernés ?",
         "typology": "Profil-type proposé : {typology}.",
+        "citizens": "Contributions localisées dans l'unité : {total}.",
+        "citizens_themes": "Thèmes principaux les plus cités : {themes}.",
+        "citizens_few": "Elles sont trop peu nombreuses pour conclure.",
         "none": "Aucun déficit marqué ni point à surveiller selon les indicateurs disponibles.",
     },
     "ar": {
@@ -291,6 +323,9 @@ FALLBACK = {
         "attention_intro": "نقاط الانتباه، من الأكثر وضوحاً إلى الأقل:",
         "question": "ما العوامل التي تفسر الوضعية الملاحظة بخصوص «{label}»، وما المسارات التي يمكن دراستها مع الفاعلين المعنيين؟",
         "typology": "الصنف النموذجي المقترح: {typology}.",
+        "citizens": "المساهمات المحددة في الوحدة: {total}.",
+        "citizens_themes": "المواضيع الرئيسية الأكثر ذكراً: {themes}.",
+        "citizens_few": "عددها غير كاف للاستنتاج.",
         "none": "لا يوجد خصاص واضح ولا نقطة تستدعي المتابعة حسب المؤشرات المتوفرة.",
     },
 }
@@ -348,6 +383,21 @@ def fallback_section(
         )
     if section.include_typology and typology:
         paragraphs.append(t["typology"].format(typology=typology))
+    if section.include_citizens and sheet.citizens and sheet.citizens["total_fact"]:
+        citizens = sheet.citizens
+        parts = [t["citizens"].format(total=_fact(citizens["total_fact"]))]
+        if citizens["themes"]:
+            themes = "، ".join if lang == "ar" else ", ".join
+            parts.append(
+                t["citizens_themes"].format(
+                    themes=themes(
+                        f"{label[lang]} ({_fact(fid)})" for label, fid in citizens["themes"]
+                    )
+                )
+            )
+        if citizens["too_few"]:
+            parts.append(t["citizens_few"])
+        paragraphs.append(" ".join(parts))
     return SectionResult(section.code, title, paragraphs, "fallback", error=error)
 
 

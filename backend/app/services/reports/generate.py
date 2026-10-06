@@ -13,11 +13,11 @@ from typing import Any, cast
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Diagnostic, Report, Territory
+from app.models import Diagnostic, Report, StudyArea, Territory
 from app.services.llm import LLMError, get_provider
 from app.services.llm.ollama import OllamaProvider
 from app.services.reports.context import latest_diagnostic, unit_identity
-from app.services.reports.facts import FactSheet, build_fact_sheet
+from app.services.reports.facts import FactSheet, add_citizen_facts, build_fact_sheet
 from app.services.reports.numbers import check_rendered, definitional_phrases
 from app.services.reports.template import ReportTemplate, load_template
 from app.services.reports.writer import (
@@ -103,6 +103,8 @@ def build_report(
     diagnostic = latest_diagnostic(session, code)
     identity = unit_identity(session, unit_id)
     sheet = build_fact_sheet(diagnostic.result, unit_id, dict(identity))
+    citizens = citizens_for(session, diagnostic.study_area_id, unit_id)
+    add_citizen_facts(sheet, citizens)
     provider_error: str | None = None
     try:
         provider = get_provider(settings, model)
@@ -172,6 +174,17 @@ def build_report(
             **sources,
         }
     )
+    # Section 7: the permanent notice comes first when contributions are fictitious.
+    if citizens and citizens["fictitious"]:
+        from app.services.citizens.stats import FICTITIOUS_BANNER
+
+        for section_out in sections_out:
+            if any(s.code == section_out["code"] and s.include_citizens for s in template.sections):
+                section_out["banner"] = FICTITIOUS_BANNER[lang]
+                section_out["paragraphs"] = [
+                    {"text": FICTITIOUS_BANNER[lang], "facts": []},
+                    *section_out["paragraphs"],
+                ]
     written = [r for r in results if r.mode in ("ai", "fallback")]
     modes = {r.mode for r in written}
     writing_mode = "ai" if modes == {"ai"} else "fallback" if modes == {"fallback"} else "mixed"
@@ -191,6 +204,7 @@ def build_report(
         if diagnostic.computed_at
         else None,
         "template_version": template.template_version,
+        "citizens": citizens,
     }
     return content, sheet.to_json(), calls, writing_mode
 
@@ -212,10 +226,29 @@ def provider_identity() -> tuple[str, str]:
     return "ollama", model
 
 
-def unit_data_hash(diagnostic: dict[str, Any], unit_id: int) -> str:
-    """Hash of everything the report depends on for this unit (values, references, typology)."""
+def citizens_for(session: Session, study_area_id: int, unit_id: int) -> dict[str, Any] | None:
+    """Section 7 facts: contributions of the unit by main theme (None: no consultation)."""
+    from app.services.citizens.pipeline import taxonomy_for
+    from app.services.citizens.report import unit_citizens
+
+    area = session.get(StudyArea, study_area_id)
+    if area is None:
+        return None
+    try:
+        taxonomy = taxonomy_for(area)
+    except Exception:  # no taxonomy for this profile yet: section 7 says so
+        return None
+    return unit_citizens(session, study_area_id, unit_id, taxonomy)
+
+
+def unit_data_hash(
+    diagnostic: dict[str, Any], unit_id: int, citizens: dict[str, Any] | None = None
+) -> str:
+    """Hash of everything the report depends on for this unit (values, references, typology,
+    citizen contributions)."""
     unit = next((u for u in diagnostic["units"] if u["id"] == unit_id), None)
     payload = {
+        "citizens": citizens,
         "unit": unit,
         "indicators": diagnostic.get("indicators"),
         "evaluation": diagnostic.get("evaluation", {}).get("label"),
@@ -231,6 +264,7 @@ def current_cache_key(
     provider: str,
     model: str,
     template: ReportTemplate | None = None,
+    citizens: dict[str, Any] | None = None,
 ) -> str:
     """Key of a report written now: same data, language, model and outline (+ controls)."""
     settings = get_settings()
@@ -238,7 +272,7 @@ def current_cache_key(
     template = template or load_template(templates / "diagnostic_commune.yaml")
     controls = hashlib.sha256((templates / "controles.yaml").read_bytes()).hexdigest()[:12]
     return cache_key(
-        unit_data_hash(diagnostic, unit_id),
+        unit_data_hash(diagnostic, unit_id, citizens),
         unit_id,
         lang,
         provider,
@@ -251,11 +285,18 @@ def stored_issues(session: Session, report: Report, diagnostic: dict[str, Any]) 
     """Today's controls applied to the text of a stored report (its raw, cited form)."""
     unit_id, lang = report.territory_id, cast(Lang, report.language)
     sheet = build_fact_sheet(diagnostic, unit_id, dict(unit_identity(session, unit_id)))
+    add_citizen_facts(sheet, report.content.get("citizens"))
+    template = load_template(
+        get_settings().config_dir / "report_templates" / "diagnostic_commune.yaml"
+    )
+    meaning = {s.code: s.meaning_checks for s in template.sections}
     return [
         issue.describe()
         for section in report.content.get("sections", [])
         if section["mode"] in ("ai", "fallback")
-        for issue in check_paragraphs(section.get("raw", []), sheet, lang)
+        for issue in check_paragraphs(
+            section.get("raw", []), sheet, lang, meaning=meaning.get(section["code"], True)
+        )
     ]
 
 
@@ -267,6 +308,7 @@ def recheck_stored(
     provider: str,
     model: str,
     key: str,
+    citizens: dict[str, Any] | None = None,
 ) -> Report | None:
     """After a change of controls or outline, keep a stored report when nothing it depends on
     has changed (same unit data, same model) and its text passes today's controls: it gets the
@@ -289,6 +331,8 @@ def recheck_stored(
     if previous is None or unit_data_hash(previous.result, unit_id) != unit_data_hash(
         diagnostic, unit_id
     ):
+        return None
+    if stored.content.get("citizens") != citizens:  # section 7 depends on the contributions
         return None
     if stored_issues(session, stored, diagnostic):
         return None
@@ -366,12 +410,15 @@ def request_report(
     if territory is None or territory.study_area_id != diagnostic.study_area_id:
         raise LookupError("Unité inconnue pour ce territoire.")
     provider, model = provider_identity()
-    key = current_cache_key(diagnostic.result, unit_id, lang, provider, model, template)
+    citizens = citizens_for(session, diagnostic.study_area_id, unit_id)
+    key = current_cache_key(diagnostic.result, unit_id, lang, provider, model, template, citizens)
     if not force:
         cached = find_cached(session, key)
         if cached is not None:
             return cached, True
-        rechecked = recheck_stored(session, diagnostic.result, unit_id, lang, provider, model, key)
+        rechecked = recheck_stored(
+            session, diagnostic.result, unit_id, lang, provider, model, key, citizens
+        )
         if rechecked is not None:
             return rechecked, True
     report = Report(

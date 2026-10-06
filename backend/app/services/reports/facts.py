@@ -56,6 +56,8 @@ class FactSheet:
     grid_label: dict[str, str] = field(default_factory=dict)
     evaluation_label: dict[str, str] = field(default_factory=dict)
     status_labels: dict[str, dict[str, str]] = field(default_factory=dict)
+    # Section 7: {"total_fact", "themes": [(label, fact id)], "total", "fictitious", "too_few"}
+    citizens: dict[str, Any] | None = None
 
     def get(self, fact_id: str) -> Fact | None:
         return next((f for f in self.facts if f.id == fact_id), None)
@@ -238,3 +240,42 @@ def build_fact_sheet(
             str(year) in m["label"]["fr"] for m in diagnostic["indicators"]
         ) else None
     return sheet
+
+
+def add_citizen_facts(sheet: FactSheet, citizens: dict[str, Any] | None) -> None:
+    """Counts of citizen contributions (main theme only) become facts like any other number."""
+    if citizens is None:
+        return
+    badge = "fictitious" if citizens["fictitious"] else "official"
+    source = (
+        "Contributions citoyennes fictives (jeu de démonstration MAJAL)"
+        if citizens["fictitious"]
+        else "Contributions citoyennes importées"
+    )
+
+    def new(label: dict[str, str], count: int) -> str:
+        fact_id = f"F{len(sheet.facts) + 1:03d}"
+        sheet.facts.append(
+            Fact(
+                fact_id,
+                "citizens",
+                None,
+                label,
+                {"fr": f"{count} contribution{'s' if count > 1 else ''}", "ar": f"{count} مساهمة"},
+                source=source,
+                badge=badge,
+            )
+        )
+        return fact_id
+
+    sheet.citizens = {
+        "total": citizens["total"],
+        "fictitious": citizens["fictitious"],
+        "too_few": citizens["too_few"],
+        "total_fact": new(
+            {"fr": "Contributions localisées", "ar": "المساهمات المحددة"}, citizens["total"]
+        )
+        if citizens["total"]
+        else None,
+        "themes": [(t["label"], new(t["label"], t["count"])) for t in citizens["themes"]],
+    }

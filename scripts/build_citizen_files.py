@@ -81,6 +81,11 @@ def main() -> None:
     book.save(models / "contributions-modele.xlsx")
 
     # 3. Sheet for the professor: 30 contributions without traps, stratified by language.
+    # Written once: the professor fills it in, it is never overwritten.
+    sheet_path = ROOT / "docs" / "evaluation" / "annotation-professeur.xlsx"
+    if sheet_path.exists():
+        print(f"{len(contributions)} contributions ; fiche du professeur conservée.")
+        return
     rng = random.Random(SEED)
     pool = [c for c in contributions if not c["pii"]]
     by_language: dict[str, list[dict[str, object]]] = {}

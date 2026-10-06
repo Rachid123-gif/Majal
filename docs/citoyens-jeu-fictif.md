@@ -25,33 +25,53 @@ tableau de bord, croisement avec les indicateurs.
 Si les contributions avaient été réparties pour confirmer les indicateurs réels (plus de plaintes
 sur les espaces verts là où ils manquent), le croisement « ce que disent les citoyens / ce que
 montrent les données » aurait l'air de fonctionner par construction. Le plan
-(`scripts/plan_fictional_contributions.py`, graine 2026) suit donc ces règles :
+(`scripts/plan_fictional_contributions.py`, paramètres dans `config/citizens/jeu-fictif.yaml`,
+graine 2026) suit donc ces règles :
 
 - **nombre par unité** : au moins 2, le reste proportionnel à la population légale 2024 (HCP).
   C'est la seule donnée lue, et elle n'est liée à aucun thème ;
-- **thèmes** : tirés au hasard, avec les **mêmes poids dans toutes les unités** (tous les thèmes
-  à égalité, « autres » à moitié) ; 20 % des contributions reçoivent un second thème ;
+- **thèmes** : tirés au hasard avec des **poids réalistes identiques dans toutes les unités**,
+  sans lire aucun indicateur (poids proposés par le porteur du projet, à affiner par le
+  professeur, TODO_REFERENT) ; 20 % des contributions reçoivent un second thème ;
 - **langue, tonalité, lieu cité, commune déclarée, pièges** : tirés au hasard selon des
   proportions fixes (35 % français, 25 % arabe, 20 % darija en alphabet arabe, 15 % en alphabet
   latin, 5 % amazighe ; 40 % demandes, 35 % plaintes, 15 % propositions, 10 % satisfactions).
 
-Les textes ont ensuite été rédigés un par un pour chaque ligne du plan. Les écarts observés au
+| Thème | Poids | Thème | Poids |
+| --- | --- | --- | --- |
+| Mobilité et transport en commun | 14 % | Santé | 5 % |
+| Propreté et déchets | 11 % | Éducation | 5 % |
+| Espaces verts et espaces publics | 10 % | Sécurité | 4 % |
+| Emploi et jeunesse | 9 % | Éclairage public | 3 % |
+| Logement et loyers | 9 % | Commerce et marchés | 2 % |
+| Voirie et trottoirs | 8 % | Culture, sport et loisirs | 2 % |
+| Circulation et stationnement | 8 % | Bruit, accessibilité PMR, patrimoine, administration | 1 % chacun |
+| Eau et assainissement | 6 % | Autres | 0 % |
+
+**Échantillon de référence.** Les 30 contributions remises au professeur pour classement
+(`docs/evaluation/annotation-professeur.xlsx`) ont été tirées avec la première version du plan,
+à poids égaux. Elles sont conservées telles quelles (`reference_sample: true`) pour que son
+annotation reste valable ; seules les 110 autres ont été tirées à nouveau avec les poids
+réalistes. Les textes en amazighe de l'échantillon (RBT-098, RBT-128) sont exclus de
+l'évaluation de référence.
+
+Les textes ont été rédigés un par un pour chaque ligne du plan. Les écarts observés au
 croisement relèvent donc du hasard : **ils ne disent rien des habitants réels**. Ils montrent
 seulement comment l'outil présenterait de vraies contributions.
 
-## Résultat du tirage
+## Résultat du tirage (140 contributions)
 
-- 140 contributions : français 55, arabe 45, darija en alphabet latin 21, darija en alphabet
-  arabe 14, amazighe 5.
-- Tonalité : plaintes 60, demandes 53, propositions 14, satisfactions 13.
-- 29 contributions à deux thèmes. Thèmes les plus tirés : accessibilité des personnes à mobilité
-  réduite 17, voirie 12, commerce et marchés 11, éclairage 11, eau et assainissement 11 ; les
-  moins tirés : patrimoine 4, logement 4 (effet du hasard, assumé).
-- 119 contributions citent un lieu ; 69 indiquent une commune ; 12 n'ont ni l'un ni l'autre
+- Langues : français 51, arabe 37, darija en alphabet arabe 25, darija en alphabet latin 18,
+  amazighe 9 (marqués « transcription approximative, à relire par un locuteur »).
+- Tonalité : plaintes 61, demandes 44, propositions 21, satisfactions 14.
+- Thèmes (premier et second) : espaces verts 25, voirie 21, mobilité 17, circulation 13,
+  logement 12, emploi et jeunesse 12, propreté 10, éducation 10, santé 8, eau et
+  assainissement 8, puis moins de 5 pour les autres. 21 contributions ont deux thèmes.
+- 114 contributions citent un lieu ; 71 indiquent une commune ; 16 n'ont ni l'un ni l'autre
   (elles resteront « lieu non identifié »).
 - 22 contributions contiennent des données personnelles **visiblement fictives** pour tester
   l'anonymisation : téléphones 06 00 00 0x xx, cartes d'identité ZZ0000xx, adresses e-mail
-  @example.com, adresses « n° 00 », plaque 00000-ب-99, prénoms seuls.
+  @example.com, adresses « n° 00 », prénoms seuls.
 
 ## Règles de rédaction (vérifiées automatiquement quand c'est possible)
 
@@ -62,11 +82,12 @@ seulement comment l'outil présenterait de vraies contributions.
 - Aucune accusation, aucun contenu politique, religieux ou injurieux.
 - Test `backend/tests/test_fictional_contributions.py` : aucun terme interdit ; conformité au
   plan ; pièges présents et visiblement fictifs ; aucun nom propre inconnu en alphabet latin.
-- Les textes en amazighe sont approximatifs : à relire par un locuteur.
+- Les textes en amazighe sont approximatifs : chacun porte la mention « transcription
+  approximative, à relire par un locuteur ».
 
 ## Deux évaluations distinctes
 
 - **Provisoire** : sur l'annotation de Claude (qui a aussi rédigé les textes : évaluation en
   partie circulaire, affichée comme telle).
-- **De référence** : sur les 30 contributions classées par le professeur
-  (`docs/evaluation/annotation-professeur.xlsx`), indépendante.
+- **De référence** : sur les contributions classées par le professeur
+  (`docs/evaluation/annotation-professeur.xlsx`), indépendante, amazighe exclue (28 textes).

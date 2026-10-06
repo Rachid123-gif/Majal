@@ -65,6 +65,21 @@ def test_the_set_is_complete_and_matches_the_random_plan() -> None:
         assert (c["place"] is not None) == (plan["place_cited"] == "True"), c["id"]
         assert ("commune_declaree" in c) == (plan["commune_declared"] == "True"), c["id"]
         assert bool(c["pii"]) == (plan["pii_trap"] == "True"), c["id"]
+        assert c.get("reference_sample", False) == (plan["reference_sample"] == "True"), c["id"]
+        if c["language"] == "amazigh_latin":
+            assert "approximative" in c["note"], c["id"]
+
+
+def test_theme_weights_come_from_the_editable_file_and_read_no_indicator() -> None:
+    config = yaml.safe_load(
+        (REPO_ROOT / "config" / "citizens" / "jeu-fictif.yaml").read_text(encoding="utf-8")
+    )
+    assert sum(config["theme_weights"].values()) == 100
+    assert len(config["reference_sample"]) == 30
+    script = (REPO_ROOT / "scripts" / "plan_fictional_contributions.py").read_text()
+    code = script.split('"""', 2)[2]  # without the docstring
+    for source in ("config/indicators", "diagnostic", "indicator", "/api/", "psycopg"):
+        assert source not in code, source
 
 
 def test_annotations_use_the_taxonomy() -> None:
@@ -157,6 +172,8 @@ ALLOWED_CAPITALISED = {
     "Al",
     "Bab",
     "Hadchi",
+    "Rabat",
+    "Salé",
 }
 
 
@@ -170,7 +187,10 @@ def test_no_unknown_proper_name_in_latin_script() -> None:
             known.update(re.findall(r"[\wÀ-ÿ'-]+", value))
     unknown: Counter[str] = Counter()
     for c in CONTRIBUTIONS:
-        for word in re.findall(r"(?<![\w'])[A-ZÀ-Ý][\wÀ-ÿ'-]+", c["text"]):
+        for match in re.finditer(r"(?<![\w'])[A-ZÀ-Ý][\wÀ-ÿ'-]+", c["text"]):
+            word, before = match.group(0), c["text"][: match.start()].rstrip()
+            if not before or before[-1] in ".!?;:":
+                continue  # starts a sentence
             if word not in known and word.split("'")[-1] not in known:
                 unknown[f"{c['id']}:{word}"] += 1
     assert not unknown, sorted(unknown)

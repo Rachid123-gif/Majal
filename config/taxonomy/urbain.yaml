@@ -7,7 +7,8 @@
 # - keywords : mots-clés du classement de repli sans IA, et de comparaison (français, arabe,
 #   darija en alphabet latin). En début de mot pour le français et la darija latine ;
 # - indicators : indicateurs de la grille mis en regard des contributions (croisement).
-#   Liste vide = thème sans indicateur correspondant dans la grille v0.
+#   Liste vide = thème sans indicateur correspondant dans la grille v0 : data_request indique
+#   alors la donnée à demander et l'institution qui la détiendrait (null = aucun indicateur prévu).
 # Une contribution peut relever de plusieurs thèmes.
 
 taxonomy_version: "v0"
@@ -41,6 +42,10 @@ themes:
       ar: [الازدحام, حركة السير, المرور, الوقوف, موقف السيارات, الضوء الأحمر, السرعة]
       darija: [zham, parking, lparking, sir, lavitesse]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Comptages de trafic et offre de stationnement (places, taux d'occupation)", ar: "حركة المرور وعرض أماكن الوقوف" }
+      holder: { fr: "Commune et opérateur de transport urbain", ar: "الجماعة ومشغل النقل الحضري" }
 
   - code: voirie
     label: { fr: "Voirie et trottoirs", ar: "الطرق والأرصفة" }
@@ -49,7 +54,11 @@ themes:
       fr: [trottoir, chaussée, nid-de-poule, nids-de-poule, route, rue, goudron, passage piéton, travaux]
       ar: [الرصيف, الأرصفة, الطريق, الحفر, حفرة, الزفت, ممر الراجلين, الأشغال]
       darija: [trottoir, triq, l7fra, hfra, zeft, chantier]
-    indicators: [MOB_ROUTE]
+    indicators: []  # distance à une route revêtue : profil « mixte » seulement
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "État de la chaussée et des trottoirs (linéaire dégradé, interventions)", ar: "حالة الطرق والأرصفة" }
+      holder: { fr: "Commune (services techniques)", ar: "الجماعة (المصالح التقنية)" }
 
   - code: logement
     label: { fr: "Logement et loyers", ar: "السكن والكراء" }
@@ -77,6 +86,10 @@ themes:
       ar: [الأزبال, النفايات, القمامة, الحاوية, النظافة, الأوساخ, جمع النفايات]
       darija: [zbel, lazbal, poubelle, lkhanz, mosekh, msekh]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Fréquence de collecte, tonnage collecté, points de dépôt sauvage", ar: "وتيرة جمع النفايات وكمياتها ونقط الرمي العشوائي" }
+      holder: { fr: "Commune (ou son délégataire de la propreté)", ar: "الجماعة (أو المفوض له تدبير النظافة)" }
 
   - code: eau_assainissement
     label: { fr: "Eau et assainissement", ar: "الماء والتطهير" }
@@ -95,6 +108,10 @@ themes:
       ar: [الإنارة, المصابيح, الضوء, الظلام, مظلمة]
       darija: [dow, ddaw, dlam, poteau]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Points lumineux en service par kilomètre de voirie, pannes signalées", ar: "نقط الإنارة العاملة لكل كيلومتر والأعطاب" }
+      holder: { fr: "Commune (service de l'éclairage public)", ar: "الجماعة (مصلحة الإنارة العمومية)" }
 
   - code: sante
     label: { fr: "Santé", ar: "الصحة" }
@@ -131,6 +148,8 @@ themes:
       ar: [الأمن, انعدام الأمن, السرقة, الاعتداء, الخوف, الدوريات]
       darija: [aman, sri9a, khouf, cheffara]
     indicators: []
+    # Aucun indicateur prévu dans la grille v0 (TODO_REFERENT).
+    data_request: null
 
   - code: bruit
     label: { fr: "Bruit et nuisances", ar: "الضجيج والإزعاج" }
@@ -140,6 +159,10 @@ themes:
       ar: [الضجيج, الإزعاج, الضوضاء, الدخان, الرائحة]
       darija: [sda3, tsda3, ri7a, dokhan]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Mesures du bruit ambiant", ar: "قياسات الضجيج" }
+      holder: { fr: "Département chargé de l'environnement", ar: "القطاع المكلف بالبيئة" }
 
   - code: commerce_marches
     label: { fr: "Commerce et marchés", ar: "التجارة والأسواق" }
@@ -158,6 +181,10 @@ themes:
       ar: [الرياضة, الملعب, المسبح, المكتبة, الثقافة, الترفيه, القاعة]
       darija: [terrain, tiran, lkoura, piscine, bibliothèque]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Équipements sportifs et culturels de proximité (terrains, salles, bibliothèques)", ar: "تجهيزات القرب الرياضية والثقافية" }
+      holder: { fr: "Commune et département de la jeunesse, de la culture et des sports", ar: "الجماعة والقطاع المكلف بالشباب والثقافة والرياضة" }
 
   - code: patrimoine
     label: { fr: "Patrimoine", ar: "التراث" }
@@ -167,6 +194,10 @@ themes:
       ar: [التراث, المدينة القديمة, الأسوار, المآثر, القصبة, التاريخية]
       darija: [lmdina l9dima, swar, l9asba]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Inventaire du patrimoine bâti et état de conservation", ar: "جرد التراث المبني وحالة صيانته" }
+      holder: { fr: "Département de la culture (inspection régionale des monuments historiques)", ar: "القطاع المكلف بالثقافة (المفتشية الجهوية للمباني التاريخية)" }
 
   - code: administration
     label: { fr: "Administration et services", ar: "الإدارة والخدمات" }
@@ -176,6 +207,10 @@ themes:
       ar: [الإدارة, الشباك, الوثائق, الملف, الانتظار, الخدمات الإلكترونية]
       darija: [lidara, l2idara, lwra9, wra9, tsnna, ssf]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Délais de traitement des démarches, fréquentation des guichets", ar: "آجال معالجة الطلبات وارتياد الشبابيك" }
+      holder: { fr: "Commune (bureaux d'état civil et de légalisation)", ar: "الجماعة (مكاتب الحالة المدنية والتصديق)" }
 
   - code: accessibilite_pmr
     label: { fr: "Accessibilité des personnes à mobilité réduite", ar: "ولوجيات الأشخاص في وضعية إعاقة" }
@@ -185,17 +220,24 @@ themes:
       ar: [الإعاقة, الكرسي المتحرك, المنحدر, المصعد, ذوي الاحتياجات الخاصة, الولوجيات]
       darija: [m3a9, mo3a9, kursi, l2asanseur]
     indicators: []
+    # Donnée à demander pour croiser ce thème (module « Besoins en données »).
+    data_request:
+      data: { fr: "Accessibilité des bâtiments publics et des trottoirs", ar: "ولوجية البنايات العمومية والأرصفة" }
+      holder: { fr: "Commune et département chargé de la solidarité", ar: "الجماعة والقطاع المكلف بالتضامن" }
 
   - code: autres
     label: { fr: "Autres", ar: "مواضيع أخرى" }
     description: "Ce qui ne relève d'aucun autre thème."
     keywords: { fr: [], ar: [], darija: [] }
     indicators: []
+    data_request: null
 
-# Croisement « ce que disent les citoyens / ce que montrent les données ».
+# Croisement « ce que disent les citoyens / ce que montrent les données » (TODO_REFERENT).
 # Aucune conclusion en dessous de min_contributions contributions pour une unité et un thème.
+# Une unité qui a moins de percent_min_total contributions est décrite en nombres, jamais en %.
 crossing:
-  min_contributions: 3
+  min_contributions: 5
+  percent_min_total: 20
   # Part des contributions de l'unité consacrée au thème, au-dessus de laquelle la demande
   # est dite « forte » (TODO_REFERENT).
   strong_share: 0.15
@@ -209,3 +251,12 @@ crossing:
     data_only:
       fr: "Déficit mesuré sans demande exprimée"
       ar: "خصاص مقيس دون طلب معبر عنه"
+    no_indicator:
+      fr: "Donnée à demander"
+      ar: "معطى يتعين طلبه"
+    no_indicator_planned:
+      fr: "Aucun indicateur prévu"
+      ar: "لا يوجد مؤشر مبرمج"
+    too_few:
+      fr: "Trop peu de contributions pour conclure"
+      ar: "عدد المساهمات غير كاف للاستنتاج"

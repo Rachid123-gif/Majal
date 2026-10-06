@@ -1,0 +1,46 @@
+# MAJAL — Paramètres du jeu de contributions FICTIVES de Rabat (étape 4).
+# Lu par scripts/plan_fictional_contributions.py. Statut : TODO_REFERENT (poids à affiner).
+#
+# Les poids des thèmes sont IDENTIQUES pour toutes les unités et ne lisent aucun indicateur :
+# le croisement « ce que disent les citoyens / ce que montrent les données » reste non circulaire.
+# Poids proposés par le porteur du projet le 2026-10-06 (en %, total 100).
+
+seed: 2026
+total: 140
+
+theme_weights:
+  mobilite: 14
+  proprete: 11
+  espaces_verts: 10
+  emploi_jeunesse: 9
+  logement: 9
+  voirie: 8
+  circulation: 8
+  eau_assainissement: 6
+  sante: 5
+  education: 5
+  securite: 4
+  eclairage: 3
+  commerce_marches: 2
+  culture_sport: 2
+  bruit: 1
+  accessibilite_pmr: 1
+  patrimoine: 1
+  administration: 1
+  autres: 0
+
+second_theme_share: 0.20
+languages: { fr: 0.35, ar: 0.25, darija_ar: 0.20, darija_latin: 0.15, amazigh_latin: 0.05 }
+tonalities: { demande: 0.40, plainte: 0.35, proposition: 0.15, satisfaction: 0.10 }
+place_cited_share: 0.85
+commune_declared_share: 0.50
+pii_traps: 22
+
+# Échantillon de référence : les 30 contributions remises au professeur pour classement
+# (docs/evaluation/annotation-professeur.xlsx). Elles sont conservées telles quelles quand le
+# jeu est régénéré, pour que son annotation reste valable. Les textes en amazighe sont exclus
+# de l'évaluation de référence (transcription approximative).
+reference_sample: [RBT-128, RBT-019, RBT-090, RBT-106, RBT-053, RBT-017, RBT-015, RBT-109,
+  RBT-001, RBT-072, RBT-005, RBT-124, RBT-077, RBT-098, RBT-045, RBT-014, RBT-127, RBT-050,
+  RBT-031, RBT-006, RBT-096, RBT-051, RBT-037, RBT-060, RBT-089, RBT-054, RBT-010, RBT-134,
+  RBT-117, RBT-079]

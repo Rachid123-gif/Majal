@@ -17,3 +17,18 @@ def test_urban_taxonomy_covers_the_brief_and_links_real_indicators() -> None:
         assert set(theme.indicators) <= grid, theme.code
         if theme.code != "autres":
             assert theme.keywords.fr and theme.keywords.ar, theme.code
+
+
+def test_themes_without_indicator_say_which_data_to_ask_for() -> None:
+    taxonomy = load_taxonomy(CONFIG / "taxonomy" / "urbain.yaml")
+    voirie = taxonomy.theme("voirie")
+    assert voirie is not None and voirie.indicators == []  # MOB_ROUTE: profile « mixte » only
+    for theme in taxonomy.themes:
+        if theme.indicators:
+            continue
+        if theme.code in ("securite", "autres"):
+            assert theme.data_request is None  # no indicator planned
+        else:
+            assert theme.data_request is not None, theme.code
+    assert taxonomy.crossing.min_contributions == 5
+    assert taxonomy.crossing.percent_min_total == 20

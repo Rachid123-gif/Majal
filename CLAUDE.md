@@ -147,6 +147,15 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
 - Étape 3 — validée le 2026-10-06. `make start` lance `caffeinate` (Mac éveillé, 12 h au plus),
   arrêté par `make stop`. Démonstration : `docs/demo-rapide.md`.
   Banc d'essai : `docs/benchmarks/` ; décisions 0014-0016.
+- Étape 4 (écoute citoyenne, Rabat) — plan validé le 2026-10-06 ; 4.1 validé avec ajustements.
+  Jeu fictif : `data/fictif/rabat/contributions.yaml` (plan neutre `scripts/plan_fictional_contributions.py`,
+  poids `config/citizens/jeu-fictif.yaml`, termes interdits `config/citizens/termes-interdits.yaml`,
+  méthode `docs/citoyens-jeu-fictif.md`). L'échantillon de référence (30 contributions remises au
+  professeur, `docs/evaluation/annotation-professeur.xlsx`) n'est jamais régénéré ; amazighe exclu
+  de l'évaluation de référence. Taxonomie `config/taxonomy/urbain.yaml` : `data_request` des thèmes
+  sans indicateur = entrées du futur module « Besoins en données » (étape 5). Bandeau obligatoire
+  « Contributions fictives — illustration du fonctionnement de l'outil… » partout (tableau de bord,
+  fiche, croisement, section 7 des rapports, exports).
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

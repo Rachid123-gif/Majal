@@ -1,26 +1,33 @@
 """Neutral plan of the fictitious citizen contributions for Rabat (stage 4).
 
-Run once: `python3 scripts/plan_fictional_contributions.py` → data/fictif/rabat/plan.csv.
-The texts are then written by hand for each line of the plan (contributions.yaml).
+Run: `backend/.venv/bin/python scripts/plan_fictional_contributions.py`
+→ data/fictif/rabat/plan.csv. The texts are then written by hand for each new line of the plan
+(data/fictif/rabat/contributions.yaml).
 
 The plan must NOT be built to confirm the indicators (otherwise the citizen/data crossing would
-be circular). Rules, documented in docs/citoyens-jeu-fictif.md:
+be circular). Rules, documented in docs/citoyens-jeu-fictif.md; parameters in
+config/citizens/jeu-fictif.yaml:
 - number per unit: at least 2, the rest in proportion to the legal population 2024 (HCP),
   the only input taken from the data (no thematic indicator is read);
-- themes: drawn at random with the SAME weights in every unit (all themes equal, « autres »
-  half weight); 20 % of contributions get a second theme;
+- themes: drawn at random with the SAME realistic weights in every unit; a share of
+  contributions gets a second theme;
 - languages, tonalities, place cited or not, declared commune or not, anonymisation traps:
   drawn at random with fixed proportions;
+- the reference sample (classified by the professor) is kept unchanged: its lines are copied
+  from the previous plan, and only the other lines are drawn again;
 - fixed seed: the plan is reproducible.
 """
 
 import csv
 import random
+from collections import Counter
 from pathlib import Path
 
-SEED = 2026
-TOTAL = 140
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config" / "citizens" / "jeu-fictif.yaml"
+PLAN = ROOT / "data" / "fictif" / "rabat" / "plan.csv"
 
 # Legal population 2024 (HCP, as imported in MAJAL), used only to size the units.
 UNITS = {
@@ -31,67 +38,71 @@ UNITS = {
     "Sidi Bouknadel": 43598, "Mers El Kheir": 26544, "Shoul": 24913, "Souissi": 21049,
     "Harhoura": 20950, "Sabbah": 15552, "El Menzeh": 7168, "Touarga": 5703, "Oumazza": 4322,
 }
-THEMES = [
-    "mobilite", "circulation", "voirie", "logement", "espaces_verts", "proprete",
-    "eau_assainissement", "eclairage", "sante", "education", "emploi_jeunesse", "securite",
-    "bruit", "commerce_marches", "culture_sport", "patrimoine", "administration",
-    "accessibilite_pmr", "autres",
-]
-THEME_WEIGHTS = [1.0] * 18 + [0.5]
-LANGUAGES = {"fr": 0.35, "ar": 0.25, "darija_ar": 0.20, "darija_latin": 0.15, "amazigh_latin": 0.05}
-TONALITIES = {"demande": 0.40, "plainte": 0.35, "proposition": 0.15, "satisfaction": 0.10}
-SECOND_THEME = 0.20
-PLACE_CITED = 0.85
-COMMUNE_DECLARED = 0.50
-PII_TRAPS = 22
 
 
-def allocate() -> dict[str, int]:
+def allocate(total: int) -> dict[str, int]:
     counts = dict.fromkeys(UNITS, 2)
-    rest = TOTAL - sum(counts.values())
+    rest = total - sum(counts.values())
     total_pop = sum(UNITS.values())
     shares = {u: rest * p / total_pop for u, p in UNITS.items()}
     for unit, share in shares.items():
         counts[unit] += int(share)
-    leftover = TOTAL - sum(counts.values())
+    leftover = total - sum(counts.values())
     for unit in sorted(shares, key=lambda u: shares[u] - int(shares[u]), reverse=True)[:leftover]:
         counts[unit] += 1
     return counts
 
 
+def pick(rng: random.Random, weights: dict[str, float], exclude: set[str] | None = None) -> str:
+    items = [(k, w) for k, w in weights.items() if w > 0 and k not in (exclude or set())]
+    return rng.choices([k for k, _ in items], [w for _, w in items])[0]
+
+
 def main() -> None:
-    rng = random.Random(SEED)
+    config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    rng = random.Random(config["seed"])
+    frozen_ids = set(config["reference_sample"])
+    previous = {row["id"]: row for row in csv.DictReader(PLAN.open(encoding="utf-8"))}
+    frozen = [previous[i] for i in sorted(frozen_ids)]
+
+    # Units: the same allocation as before, minus the lines kept from the reference sample.
+    needed = Counter(allocate(config["total"]))
+    needed.subtract(Counter(row["unit"] for row in frozen))
+    free_ids = sorted(set(previous) - frozen_ids)
     rows = []
-    number = 0
-    for unit, count in allocate().items():
-        for _ in range(count):
-            number += 1
-            first = rng.choices(THEMES, THEME_WEIGHTS)[0]
+    for unit in UNITS:
+        for _ in range(needed[unit]):
+            first = pick(rng, config["theme_weights"])
             themes = [first]
-            if first != "autres" and rng.random() < SECOND_THEME:
-                second = rng.choices([t for t in THEMES[:-1] if t != first])[0]
-                themes.append(second)
+            if rng.random() < config["second_theme_share"]:
+                themes.append(pick(rng, config["theme_weights"], exclude={first}))
             rows.append(
                 {
-                    "id": f"RBT-{number:03d}",
                     "unit": unit,
                     "themes": "|".join(themes),
-                    "language": rng.choices(list(LANGUAGES), list(LANGUAGES.values()))[0],
-                    "tonality": rng.choices(list(TONALITIES), list(TONALITIES.values()))[0],
-                    "place_cited": rng.random() < PLACE_CITED,
-                    "commune_declared": rng.random() < COMMUNE_DECLARED,
+                    "language": pick(rng, config["languages"]),
+                    "tonality": pick(rng, config["tonalities"]),
+                    "place_cited": rng.random() < config["place_cited_share"],
+                    "commune_declared": rng.random() < config["commune_declared_share"],
                     "pii_trap": False,
+                    "reference_sample": False,
                 }
             )
-    for row in rng.sample(rows, PII_TRAPS):
+    assert len(rows) == len(free_ids)
+    for row in rng.sample(rows, config["pii_traps"]):
         row["pii_trap"] = True
-    out = ROOT / "data" / "fictif" / "rabat" / "plan.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+    for row, new_id in zip(rows, free_ids, strict=True):
+        row["id"] = new_id
+    for row in frozen:
+        row["reference_sample"] = True
+    out = sorted(rows + frozen, key=lambda r: r["id"])
+    fields = ["id", "unit", "themes", "language", "tonality", "place_cited",
+              "commune_declared", "pii_trap", "reference_sample"]
+    with PLAN.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
-        writer.writerows(rows)
-    print(f"{len(rows)} lignes → {out.relative_to(ROOT)}")
+        writer.writerows({k: r[k] for k in fields} for r in out)
+    print(f"{len(out)} lignes ({len(frozen)} de l'échantillon de référence conservées)")
 
 
 if __name__ == "__main__":

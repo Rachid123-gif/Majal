@@ -15,16 +15,25 @@ class Keywords(StrictModel):
     darija: list[str] = Field(default_factory=list)
 
 
+class DataRequest(StrictModel):
+    """Data to ask for when no indicator of the grid covers the theme (« Besoins en données »)."""
+
+    data: Localized
+    holder: Localized
+
+
 class Theme(StrictModel):
     code: Slug
     label: Localized
     description: Text
     keywords: Keywords = Field(default_factory=Keywords)
     indicators: list[str] = Field(default_factory=list)
+    data_request: DataRequest | None = None
 
 
 class CrossingRules(StrictModel):
-    min_contributions: int = Field(default=3, ge=1)
+    min_contributions: int = Field(default=5, ge=1)
+    percent_min_total: int = Field(default=20, ge=1)
     strong_share: float = Field(default=0.15, gt=0, lt=1)
     labels: dict[str, Localized]
 

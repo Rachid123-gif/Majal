@@ -72,6 +72,12 @@ export function AppHeader({ territory }: { territory?: string }) {
             >
               {t("citizens.nav")}
             </Link>
+            <Link
+              href={`/territoire/${territory}/besoins-donnees`}
+              className="text-petrol hover:underline"
+            >
+              {t("dataNeeds.nav")}
+            </Link>
           </nav>
         )}
         <div className="ms-auto flex items-center gap-3">

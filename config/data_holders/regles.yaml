@@ -29,8 +29,20 @@ priorities:
   context: { fr: "Contexte", ar: "سياق" }
 
 # Classement des demandes : par priorité (ordre ci-dessus), puis par nombre total
-# d'indicateurs concernés (calculables + améliorés), puis par nombre de thèmes citoyens.
+# d'indicateurs concernés (calculés + fiabilisés + affinés), puis par nombre de thèmes citoyens.
 sort_by: [priority, indicators, themes]
+
+# Trois effets d'une donnée sur un indicateur, CALCULÉS d'après son statut actuel (choix du
+# porteur, 2026-10-07) ; une même demande peut cumuler plusieurs effets :
+#   computed  « calculer »   : l'indicateur est aujourd'hui manquant (demande : enables) ;
+#   reliable  « fiabiliser » : l'indicateur est aujourd'hui ouvert ou estimé (demande : improves) ;
+#   finer     « affiner »    : l'indicateur est déjà officiel et devient disponible à une échelle
+#                              plus fine (demande : improves + finer_scale).
+# Le classement « Par où commencer » utilise le total des trois.
+effects:
+  computed: { verb: { fr: "calculer", ar: "حساب" }, label: { fr: "Calculés", ar: "محسوبة" } }
+  reliable: { verb: { fr: "fiabiliser", ar: "تعزيز موثوقية" }, label: { fr: "Fiabilisés", ar: "معززة الموثوقية" } }
+  finer: { verb: { fr: "affiner", ar: "تدقيق" }, label: { fr: "Affinés", ar: "مدققة" } }
 
 # Suivi des demandes, par institution (statut modifiable, avec sa date).
 tracking_statuses:

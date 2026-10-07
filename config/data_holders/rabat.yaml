@@ -30,8 +30,9 @@
 #   boundaries    la demande porte sur les limites officielles (priorité « essentielle ») ;
 #   enables       indicateurs aujourd'hui « non disponibles » que la donnée permettrait de calculer ;
 #   requires_also autre demande nécessaire pour calculer ces indicateurs ;
-#   improves      indicateurs déjà calculés (estimés ou ouverts) qui deviendraient officiels ou
-#                 plus fins ;
+#   improves      indicateurs déjà calculés : « fiabiliser » s'ils sont ouverts ou estimés,
+#                 « affiner » s'ils sont déjà officiels (voir regles.yaml, effects) ;
+#   finer_scale   échelle plus fine apportée (« affiner … à l'échelle du quartier ») ;
 #   themes        thèmes citoyens sans indicateur que la donnée permettrait d'objectiver ;
 #   detail        niveau de détail souhaité (Rabat : arrondissement, quartier ou îlot).
 #
@@ -264,6 +265,7 @@ requests:
       fr: "Résultats du RGPH 2024 à un niveau plus fin que l'arrondissement (districts ou quartiers) : population, âges, activité, logement, raccordements"
       ar: "نتائج الإحصاء العام 2024 على مستوى أدق من المقاطعة (المناطق الإحصائية أو الأحياء): السكان، الأعمار، النشاط، السكن، الربط بالشبكات"
     detail: { fr: "Quartier ou îlot (district de recensement)", ar: "الحي أو الجزيرة (منطقة الإحصاء)" }
+    finer_scale: { fr: "du quartier", ar: "الحي" }
     format: { fr: "Tableau et fichier géographique des districts", ar: "جدول وملف جغرافي للمناطق" }
     frequency: { fr: "Une fois (recensement 2024)", ar: "مرة واحدة (إحصاء 2024)" }
     enables: []
@@ -316,6 +318,7 @@ requests:
       fr: "Taux de raccordement aux réseaux d'eau potable, d'assainissement et d'électricité, et coupures enregistrées"
       ar: "نسب الربط بشبكات الماء الصالح للشرب والتطهير والكهرباء، والانقطاعات المسجلة"
     detail: { fr: "Quartier", ar: "الحي" }
+    finer_scale: { fr: "du quartier", ar: "الحي" }
     format: { fr: "Tableau (Excel ou CSV), fichier géographique si disponible", ar: "جدول (Excel أو CSV)، وملف جغرافي إن توفر" }
     frequency: { fr: "Annuelle", ar: "سنوية" }
     enables: []

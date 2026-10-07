@@ -2,18 +2,34 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { DataNeedsSimulator } from "@/components/app/DataNeedsSimulator";
 import { Logo } from "@/components/Logo";
 import { MoroccoMap } from "@/components/landing/MoroccoMap";
 import { landing } from "@/content/landing";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { fetchTerritories, type TerritorySummary } from "@/lib/api";
+import { fetchDataNeeds, type DataNeeds } from "@/lib/dataNeeds";
 
-/** Placeholder for the presentation mode (delivered at stage 7). */
+/** Presentation mode (full version at stage 7): title slide, and the data needs simulator
+ * (« Si nous obtenons les données de… »), switched with the arrow keys or the buttons. */
 export function PresentationView() {
   const { locale, setLocale, t } = useLocale();
   const router = useRouter();
   const code = useSearchParams().get("territoire");
   const [territory, setTerritory] = useState<TerritorySummary | null>(null);
+  const [slide, setSlide] = useState<"home" | "dataNeeds">("home");
+  const [needs, setNeeds] = useState<DataNeeds | null>(null);
+
+  useEffect(() => {
+    if (!territory) return;
+    let cancelled = false;
+    fetchDataNeeds(territory.code)
+      .then((d) => !cancelled && setNeeds(d))
+      .catch(() => !cancelled && setNeeds(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [territory]);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,6 +46,8 @@ export function PresentationView() {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !document.fullscreenElement) router.push("/tableau-de-bord");
+      if (event.key === "ArrowRight") setSlide("dataNeeds");
+      if (event.key === "ArrowLeft") setSlide("home");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -47,6 +65,16 @@ export function PresentationView() {
           {territory ? territory.name[locale] : ""} · {t("demoBanner")}
         </span>
         <div className="flex gap-2">
+          {needs && (
+            <button
+              type="button"
+              aria-pressed={slide === "dataNeeds"}
+              onClick={() => setSlide(slide === "home" ? "dataNeeds" : "home")}
+              className="border-cream/30 hover:bg-cream/10 rounded-full border px-3 py-1"
+            >
+              {slide === "home" ? t("dataNeeds.nav") : t("presentation.territory")}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setLocale(locale === "fr" ? "ar" : "fr")}
@@ -70,27 +98,39 @@ export function PresentationView() {
           </button>
         </div>
       </div>
-      <main className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 pb-16 lg:grid-cols-2">
-        <div>
-          <Logo size="lg" tone="light" />
-          <p className="text-terracotta-light mt-10 text-sm font-semibold uppercase">
-            {t("presentation.territory")}
-          </p>
-          <h1 className="font-heading mt-2 text-6xl sm:text-8xl">
-            {territory ? territory.name[locale] : "…"}
-          </h1>
-          {territory && <p className="text-cream/70 mt-3 text-xl">{territory.region[locale]}</p>}
-          <p className="border-cream/20 text-cream/85 mt-10 max-w-lg rounded-2xl border p-6 text-lg">
-            <span className="bg-terracotta-light/20 text-terracotta-light me-2 rounded-full px-2.5 py-0.5 text-sm">
-              {t("dashboard.comingSoon")}
-            </span>
-            {t("presentation.soon")}
-          </p>
-        </div>
-        <div className="mx-auto w-full max-w-md">
-          <MoroccoMap label={landing[locale].hero.mapLabel} cities={landing[locale].hero.cities} />
-        </div>
-      </main>
+      {slide === "dataNeeds" && needs ? (
+        <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-16">
+          <h1 className="font-heading text-5xl">{t("dataNeeds.title")}</h1>
+          <div className="mt-8">
+            <DataNeedsSimulator data={needs} tone="dark" />
+          </div>
+        </main>
+      ) : (
+        <main className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 pb-16 lg:grid-cols-2">
+          <div>
+            <Logo size="lg" tone="light" />
+            <p className="text-terracotta-light mt-10 text-sm font-semibold uppercase">
+              {t("presentation.territory")}
+            </p>
+            <h1 className="font-heading mt-2 text-6xl sm:text-8xl">
+              {territory ? territory.name[locale] : "…"}
+            </h1>
+            {territory && <p className="text-cream/70 mt-3 text-xl">{territory.region[locale]}</p>}
+            <p className="border-cream/20 text-cream/85 mt-10 max-w-lg rounded-2xl border p-6 text-lg">
+              <span className="bg-terracotta-light/20 text-terracotta-light me-2 rounded-full px-2.5 py-0.5 text-sm">
+                {t("dashboard.comingSoon")}
+              </span>
+              {t("presentation.soon")}
+            </p>
+          </div>
+          <div className="mx-auto w-full max-w-md">
+            <MoroccoMap
+              label={landing[locale].hero.mapLabel}
+              cities={landing[locale].hero.cities}
+            />
+          </div>
+        </main>
+      )}
     </div>
   );
 }

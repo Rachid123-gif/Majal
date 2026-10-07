@@ -64,10 +64,10 @@ def test_completeness_by_axis() -> None:
 def test_sentence_counts_only_indicators_missing_today() -> None:
     result = compute(diagnostic(), GRID, HOLDERS, RULES, TAXONOMY)
     sante = next(i for i in result["institutions"] if i["code"] == "sante_dr_rsk")
-    assert sante["computable"] == ["MOB_15MIN", "SAN_ESSP", "SAN_PROX"]
+    assert sante["effects"]["computed"] == ["MOB_15MIN", "SAN_ESSP", "SAN_PROX"]
     assert sante["sentence"]["fr"] == (
         "Avec les données de la Direction régionale de la Santé, MAJAL pourrait calculer "
-        "3 indicateurs supplémentaires et en améliorer 1."
+        "3 indicateurs supplémentaires et fiabiliser 1 indicateur."
     )
     hcp = next(i for i in result["institutions"] if i["code"] == "hcp_dr_rsk")
     assert "(avec les données de l'AREF)" in hcp["sentence"]["fr"]
@@ -99,3 +99,14 @@ def test_follow_up_is_reserved_to_professor_and_administrator(
     assert response.status_code == 403
     assert "professeur et administrateur" in response.json()["detail"]
     get_settings.cache_clear()
+
+
+def test_three_effects_follow_the_current_status() -> None:
+    result = compute(diagnostic(), GRID, HOLDERS, RULES, TAXONOMY)
+    limits = next(r for r in result["requests"] if r["code"] == "limites_officielles")
+    # Open or estimated today: « fiabiliser » (DEM_POP is not concerned by the boundaries).
+    assert set(limits["effects"]["reliable"]) == {"MOB_TC", "ENV_VERT", "SAN_HOP", "EDU_PROX"}
+    assert limits["effects"]["computed"] == [] and limits["effects"]["finer"] == []
+    hcp = next(i for i in result["institutions"] if i["code"] == "hcp_dr_rsk")
+    assert hcp["effects"]["finer"] == ["DEM_POP"]  # already official: « affiner »
+    assert "affiner 1 indicateur à l'échelle du quartier" in hcp["sentence"]["fr"]

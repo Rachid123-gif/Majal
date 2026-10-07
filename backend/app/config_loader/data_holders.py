@@ -41,6 +41,7 @@ class DataRequest(StrictModel):
     enables: list[str] = Field(default_factory=list)
     requires_also: list[Slug] = Field(default_factory=list)
     improves: list[str] = Field(default_factory=list)
+    finer_scale: Localized | None = None  # « affiner … à l'échelle du quartier »
     themes: list[Slug] = Field(default_factory=list)
     context: bool = False
     source: list[str] = Field(min_length=1)
@@ -150,6 +151,14 @@ class PriorityRule(StrictModel):
     when_any: list[Criterion] = Field(min_length=1)
 
 
+EffectCode = Literal["computed", "reliable", "finer"]
+
+
+class Effect(StrictModel):
+    verb: Localized
+    label: Localized
+
+
 class ModuleRules(StrictModel):
     """config/data_holders/regles.yaml: rules shared by every territory."""
 
@@ -157,6 +166,7 @@ class ModuleRules(StrictModel):
     priority_rules: list[PriorityRule] = Field(min_length=1)
     priorities: dict[PriorityCode, Localized]
     sort_by: list[SortCriterion] = Field(min_length=1)
+    effects: dict[EffectCode, Effect]
     tracking_statuses: dict[Slug, Localized] = Field(min_length=1)
     indicator_statuses: dict[Literal["official", "open", "estimated", "missing"], Localized]
 

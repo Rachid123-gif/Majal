@@ -280,6 +280,7 @@
     "humanMainTheme": "Thème principal de l'outil confirmé",
     "humanTonality": "Tonalité de l'outil confirmée",
     "humanLocation": "Lieu de l'outil confirmé",
-    "reviewTonality": "Tonalité"
+    "reviewTonality": "Tonalité",
+    "mediumConfidence": "Confiance moyenne (thème non confirmé par les mots-clés)"
   }
 }

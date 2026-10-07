@@ -1,0 +1,526 @@
+# MAJAL — Référentiel des institutions détentrices de données : Rabat (étape 5)
+#
+# Rôle : dire, pour chaque donnée qui manque ou qui n'est qu'estimée, QUI la détient, ce que
+# MAJAL demande exactement et ce qu'elle permettrait. Ce fichier alimente l'écran « Ce que MAJAL
+# pourrait faire avec vos données », les notes de demande (Word, PDF) et le tableau Excel.
+#
+# Statut : proposition. Liste des institutions fournie par le porteur du projet (2026-10-07).
+# Chaque intitulé, en français comme en arabe, est À VÉRIFIER PAR LE PROFESSEUR
+# (`to_verify: true`) : aucun intitulé n'est présenté comme officiel tant qu'il n'est pas vérifié.
+#
+# Les demandes viennent uniquement de trois sources, citées dans `source` :
+# - grid: indicateur de la grille v0 non disponible ou seulement estimé / ouvert pour Rabat ;
+# - taxonomy: thème citoyen sans indicateur, marqué « donnée à demander »
+#   (config/taxonomy/urbain.yaml) ;
+# - question: point ouvert de docs/questions-referent.md (ex. Q15) ;
+# - context: projets programmés (programmes territoriaux intégrés, BRIEF §1), à mettre en regard
+#   des déficits mesurés, sans indicateur propre.
+# Les contributions citoyennes (fictives dans le démonstrateur) ne sont jamais citées dans les
+# notes de demande (choix du porteur, 2026-10-07).
+#
+# Champs d'une demande :
+#   holders       institutions destinataires (une note chacune ; une demande adressée à
+#                 plusieurs communes porte sur le territoire de chacune) ;
+#   alternatives  autres détenteurs possibles, affichés à l'écran, sans note ;
+#   enables       indicateurs aujourd'hui « non disponibles » que la donnée permettrait de calculer ;
+#   requires_also autre demande nécessaire pour calculer ces indicateurs ;
+#   improves      indicateurs déjà calculés (estimés ou ouverts) qui deviendraient officiels ou
+#                 plus fins ;
+#   themes        thèmes citoyens sans indicateur que la donnée permettrait d'objectiver ;
+#   detail        niveau de détail souhaité (Rabat : arrondissement, quartier ou îlot).
+#
+# Après toute modification : `make check-config`.
+
+territory: rabat
+version: "v0"
+status: TODO_REFERENT
+display_label:
+  fr: "Référentiel des institutions — proposition, intitulés à vérifier par le professeur"
+  ar: "مرجع المؤسسات — مقترح، التسميات يتعين أن يتحقق منها الأستاذ"
+to_verify_label:
+  fr: "Intitulé à vérifier par le professeur"
+  ar: "تسمية يتعين أن يتحقق منها الأستاذ"
+
+institutions:
+  - code: wilaya_rsk
+    name:
+      fr: "Wilaya de la Région Rabat-Salé-Kénitra – Préfecture de Rabat (et préfectures de Salé et de Skhirate-Témara)"
+      ar: "ولاية جهة الرباط-سلا-القنيطرة – عمالة الرباط (وعمالتا سلا والصخيرات-تمارة)"
+    kind: administration_territoriale
+    to_verify: true
+
+  - code: commune_rabat
+    name:
+      fr: "Commune de Rabat et conseils d'arrondissement"
+      ar: "جماعة الرباط ومجالس المقاطعات"
+    kind: collectivite
+    to_verify: true
+
+  - code: commune_sale
+    name:
+      fr: "Commune de Salé et conseils d'arrondissement"
+      ar: "جماعة سلا ومجالس المقاطعات"
+    kind: collectivite
+    to_verify: true
+
+  - code: communes_skhirate_temara
+    name:
+      fr: "Communes de la préfecture de Skhirate-Témara"
+      ar: "جماعات عمالة الصخيرات-تمارة"
+    kind: collectivite
+    to_verify: true
+
+  - code: conseil_region_rsk
+    name:
+      fr: "Conseil de la Région Rabat-Salé-Kénitra"
+      ar: "مجلس جهة الرباط-سلا-القنيطرة"
+    kind: collectivite
+    to_verify: true
+
+  - code: agence_urbaine_rabat_sale
+    name:
+      fr: "Agence urbaine de Rabat-Salé"
+      ar: "الوكالة الحضرية للرباط-سلا"
+    kind: etablissement_public
+    to_verify: true
+
+  - code: hcp_dr_rsk
+    name:
+      fr: "Direction régionale du Haut-Commissariat au Plan (Rabat-Salé-Kénitra)"
+      ar: "المديرية الجهوية للمندوبية السامية للتخطيط (الرباط-سلا-القنيطرة)"
+    kind: administration
+    to_verify: true
+
+  - code: sante_dr_rsk
+    name:
+      fr: "Direction régionale de la Santé et de la Protection sociale (Rabat-Salé-Kénitra) et délégations préfectorales"
+      ar: "المديرية الجهوية للصحة والحماية الاجتماعية (الرباط-سلا-القنيطرة) والمندوبيات الإقليمية"
+    kind: administration
+    to_verify: true
+
+  - code: aref_rsk
+    name:
+      fr: "Académie régionale d'éducation et de formation (AREF) Rabat-Salé-Kénitra et directions provinciales"
+      ar: "الأكاديمية الجهوية للتربية والتكوين لجهة الرباط-سلا-القنيطرة والمديريات الإقليمية"
+    kind: etablissement_public
+    to_verify: true
+
+  - code: distributeur_eau_electricite
+    name:
+      fr: "Distributeur d'eau, d'électricité et d'assainissement de la région (Société régionale multiservices, à vérifier)"
+      ar: "موزع الماء والكهرباء والتطهير بالجهة (الشركة الجهوية متعددة الخدمات، يتعين التحقق)"
+    kind: operateur
+    to_verify: true
+
+  - code: eci_al_assima
+    name:
+      fr: "Établissement de coopération intercommunale Al Assima (transport urbain)"
+      ar: "مؤسسة التعاون بين الجماعات العاصمة (النقل الحضري)"
+    kind: groupement_collectivites
+    to_verify: true
+
+  - code: operateur_tramway
+    name:
+      fr: "Opérateur du tramway de Rabat-Salé (à vérifier)"
+      ar: "مشغل ترامواي الرباط-سلا (يتعين التحقق)"
+    kind: operateur
+    to_verify: true
+
+  - code: agence_bouregreg
+    name:
+      fr: "Agence pour l'aménagement de la vallée du Bouregreg"
+      ar: "وكالة تهيئة ضفتي أبي رقراق"
+    kind: etablissement_public
+    to_verify: true
+
+  - code: culture_dr_rsk
+    name:
+      fr: "Direction régionale de la Culture (monuments historiques et patrimoine)"
+      ar: "المديرية الجهوية للثقافة (المباني التاريخية والتراث)"
+    kind: administration
+    to_verify: true
+
+  - code: developpement_durable_dr_rsk
+    name:
+      fr: "Direction régionale du développement durable (environnement, bruit)"
+      ar: "المديرية الجهوية للتنمية المستدامة (البيئة، الضجيج)"
+    kind: administration
+    to_verify: true
+
+  - code: interieur_dgct
+    name:
+      fr: "Ministère de l'Intérieur — Direction générale des collectivités territoriales"
+      ar: "وزارة الداخلية — المديرية العامة للجماعات الترابية"
+    kind: administration
+    to_verify: true
+
+requests:
+  # ---------------------------------------------------------------- Limites officielles
+  - code: limites_officielles
+    holders: [interieur_dgct]
+    alternatives: [agence_urbaine_rabat_sale, hcp_dr_rsk]
+    data:
+      fr: "Limites officielles des communes et des arrondissements de l'agglomération (fichier géographique)"
+      ar: "الحدود الرسمية للجماعات والمقاطعات بالتجمع الحضري (ملف جغرافي)"
+    detail: { fr: "Commune et arrondissement", ar: "الجماعة والمقاطعة" }
+    format: { fr: "Shapefile, GeoPackage ou GeoJSON", ar: "Shapefile أو GeoPackage أو GeoJSON" }
+    frequency: { fr: "Une fois, puis à chaque modification du découpage", ar: "مرة واحدة، ثم عند كل تعديل للتقطيع" }
+    enables: []
+    improves: [DEM_DENS, EDU_PROX, SAN_HOP, MOB_TC, MOB_TRAM, ENV_VERT, ENV_VERT300, URB_BATI, URB_CROIS, URB_CONSO]
+    themes: []
+    source: [grid, "question:Q15"]
+    value:
+      fr: "Remplacer les limites OpenStreetMap par les limites officielles ; rendre évaluable Sidi Bouknadel, aujourd'hui exclue des classements faute de limite fiable."
+      ar: "تعويض حدود OpenStreetMap بالحدود الرسمية؛ وجعل سيدي أبي القنادل قابلة للتقييم بعد أن استُبعدت من الترتيب لغياب حدود موثوقة."
+
+  # ---------------------------------------------------------------- Urbanisme
+  - code: documents_urbanisme
+    holders: [agence_urbaine_rabat_sale]
+    data:
+      fr: "Couverture par les documents d'urbanisme homologués (plans d'aménagement, périmètres, dates d'homologation)"
+      ar: "التغطية بوثائق التعمير المصادق عليها (تصاميم التهيئة، المدارات، تواريخ المصادقة)"
+    detail: { fr: "Arrondissement ou commune", ar: "المقاطعة أو الجماعة" }
+    format: { fr: "Fichier géographique des périmètres et tableau des documents", ar: "ملف جغرافي للمدارات وجدول للوثائق" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: [URB_DOC]
+    improves: []
+    themes: []
+    source: [grid]
+    value:
+      fr: "Savoir quelle part de chaque unité est couverte par un document d'urbanisme en vigueur."
+      ar: "معرفة الجزء المغطى من كل وحدة بوثيقة تعمير سارية."
+
+  # ---------------------------------------------------------------- Population fine (HCP)
+  - code: population_6_14
+    holders: [hcp_dr_rsk]
+    data:
+      fr: "Population de 6 à 14 ans par commune et par arrondissement (RGPH 2024)"
+      ar: "السكان من 6 إلى 14 سنة حسب الجماعة والمقاطعة (الإحصاء العام 2024)"
+    detail: { fr: "Arrondissement", ar: "المقاطعة" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Une fois (recensement 2024)", ar: "مرة واحدة (إحصاء 2024)" }
+    enables: [EDU_ECOLES]
+    requires_also: [etablissements_scolaires]
+    improves: []
+    themes: []
+    source: [grid, "question:Q17"]
+    value:
+      fr: "Rapporter le nombre d'écoles et de collèges au nombre d'enfants en âge d'y aller."
+      ar: "مقارنة عدد المدارس والإعداديات بعدد الأطفال في سن التمدرس."
+
+  - code: rgph_infra_communal
+    holders: [hcp_dr_rsk]
+    data:
+      fr: "Résultats du RGPH 2024 à un niveau plus fin que l'arrondissement (districts ou quartiers) : population, âges, activité, logement, raccordements"
+      ar: "نتائج الإحصاء العام 2024 على مستوى أدق من المقاطعة (المناطق الإحصائية أو الأحياء): السكان، الأعمار، النشاط، السكن، الربط بالشبكات"
+    detail: { fr: "Quartier ou îlot (district de recensement)", ar: "الحي أو الجزيرة (منطقة الإحصاء)" }
+    format: { fr: "Tableau et fichier géographique des districts", ar: "جدول وملف جغرافي للمناطق" }
+    frequency: { fr: "Une fois (recensement 2024)", ar: "مرة واحدة (إحصاء 2024)" }
+    enables: []
+    improves: [DEM_POP, DEM_DENS, DEM_JEUNES, DEM_AGES, EMP_CHOM, EMP_ACTF, EMP_ANALPH, EAU_RES, EAU_ASS, LOG_PREC]
+    themes: []
+    source: [grid]
+    value:
+      fr: "Repérer les poches de difficulté à l'intérieur des arrondissements, que la moyenne de l'arrondissement masque ; remplacer la population carroyée estimée par une population officielle fine."
+      ar: "رصد جيوب الهشاشة داخل المقاطعات التي يخفيها متوسط المقاطعة؛ وتعويض السكان المقدرين حسب الشبكة بسكان رسميين على مستوى دقيق."
+
+  # ---------------------------------------------------------------- Éducation
+  - code: etablissements_scolaires
+    holders: [aref_rsk]
+    data:
+      fr: "Liste des établissements primaires et collégiaux publics et privés : localisation, cycle, effectifs"
+      ar: "لائحة المؤسسات الابتدائية والإعدادية العمومية والخصوصية: الموقع، السلك، عدد التلاميذ"
+    detail: { fr: "Établissement (coordonnées géographiques)", ar: "المؤسسة (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Annuelle (rentrée scolaire)", ar: "سنوية (الدخول المدرسي)" }
+    enables: [EDU_ECOLES]
+    requires_also: [population_6_14]
+    improves: [EDU_PROX]
+    themes: []
+    source: [grid, "question:Q17"]
+    value:
+      fr: "Mesurer l'offre scolaire par cycle et la proximité des écoles avec la liste officielle, au lieu d'OpenStreetMap qui mêle les niveaux et le public et le privé."
+      ar: "قياس العرض المدرسي حسب السلك وقرب المدارس انطلاقا من اللائحة الرسمية، بدل OpenStreetMap الذي يخلط بين المستويات وبين العمومي والخصوصي."
+
+  # ---------------------------------------------------------------- Santé
+  - code: etablissements_sante
+    holders: [sante_dr_rsk]
+    data:
+      fr: "Liste des établissements de soins de santé primaires et des hôpitaux publics : localisation, type, aire de desserte"
+      ar: "لائحة مؤسسات العلاجات الصحية الأولية والمستشفيات العمومية: الموقع، النوع، مجال التغطية"
+    detail: { fr: "Établissement (coordonnées géographiques)", ar: "المؤسسة (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: [SAN_ESSP, SAN_PROX, MOB_15MIN]
+    improves: [SAN_HOP]
+    themes: []
+    source: [grid, "question:Q16"]
+    value:
+      fr: "Calculer l'offre et la proximité des soins de santé primaires, aujourd'hui non disponibles (OpenStreetMap n'en recense que 5 pour toute l'agglomération)."
+      ar: "حساب عرض العلاجات الصحية الأولية وقربها، غير المتوفرين حاليا (لا يحصي OpenStreetMap سوى 5 منها في التجمع الحضري كله)."
+
+  # ---------------------------------------------------------------- Eau, assainissement, électricité
+  - code: reseaux_eau_assainissement
+    holders: [distributeur_eau_electricite]
+    data:
+      fr: "Taux de raccordement aux réseaux d'eau potable, d'assainissement et d'électricité, et coupures enregistrées"
+      ar: "نسب الربط بشبكات الماء الصالح للشرب والتطهير والكهرباء، والانقطاعات المسجلة"
+    detail: { fr: "Quartier", ar: "الحي" }
+    format: { fr: "Tableau (Excel ou CSV), fichier géographique si disponible", ar: "جدول (Excel أو CSV)، وملف جغرافي إن توفر" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: [EAU_RES, EAU_ASS]
+    themes: [eau_assainissement]
+    source: [grid]
+    value:
+      fr: "Actualiser chaque année les raccordements mesurés au recensement de 2024, à l'échelle du quartier, et suivre les coupures."
+      ar: "تحيين نسب الربط المقيسة في إحصاء 2024 سنويا وعلى مستوى الحي، وتتبع الانقطاعات."
+
+  # ---------------------------------------------------------------- Mobilité
+  - code: reseau_bus
+    holders: [eci_al_assima]
+    data:
+      fr: "Arrêts, lignes et fréquences du réseau de bus"
+      ar: "محطات وخطوط وترددات شبكة الحافلات"
+    detail: { fr: "Arrêt (coordonnées géographiques)", ar: "المحطة (الإحداثيات الجغرافية)" }
+    format: { fr: "GTFS ou tableau avec coordonnées", ar: "GTFS أو جدول مع الإحداثيات" }
+    frequency: { fr: "À chaque modification du réseau", ar: "عند كل تعديل للشبكة" }
+    enables: []
+    improves: [MOB_TC]
+    themes: []
+    source: [grid]
+    value:
+      fr: "Mesurer la desserte réelle (arrêts en service et fréquence), et non la seule présence d'un arrêt dans OpenStreetMap."
+      ar: "قياس الخدمة الفعلية (المحطات العاملة والتردد)، لا مجرد وجود محطة في OpenStreetMap."
+
+  - code: reseau_tramway
+    holders: [operateur_tramway]
+    data:
+      fr: "Stations, lignes et fréquences du tramway"
+      ar: "محطات وخطوط وترددات الترامواي"
+    detail: { fr: "Station (coordonnées géographiques)", ar: "المحطة (الإحداثيات الجغرافية)" }
+    format: { fr: "GTFS ou tableau avec coordonnées", ar: "GTFS أو جدول مع الإحداثيات" }
+    frequency: { fr: "À chaque modification du réseau", ar: "عند كل تعديل للشبكة" }
+    enables: []
+    improves: [MOB_TRAM]
+    themes: []
+    source: [grid]
+    value:
+      fr: "Confirmer les stations en service et intégrer la fréquence dans la mesure de l'accès au tramway."
+      ar: "تأكيد المحطات العاملة وإدماج التردد في قياس الولوج إلى الترامواي."
+
+  - code: circulation_stationnement
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    alternatives: [eci_al_assima]
+    data:
+      fr: "Comptages de trafic et offre de stationnement (places, taux d'occupation)"
+      ar: "إحصاءات حركة المرور وعرض أماكن الوقوف (عدد الأماكن، نسبة الاستغلال)"
+    detail: { fr: "Axe ou quartier", ar: "المحور أو الحي" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [circulation]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « circulation et stationnement », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «حركة المرور والوقوف» الذي لا يتوفر حاليا على أي مؤشر."
+
+  # ---------------------------------------------------------------- Services communaux
+  - code: etat_voirie
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "État de la chaussée et des trottoirs (linéaire dégradé, interventions)"
+      ar: "حالة الطرق والأرصفة (الطول المتدهور، التدخلات)"
+    detail: { fr: "Arrondissement ou quartier", ar: "المقاطعة أو الحي" }
+    format: { fr: "Tableau ou fichier géographique", ar: "جدول أو ملف جغرافي" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [voirie]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « voirie et trottoirs », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «الطرق والأرصفة» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: proprete
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "Fréquence de collecte des déchets, tonnage collecté, points de dépôt sauvage (y compris les données du délégataire)"
+      ar: "وتيرة جمع النفايات، الكميات المجموعة، نقط الرمي العشوائي (بما فيها معطيات المفوض له)"
+    detail: { fr: "Arrondissement ou secteur de collecte", ar: "المقاطعة أو قطاع الجمع" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Mensuelle ou annuelle", ar: "شهرية أو سنوية" }
+    enables: []
+    improves: []
+    themes: [proprete]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « propreté et déchets », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «النظافة والنفايات» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: eclairage_public
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "Points lumineux en service par kilomètre de voirie, pannes signalées"
+      ar: "نقط الإنارة العاملة لكل كيلومتر من الطرق، والأعطاب المبلغ عنها"
+    detail: { fr: "Arrondissement ou quartier", ar: "المقاطعة أو الحي" }
+    format: { fr: "Tableau ou fichier géographique", ar: "جدول أو ملف جغرافي" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [eclairage]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « éclairage public », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «الإنارة العمومية» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: espaces_verts_inventaire
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    alternatives: [agence_bouregreg]
+    data:
+      fr: "Inventaire des espaces verts et des espaces publics ouverts au public (surface, statut, ouverture)"
+      ar: "جرد المساحات الخضراء والفضاءات العمومية المفتوحة للعموم (المساحة، الوضعية، الفتح)"
+    detail: { fr: "Espace vert (fichier géographique)", ar: "المساحة الخضراء (ملف جغرافي)" }
+    format: { fr: "Fichier géographique ou tableau avec coordonnées", ar: "ملف جغرافي أو جدول مع الإحداثيات" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: [ENV_VERT, ENV_VERT300]
+    themes: []
+    source: [grid]
+    value:
+      fr: "Remplacer le relevé OpenStreetMap par l'inventaire officiel, et ne compter que les espaces réellement ouverts au public."
+      ar: "تعويض رصد OpenStreetMap بالجرد الرسمي، واحتساب الفضاءات المفتوحة فعلا للعموم فقط."
+
+  - code: equipements_sport_culture
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "Équipements sportifs et culturels de proximité (terrains, salles, bibliothèques)"
+      ar: "تجهيزات القرب الرياضية والثقافية (ملاعب، قاعات، خزانات)"
+    detail: { fr: "Équipement (coordonnées géographiques)", ar: "التجهيز (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [culture_sport]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « culture, sport et loisirs », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «الثقافة والرياضة والترفيه» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: services_administratifs
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "Délais de traitement des démarches et fréquentation des guichets (état civil, légalisation)"
+      ar: "آجال معالجة الطلبات وارتياد الشبابيك (الحالة المدنية، التصديق)"
+    detail: { fr: "Bureau ou arrondissement", ar: "المكتب أو المقاطعة" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [administration]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « administration et services », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «الإدارة والخدمات» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: accessibilite_pmr
+    holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    data:
+      fr: "Accessibilité des bâtiments publics et des trottoirs aux personnes à mobilité réduite"
+      ar: "ولوجية البنايات العمومية والأرصفة للأشخاص في وضعية إعاقة حركية"
+    detail: { fr: "Bâtiment ou axe", ar: "البناية أو المحور" }
+    format: { fr: "Tableau ou fichier géographique", ar: "جدول أو ملف جغرافي" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [accessibilite_pmr]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « accessibilité des personnes à mobilité réduite », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «ولوجية الأشخاص في وضعية إعاقة حركية» الذي لا يتوفر حاليا على أي مؤشر."
+
+  # ---------------------------------------------------------------- Patrimoine, environnement
+  - code: inventaire_patrimoine
+    holders: [culture_dr_rsk]
+    data:
+      fr: "Inventaire du patrimoine bâti protégé et état de conservation"
+      ar: "جرد التراث المبني المحمي وحالة صيانته"
+    detail: { fr: "Monument ou site (coordonnées géographiques)", ar: "المعلمة أو الموقع (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées ou fichier géographique", ar: "جدول مع الإحداثيات أو ملف جغرافي" }
+    frequency: { fr: "Une fois, puis mises à jour", ar: "مرة واحدة، ثم تحيينات" }
+    enables: []
+    improves: []
+    themes: [patrimoine]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « patrimoine », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «التراث» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: mesures_bruit
+    holders: [developpement_durable_dr_rsk]
+    data:
+      fr: "Mesures du bruit ambiant (points de mesure, niveaux, périodes)"
+      ar: "قياسات الضجيج المحيط (نقط القياس، المستويات، الفترات)"
+    detail: { fr: "Point de mesure (coordonnées géographiques)", ar: "نقطة القياس (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Selon les campagnes de mesure", ar: "حسب حملات القياس" }
+    enables: []
+    improves: []
+    themes: [bruit]
+    source: [taxonomy]
+    value:
+      fr: "Disposer d'une mesure pour le thème « bruit et nuisances », qui n'a aujourd'hui aucun indicateur."
+      ar: "التوفر على قياس لموضوع «الضجيج والإزعاج» الذي لا يتوفر حاليا على أي مؤشر."
+
+  # ---------------------------------------------------------------- Projets programmés (contexte)
+  - code: projets_programmes_pti
+    holders: [wilaya_rsk]
+    data:
+      fr: "Projets programmés ou en cours dans le cadre des programmes territoriaux intégrés : localisation, secteur, état d'avancement"
+      ar: "المشاريع المبرمجة أو الجارية في إطار البرامج الترابية المندمجة: الموقع، القطاع، درجة التقدم"
+    detail: { fr: "Projet (commune ou arrondissement)", ar: "المشروع (الجماعة أو المقاطعة)" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Semestrielle", ar: "نصف سنوية" }
+    enables: []
+    improves: []
+    themes: []
+    context: true
+    source: [context]
+    value:
+      fr: "Mettre en regard les déficits mesurés et les projets déjà programmés, pour ne signaler que les besoins non couverts."
+      ar: "مقارنة أوجه الخصاص المقيسة بالمشاريع المبرمجة، للإشارة فقط إلى الحاجيات غير المغطاة."
+
+  - code: projets_regionaux
+    holders: [conseil_region_rsk]
+    data:
+      fr: "Projets du programme de développement régional localisés dans l'agglomération : localisation, secteur, état d'avancement"
+      ar: "مشاريع برنامج التنمية الجهوية المتموقعة بالتجمع الحضري: الموقع، القطاع، درجة التقدم"
+    detail: { fr: "Projet (commune ou arrondissement)", ar: "المشروع (الجماعة أو المقاطعة)" }
+    format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: []
+    context: true
+    source: [context]
+    value:
+      fr: "Mettre en regard les déficits mesurés et les projets régionaux programmés."
+      ar: "مقارنة أوجه الخصاص المقيسة بالمشاريع الجهوية المبرمجة."
+
+  - code: projets_bouregreg
+    holders: [agence_bouregreg]
+    data:
+      fr: "Périmètre d'intervention, espaces publics et équipements réalisés ou programmés dans la vallée du Bouregreg"
+      ar: "مجال التدخل والفضاءات العمومية والتجهيزات المنجزة أو المبرمجة بضفتي أبي رقراق"
+    detail: { fr: "Projet ou espace (fichier géographique)", ar: "المشروع أو الفضاء (ملف جغرافي)" }
+    format: { fr: "Fichier géographique ou tableau avec coordonnées", ar: "ملف جغرافي أو جدول مع الإحداثيات" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: [ENV_VERT, ENV_VERT300]
+    themes: []
+    context: true
+    source: [context]
+    value:
+      fr: "Intégrer les espaces publics aménagés de la vallée dans la mesure des espaces verts et tenir compte des projets programmés."
+      ar: "إدماج الفضاءات العمومية المهيأة بضفتي أبي رقراق في قياس المساحات الخضراء ومراعاة المشاريع المبرمجة."

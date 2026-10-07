@@ -83,6 +83,7 @@ export type Verbatim = {
   place: string | null;
   unit: { id: number; name_fr: string; name_ar: string | null } | null;
   sure: { language: boolean; theme: boolean };
+  confidence?: "high" | "medium" | "low";
   badge: string;
   validated_by?: string | null;
   validation_note?: Localized | null;

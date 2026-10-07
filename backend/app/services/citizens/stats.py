@@ -49,6 +49,18 @@ def theme_sure(contribution: Contribution) -> bool:
     return bool(contribution.themes) and contribution.themes[0] in (keywords.get("themes") or [])
 
 
+def confidence(contribution: Contribution) -> str:
+    """« high »: checked by a person, or model and keywords agree on language and main theme;
+    « medium »: the keywords find no theme at all (the model's theme is neither confirmed nor
+    contradicted); « low »: otherwise."""
+    if language_sure(contribution) and theme_sure(contribution):
+        return "high"
+    keywords = (contribution.analysis or {}).get("keywords", {})
+    if language_sure(contribution) and (keywords.get("themes") or ["autres"])[0] == "autres":
+        return "medium"
+    return "low"
+
+
 def filtered(
     contributions: list[Contribution],
     theme: str | None = None,
@@ -185,6 +197,7 @@ def verbatim(c: Contribution, units: dict[int, dict[str, Any]]) -> dict[str, Any
         if unit
         else None,
         "sure": {"language": language_sure(c), "theme": theme_sure(c)},
+        "confidence": confidence(c),
         "badge": c.badge,
         "validated_by": getattr(c, "validated_by", None),
         "validation_note": {

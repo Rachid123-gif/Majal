@@ -65,6 +65,26 @@ def main() -> int:
             ok &= check(f"taxonomy/{profile}.yaml", load_taxonomy, path)
         else:
             print(f"- taxonomy/{profile}.yaml : pas encore rédigé")
+    from app.config_loader.data_holders import load_data_holders, reference_errors
+
+    grid_codes = {i.code for i in load_grid(root / "indicators" / "grille-v0.yaml").indicators}
+    for code, territory in sorted(territories.items()):
+        path = root / "data_holders" / f"{code}.yaml"
+        if not path.exists():
+            print(f"- data_holders/{code}.yaml : pas encore rédigé")
+            continue
+        if not check(f"data_holders/{code}.yaml", load_data_holders, path):
+            ok = False
+            continue
+        taxonomy_path = root / "taxonomy" / f"{territory.profiles.taxonomy}.yaml"
+        themes = (
+            {t.code for t in load_taxonomy(taxonomy_path).themes}
+            if taxonomy_path.exists()
+            else set()
+        )
+        for error in reference_errors(load_data_holders(path), grid_codes, themes):
+            print(f"✗ data_holders/{code}.yaml : {error}")
+            ok = False
     mappings = {
         source.model_dump().get("mapping")
         for territory in territories.values()

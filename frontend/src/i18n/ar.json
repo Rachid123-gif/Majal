@@ -280,6 +280,7 @@
     "humanMainTheme": "الموضوع الرئيسي للأداة مؤكد",
     "humanTonality": "نبرة الأداة مؤكدة",
     "humanLocation": "مكان الأداة مؤكد",
-    "reviewTonality": "النبرة"
+    "reviewTonality": "النبرة",
+    "mediumConfidence": "ثقة متوسطة (موضوع غير مؤكد بالكلمات المفتاحية)"
   }
 }

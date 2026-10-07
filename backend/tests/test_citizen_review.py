@@ -45,10 +45,13 @@ def test_disagreement_on_the_main_theme_is_to_check() -> None:
     assert review.reasons(make(["securite"], ["securite", "eau_assainissement"]), RULES) == []
 
 
-def test_keywords_finding_nothing_is_configurable() -> None:
+def test_keywords_finding_nothing_is_not_in_the_queue_but_medium_confidence() -> None:
     c = make(["voirie"], ["autres"])
-    assert review.reasons(c, RULES) == ["theme_unconfirmed"]
-    assert review.reasons(c, ReviewRules(keywords_silent_is_disagreement=False)) == []
+    assert review.reasons(c, RULES) == []  # owner's choice (2026-10-07)
+    assert stats.verbatim(c, {})["confidence"] == "medium"
+    assert review.reasons(c, ReviewRules(keywords_silent_is_disagreement=True)) == [
+        "theme_unconfirmed"
+    ]
 
 
 def test_uncertain_language_is_to_check() -> None:

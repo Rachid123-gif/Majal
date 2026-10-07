@@ -57,7 +57,13 @@ export function VerbatimCard({
             : t("citizens.unknownPlace")}
         </span>
         <span aria-hidden>·</span>
-        <span>{sure ? `✓ ${t("citizens.sure")}` : `? ${t("citizens.unsure")}`}</span>
+        <span>
+          {sure
+            ? `✓ ${t("citizens.sure")}`
+            : verbatim.confidence === "medium"
+              ? `◐ ${t("citizens.mediumConfidence")}`
+              : `? ${t("citizens.unsure")}`}
+        </span>
         {verbatim.validation_note && (
           <span className="bg-petrol/10 text-petrol rounded-full px-2 py-0.5">
             ✓ {verbatim.validation_note[locale]}

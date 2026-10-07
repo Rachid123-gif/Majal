@@ -92,8 +92,9 @@ place_cues: [حي, قطاع, دوار, ساحة, منطقة, جماعة, مدي�
 # « à vérifier » quand l'IA et les mots-clés ne donnent pas le même thème principal, ou quand la
 # langue est incertaine (TODO_REFERENT).
 review:
-  # Les mots-clés ne trouvent aucun thème (« autres ») alors que l'IA en propose un : la
-  # proposition n'est pas confirmée, donc à vérifier.
-  keywords_silent_is_disagreement: true
+  # Les mots-clés ne trouvent aucun thème (« autres ») alors que l'IA en propose un : ce n'est
+  # pas un désaccord. Choix du porteur (2026-10-07) : ces contributions n'entrent pas dans la
+  # file et s'affichent « confiance moyenne ».
+  keywords_silent_is_disagreement: false
   # Langues toujours incertaines (transcription approximative, langue non reconnue).
   uncertain_languages: [amazigh_latin, other]

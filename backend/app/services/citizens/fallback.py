@@ -31,7 +31,7 @@ class ToneWords(StrictModel):
 
 
 class ReviewRules(StrictModel):
-    keywords_silent_is_disagreement: bool = True
+    keywords_silent_is_disagreement: bool = False
     uncertain_languages: list[str] = Field(default_factory=lambda: ["amazigh_latin", "other"])
 
 

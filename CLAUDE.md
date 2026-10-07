@@ -178,7 +178,12 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   `/territoire/<code>/besoins-donnees` (`DataNeedsView`, `DataNeedsSimulator`, aussi dans le mode
   présentation), notes `config/report_templates/note_demande.yaml` → `make notes`
   (`docs/notes-demande/<code>/`). Kit du professeur : `docs/kit-professeur/`. Assistant
-  documentaire reporté après Tétouan. Prochaine : étape 6 (Tétouan).
+  documentaire reporté après Tétouan.
+- Mode présentation — avancé avant Tétouan à la demande du porteur, livré le 2026-10-07 ;
+  décision 0019. Scénario `config/presentation/<code>.yaml` (9 étapes), API
+  `app/api/presentation.py`, `PresentationView` (diapositives = vrais écrans en contexte
+  « intégré », `components/app/Embedded.tsx`), préchargement hors ligne. Arabe plus tard.
+  Prochaine : étape 6 (Tétouan) — plan présenté, réponses du porteur attendues.
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

@@ -29,6 +29,13 @@ describe("landing content", () => {
     }
     // Delivered: stage 2 (diagnostic map, commune sheet, comparison), stage 3 (AI report).
     const available = features.filter((f) => f.status === "available").map((f) => f.id);
-    expect(available).toEqual(["diagnostic", "commune", "report", "citizens", "dataNeeds"]);
+    expect(available).toEqual([
+      "diagnostic",
+      "commune",
+      "report",
+      "citizens",
+      "dataNeeds",
+      "presentation",
+    ]);
   });
 });

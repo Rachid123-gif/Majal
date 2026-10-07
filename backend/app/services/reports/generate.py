@@ -242,10 +242,12 @@ def citizens_for(session: Session, study_area_id: int, unit_id: int) -> dict[str
     area = session.get(StudyArea, study_area_id)
     if area is None:
         return None
-    try:
-        taxonomy = taxonomy_for(area)
-    except Exception:  # no taxonomy for this profile yet: section 7 says so
+    path = get_settings().config_dir / "taxonomy" / f"{area.taxonomy_profile}.yaml"
+    if not path.exists():  # no taxonomy for this profile yet: section 7 says so
         return None
+    # A taxonomy that cannot be read is an error, never « no contribution »: a silent None
+    # once let outdated reports pass as up to date (2026-10-07).
+    taxonomy = taxonomy_for(area)
     return unit_citizens(session, study_area_id, unit_id, taxonomy)
 
 

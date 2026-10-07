@@ -1,0 +1,48 @@
+# MAJAL — Scénario du mode présentation : Rabat (BRIEF §8 et §9.9)
+#
+# Le mode présentation déroule ces étapes en plein écran (flèches du clavier, touches 1 à 9).
+# Les unités sont désignées par leur nom officiel (tel qu'importé) ; MAJAL retrouve leur
+# identifiant et signale en français un nom introuvable. Ajouter Tétouan = un second fichier.
+# Statut : scénario validé par le porteur du projet (2026-10-07). Arabe : plus tard.
+
+territory: rabat
+data_note: { fr: "Données : RGPH 2024 (HCP), OpenStreetMap, GHSL" }
+
+steps:
+  - home
+  - stakes
+  - map
+  - sheet
+  - compare
+  - citizens
+  - report
+  - data_needs
+  - proposal
+
+map:
+  indicator: ENV_VERT          # « Espaces verts publics par habitant »
+sheet:
+  unit: Layayda
+compare:
+  units: [Layayda, Agdal-Riyad, Oumazza]
+citizens:
+  scale: commune
+  unit: Salé                   # croisement à l'échelle de la commune
+report:
+  unit: Layayda                # rapport déjà préparé ; « Régénérer en direct » en option
+data_needs:
+  suggested: [sante_dr_rsk, interieur_dgct]   # à cocher dans cet ordre pendant la démonstration
+
+stakes:
+  sentence: { fr: "Chaque territoire doit produire un diagnostic. MAJAL le rend possible en quelques minutes, à partir de données officielles." }
+
+proposal:
+  title: { fr: "Ce que nous vous proposons" }
+  items:
+    - { fr: "Un pilote sur votre territoire" }
+    - { fr: "Une convention d'échange de données, encadrée et confidentielle" }
+    - { fr: "La restitution gratuite des résultats à votre institution" }
+  contact:
+    - "[Nom et titre du professeur]"
+    - "[email]"
+    - "[téléphone]"

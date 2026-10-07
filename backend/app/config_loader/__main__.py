@@ -93,6 +93,10 @@ def main() -> int:
         for error in reference_errors(load_data_holders(path), grid_codes, themes):
             print(f"✗ data_holders/{code}.yaml : {error}")
             ok = False
+    from app.api.presentation import load_scenario
+
+    for path in sorted((root / "presentation").glob("*.yaml")):
+        ok &= check(f"presentation/{path.name}", load_scenario, path)
     mappings = {
         source.model_dump().get("mapping")
         for territory in territories.values()

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
+import { useEmbedded } from "@/components/app/Embedded";
 import { GridBanner } from "@/components/app/GridBanner";
 import { useLocale } from "@/i18n/LocaleProvider";
 import {
@@ -22,16 +23,19 @@ function csvCell(value: string): string {
   return /[",;\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 }
 
-export function CompareView({ code }: { code: string }) {
+export function CompareView({ code, initialIds }: { code: string; initialIds?: number[] }) {
   const { locale, t } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
+  const embedded = useEmbedded();
+  // In the presentation the selection stays local (changing the address would leave the slides).
+  const [localIds, setLocalIds] = useState<number[]>(initialIds ?? []);
   const [diag, setDiag] = useState<DiagnosticData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [chartCode, setChartCode] = useState<string | null>(null);
   const chartRef = useRef<SVGSVGElement>(null);
 
-  const ids = useMemo(
+  const urlIds = useMemo(
     () =>
       (params.get("ids") ?? "")
         .split(",")
@@ -40,6 +44,7 @@ export function CompareView({ code }: { code: string }) {
         .slice(0, MAX),
     [params],
   );
+  const ids = embedded ? localIds : urlIds;
 
   useEffect(() => {
     let cancelled = false;
@@ -67,7 +72,8 @@ export function CompareView({ code }: { code: string }) {
       : ids.length < MAX
         ? [...ids, id]
         : ids;
-    router.replace(`/territoire/${code}/comparer?ids=${next.join(",")}`);
+    if (embedded) setLocalIds(next);
+    else router.replace(`/territoire/${code}/comparer?ids=${next.join(",")}`);
   }
 
   function exportCsv() {
@@ -136,7 +142,10 @@ export function CompareView({ code }: { code: string }) {
     <div className="min-h-screen">
       <AppHeader territory={code} />
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        <Link href={`/territoire/${code}`} className="text-slate hover:text-petrol text-sm">
+        <Link
+          href={`/territoire/${code}`}
+          className={`text-slate hover:text-petrol text-sm ${embedded ? "hidden" : ""}`}
+        >
           <span aria-hidden className="inline-block rtl:rotate-180">
             ←
           </span>{" "}

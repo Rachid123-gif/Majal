@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
+import { useEmbedded } from "@/components/app/Embedded";
 import { ConfidenceBadge } from "@/components/app/ConfidenceBadge";
 import { GridBanner } from "@/components/app/GridBanner";
 import { CitizenUnitCard } from "@/components/app/CitizenUnitCard";
@@ -239,6 +240,7 @@ function MiniMap({ unitId, loaded }: { unitId: number; loaded: Loaded }) {
 }
 
 export function UnitSheetView({ code, unitId }: { code: string; unitId: number }) {
+  const embedded = useEmbedded();
   const { locale, t } = useLocale();
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -262,7 +264,7 @@ export function UnitSheetView({ code, unitId }: { code: string; unitId: number }
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 print:py-0">
         <Link
           href={`/territoire/${code}`}
-          className="text-slate hover:text-petrol text-sm print:hidden"
+          className={`text-slate hover:text-petrol text-sm print:hidden ${embedded ? "hidden" : ""}`}
         >
           <span aria-hidden className="inline-block rtl:rotate-180">
             ←
@@ -302,6 +304,7 @@ function SheetBody({
   parent: string | null;
   term: string | null;
 }) {
+  const embedded = useEmbedded();
   const { locale, t } = useLocale();
   const { diag } = loaded;
   const population = unit.values.DEM_POP;
@@ -429,7 +432,7 @@ function SheetBody({
           <TypologyLine data={diag} unitId={unit.id} />
           <Link
             href={`/territoire/${code}/comparer?ids=${unit.id}`}
-            className="border-petrol/30 text-petrol hover:bg-petrol/5 mt-5 inline-flex rounded-lg border px-4 py-2 text-sm print:hidden"
+            className={`border-petrol/30 text-petrol hover:bg-petrol/5 mt-5 inline-flex rounded-lg border px-4 py-2 text-sm print:hidden ${embedded ? "hidden" : ""}`}
           >
             {t("diag.compare")}
           </Link>
@@ -458,9 +461,10 @@ function SheetBody({
         );
       })}
 
-      <CitizenUnitCard code={code} unitId={unit.id} />
+      {/* In the presentation, citizens and the report have their own slides. */}
+      {!embedded && <CitizenUnitCard code={code} unitId={unit.id} />}
 
-      <ReportPanel code={code} unitId={unit.id} />
+      {!embedded && <ReportPanel code={code} unitId={unit.id} />}
     </>
   );
 }

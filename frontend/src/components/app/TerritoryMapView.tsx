@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
+import { useEmbedded } from "@/components/app/Embedded";
 import { ConfidenceBadge } from "@/components/app/ConfidenceBadge";
 import { GridBanner } from "@/components/app/GridBanner";
 import { StatusChip } from "@/components/app/StatusChip";
@@ -38,8 +39,16 @@ const TerritoryMap = dynamic(
 
 type Data = { units: UnitCollection; facilities: FacilityCollection; tiles: TilesInfo };
 
-export function TerritoryMapView({ code }: { code: string }) {
+export function TerritoryMapView({
+  code,
+  initialIndicator,
+}: {
+  code: string;
+  /** Indicator shown first (presentation scenario); default: public transport access. */
+  initialIndicator?: string;
+}) {
   const { locale, t } = useLocale();
+  const embedded = useEmbedded();
   const [scope, setScope] = useState<string | undefined>(undefined);
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState(false);
@@ -62,6 +71,7 @@ export function TerritoryMapView({ code }: { code: string }) {
         setDiagError(null);
         // Default: access to public transport if the profile has it, else the first evaluated one.
         const preferred =
+          value.indicators.find((i) => i.code === initialIndicator) ??
           value.indicators.find((i) => i.code === "MOB_TC") ??
           value.indicators.find((i) => i.direction !== "neutral");
         setIndicatorCode((current) => current ?? preferred?.code ?? null);
@@ -70,7 +80,7 @@ export function TerritoryMapView({ code }: { code: string }) {
     return () => {
       cancelled = true;
     };
-  }, [code]);
+  }, [code, initialIndicator]);
 
   async function recompute() {
     setRecomputing(true);
@@ -177,7 +187,7 @@ export function TerritoryMapView({ code }: { code: string }) {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className={`flex flex-col ${embedded ? "h-full" : "h-screen"}`}>
       <AppHeader territory={code} />
       {error && (
         <p role="alert" className="bg-terracotta/10 text-terracotta-dark px-6 py-3 text-sm">
@@ -594,7 +604,7 @@ export function TerritoryMapView({ code }: { code: string }) {
                   {diagUnits[selected.id].warning?.[locale]}
                 </p>
               )}
-              <div className="mt-6 flex flex-col gap-2">
+              <div className={`mt-6 flex flex-col gap-2 ${embedded ? "hidden" : ""}`}>
                 <Link
                   href={`/territoire/${code}/unite/${selected.id}`}
                   className="bg-petrol text-cream hover:bg-petrol-dark rounded-lg px-4 py-2.5 text-center text-sm font-medium"

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/app/AppHeader";
+import { useEmbedded } from "@/components/app/Embedded";
 import { CitizenBanner } from "@/components/app/CitizenBanner";
 import { CitizenCrossing } from "@/components/app/CitizenCrossing";
 import { TerritoryMap } from "@/components/app/TerritoryMap";
@@ -269,9 +270,20 @@ function ImportPanel({ code, onDone }: { code: string; onDone: () => void }) {
   );
 }
 
-export function CitizensView({ code }: { code: string }) {
+export function CitizensView({
+  code,
+  initialFilters,
+  initialCrossing,
+}: {
+  code: string;
+  /** Presentation scenario: filters shown first (e.g. the commune scale). */
+  initialFilters?: Filters;
+  /** Presentation scenario: unit of the crossing shown while no unit is filtered. */
+  initialCrossing?: { unit: number; scale: "unit" | "commune" };
+}) {
   const { locale, t } = useLocale();
-  const [filters, setFilters] = useState<Filters>({});
+  const embedded = useEmbedded();
+  const [filters, setFilters] = useState<Filters>(initialFilters ?? {});
   const [data, setData] = useState<Dashboard | null>(null);
   const [verbatims, setVerbatims] = useState<Record<string, Verbatim[]>>({});
   const [units, setUnits] = useState<UnitCollection | null>(null);
@@ -330,7 +342,10 @@ export function CitizensView({ code }: { code: string }) {
     <div className="min-h-screen">
       <AppHeader territory={code} />
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <Link href={`/territoire/${code}`} className="text-slate hover:text-petrol text-sm">
+        <Link
+          href={`/territoire/${code}`}
+          className={`text-slate hover:text-petrol text-sm ${embedded ? "hidden" : ""}`}
+        >
           <span aria-hidden className="inline-block rtl:rotate-180">
             ←
           </span>{" "}
@@ -479,7 +494,7 @@ export function CitizensView({ code }: { code: string }) {
                   {data.review.validated > 0 &&
                     t("citizens.validatedCount", { n: String(data.review.validated) })}
                 </span>
-                {canImport && (
+                {canImport && !embedded && (
                   <Link
                     href={`/territoire/${code}/citoyens/verifier`}
                     className="bg-petrol ms-auto rounded-full px-4 py-1.5 text-white"
@@ -603,6 +618,12 @@ export function CitizensView({ code }: { code: string }) {
                   unitId={filters.unit}
                   scale={filters.scale ?? "unit"}
                 />
+              ) : initialCrossing && (filters.scale ?? "unit") === initialCrossing.scale ? (
+                <CitizenCrossing
+                  code={code}
+                  unitId={initialCrossing.unit}
+                  scale={initialCrossing.scale}
+                />
               ) : (
                 <>
                   <h2 className="font-heading text-petrol text-2xl">{t("citizens.crossing")}</h2>
@@ -654,7 +675,7 @@ export function CitizensView({ code }: { code: string }) {
               </div>
             </section>
 
-            {canImport && (
+            {canImport && !embedded && (
               <section className="mt-10 max-w-xl">
                 <ImportPanel code={code} onDone={() => setReload((n) => n + 1)} />
               </section>

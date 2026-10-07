@@ -162,8 +162,8 @@ export const features: Feature[] = [
   },
   {
     id: "presentation",
-    status: "in_development",
-    stage: { fr: "Étape 7", ar: "المرحلة 7" },
+    status: "available",
+    stage: { fr: "Avant Tétouan", ar: "قبل تطوان" },
     title: { fr: "Mode présentation", ar: "وضع العرض" },
     summary: {
       fr: "Une démonstration fluide en plein écran, en moins de vingt minutes, même sans internet.",
@@ -171,13 +171,13 @@ export const features: Feature[] = [
     },
     points: {
       fr: [
+        "Le scénario de Rabat en neuf étapes, de l'enjeu à la proposition",
         "Navigation au clavier, étape par étape",
-        "Bascule entre le français et l'arabe",
         "Bandeau « données fictives » quand c'est le cas",
       ],
       ar: [
+        "سيناريو الرباط في تسع مراحل، من الرهان إلى المقترح",
         "تنقّل بلوحة المفاتيح، خطوة بخطوة",
-        "التبديل بين الفرنسية والعربية",
         "شريط «معطيات افتراضية» كلما كان الأمر كذلك",
       ],
     },

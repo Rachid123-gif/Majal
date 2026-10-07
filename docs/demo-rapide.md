@@ -1,5 +1,16 @@
 # Démonstration rapide (20 minutes)
 
+## Version « mode présentation » (recommandée devant un décideur)
+
+1. Ouvrir **Ollama**, puis `make start` ; se connecter avec le compte `professeur`.
+2. Tableau de bord → **Mode présentation** (ou http://localhost:3000/presentation?territoire=rabat), puis **F** pour le plein écran. Attendre « ✓ Prêt hors ligne » en haut à droite : tout est chargé, internet n'est plus nécessaire.
+3. Dérouler avec **→** (ou une télécommande de présentation), revenir avec **←**, aller directement à une étape avec **1 à 9**, quitter avec **Échap** :
+   1 Accueil · 2 L'enjeu · 3 Carte (espaces verts) · 4 Fiche de Layayda · 5 Comparaison Layayda / Agdal-Riyad / Oumazza · 6 Écoute citoyenne (bandeau « Données fictives », croisement sur Salé) · 7 Rapport de Layayda (déjà préparé ; « Régénérer » pour la rédaction en direct) · 8 Besoins en données (cocher la Santé puis le Ministère de l'Intérieur) · 9 Ce que nous vous proposons.
+4. Le scénario (unités, indicateur, textes) se modifie dans `config/presentation/rabat.yaml`.
+
+## Version détaillée, écran par écran
+
+
 1. Ouvrir l'application **Ollama** (icône du lama dans la barre des menus), puis dans le Terminal, dossier MAJAL : `make start`. Le navigateur s'ouvre sur http://localhost:3000 et le Mac ne se met plus en veille (`make stop` à la fin).
 2. **Vitrine** : faire défiler la page d'accueil (enjeu des programmes territoriaux, carte du Maroc entier, fonctions disponibles), puis « Se connecter » avec le compte `professeur` (mot de passe dans `.env`).
 3. **Carte** : ouvrir Rabat ; choisir l'indicateur « Espaces verts publics par habitant » puis « Part de la population à moins de 500 m d'un arrêt de bus ou de tramway » ; montrer la légende, les badges de confiance et le bandeau « Grille v0 — proposition ».

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useEmbedded } from "@/components/app/Embedded";
 import { Logo } from "@/components/Logo";
 import { LanguageToggle } from "@/components/landing/SiteHeader";
 import { useLocale } from "@/i18n/LocaleProvider";
@@ -10,6 +11,11 @@ import { fetchMe, fetchTerritories, logout, type Me, type TerritorySummary } fro
 
 /** Header of the logged-in app: logo, territory selector, user, language, logout. */
 export function AppHeader({ territory }: { territory?: string }) {
+  // In the presentation mode the slides have no app header.
+  return useEmbedded() ? null : <Header territory={territory} />;
+}
+
+function Header({ territory }: { territory?: string }) {
   const { locale, t } = useLocale();
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);

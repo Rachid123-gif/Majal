@@ -3,7 +3,7 @@
 Les réponses proviennent des **positions méthodologiques provisoires v0**
 (`docs/methodologie-v0.md`, section 4). Elles sont appliquées dans le démonstrateur, mais
 chacune reste une **réponse provisoire v0, à valider par le professeur**.
-Dernière mise à jour : 2026-10-05.
+Dernière mise à jour : 2026-10-07. Version triée par importance : `docs/kit-professeur/questions-referent.md`.
 
 | # | Question | Réponse provisoire v0 (appliquée) | Statut |
 | --- | --- | --- | --- |
@@ -28,10 +28,21 @@ Dernière mise à jour : 2026-10-05.
 | Q19 | Bâti : l'imagerie GHSL observe 2015 et 2020 ; les recensements sont de 2014 et 2024 | URB_CROIS sur 2015-2020, les deux dates observées, sans année projetée ; URB_CONSO avec une population 2015 et 2020 interpolée entre les recensements (badge Estimé) | Réponse provisoire v0, à valider par le professeur |
 | Q20 | Indicateurs de proximité | Population répartie dans chaque unité selon la grille GHSL 2020, recalée sur la population légale 2024 ; distances à vol d'oiseau en v0, signalées comme limite dans « Source · Méthode » ; passage aux distances le long des rues au plus tard à l'étape 7 | Réponse provisoire v0, à valider par le professeur |
 
+## Écoute citoyenne (étape 4)
+
+| # | Point | Choix provisoire | Statut |
+| --- | --- | --- | --- |
+| Q24 | Évaluation de référence de l'analyse des contributions | `docs/evaluation/annotation-professeur.xlsx` (28 contributions fictives, amazighe exclu) est aujourd'hui classé par un second modèle d'IA : affiché « Évaluation indépendante par un second modèle d'IA … — en attente de validation par le professeur », jamais « de référence » | **Ouverte** : classement ou relecture par le professeur |
+| Q25 | Seuils du croisement citoyens / données | Pas de conclusion en dessous de 5 contributions ; nombres et non pourcentages en dessous de 20 ; « sans demande exprimée » seulement à partir de 30 contributions dans l'unité ; demande « forte » au-delà de 15 % des contributions ; à l'échelle de la commune, indicateur défavorable si les unités concernées réunissent la moitié de la population (`config/taxonomy/urbain.yaml`, `crossing`) | TODO_REFERENT, à valider |
+| Q26 | Taxonomie urbaine des contributions | 19 thèmes, mots-clés en français, arabe et darija, indicateurs liés, données à demander (`config/taxonomy/urbain.yaml`) ; eau et assainissement distincts de la propreté, crèches en éducation | À valider |
+| Q27 | File « À vérifier » | Contribution à vérifier si l'IA et les mots-clés ne donnent pas le même thème principal, ou si la langue est incertaine ; les cas où les mots-clés ne trouvent aucun thème s'affichent « confiance moyenne » sans entrer dans la file (choix du porteur, 2026-10-07) | À valider |
+
 ## Besoins en données (étape 5)
 
 | # | Point | Choix provisoire | Statut |
 | --- | --- | --- | --- |
-| Q21 | Demandes de « contexte » (projets programmés : Wilaya – programmes territoriaux intégrés, Conseil de la Région, Agence du Bouregreg) | Gardées dans une catégorie distincte « Contexte » (`context: true` dans `config/data_holders/rabat.yaml`). **Fonction future, non développée** : une fois ces données obtenues, MAJAL distinguera pour chaque déficit mesuré « besoin non couvert » et « besoin déjà couvert par un projet programmé » (choix du porteur, 2026-10-07) | À préciser avec le professeur : règle de correspondance entre un projet et un déficit (secteur, localisation, horizon) |
+| Q21 | Demandes de « contexte » (projets programmés : Wilaya – programmes de développement territorial intégré, Conseil de la Région, Agence du Bouregreg) | Gardées dans une catégorie distincte « Contexte » (`context: true` dans `config/data_holders/rabat.yaml`). **Fonction future, non développée** : une fois ces données obtenues, MAJAL distinguera pour chaque déficit mesuré « besoin non couvert » et « besoin déjà couvert par un projet programmé » (choix du porteur, 2026-10-07) | À préciser avec le professeur : règle de correspondance entre un projet et un déficit (secteur, localisation, horizon) |
 | Q22 | Priorité des demandes de données | Calculée, jamais choisie à la main : « Essentielle » si la demande rend calculables des indicateurs aujourd'hui non disponibles ou porte sur les limites officielles ; « Utile » si elle améliore des indicateurs estimés ou ouverts ou objective un thème citoyen ; « Contexte » pour les projets programmés, même s'ils améliorent aussi un indicateur (`app/services/data_needs/priority.py`) | Réponse provisoire du porteur, à valider par le professeur |
 | Q23 | Intitulés des institutions (FR et AR) | Liste proposée par le porteur (2026-10-07), complétée de la Direction régionale chargée de la Jeunesse et de l'Entraide nationale ; chaque intitulé marqué « à vérifier par le professeur » | À vérifier par le professeur |
+| Q28 | Modèle de la note de demande de données | `config/report_templates/note_demande.yaml` : première personne (un seul signataire), en-tête « MAJAL — projet de recherche appliquée », en-tête de l'établissement seulement avec son autorisation, contrepartie, proposition de convention ; paragraphe « Hautes Orientations Royales » désactivé par défaut ; formule « Je serais honoré » au masculin, à adapter au signataire | À relire par le professeur ; décider l'activation du paragraphe optionnel |
+| Q29 | Titres des destinataires des notes | Un destinataire unique par institution, titre complet au masculin et au féminin (« Monsieur / Madame le / la … ») dans `config/data_holders/rabat.yaml` ; communes de Skhirate-Témara : une note par commune | À vérifier par le professeur |

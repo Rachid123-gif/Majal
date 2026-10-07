@@ -168,8 +168,17 @@ Copilote IA d'intelligence territoriale : démonstrateur sur deux territoires (R
   tonality / territory_id), proposition conservée dans `ai_proposal` (migration 0007), jamais
   écrasée par une nouvelle analyse ; évaluation humaine comptée à part. L'évaluation par Claude
   (xlsx, onglet « Annotateur ») = « second modèle d'IA », jamais « de référence » avant relecture.
-- Étape 4 — finalisée le 2026-10-06 (en attente de validation du porteur). Prochaine : étape 5
-  (besoins en données et notes de demande).
+- Étape 4 — validée le 2026-10-07.
+- Étape 5 (besoins en données, Rabat) — validée le 2026-10-07 ; décision 0018. Référentiel
+  `config/data_holders/rabat.yaml` (18 institutions, 24 demandes, intitulés et titres des
+  destinataires « à vérifier »), règles `config/data_holders/regles.yaml` (priorité calculée,
+  classement, trois effets calculer / fiabiliser / affiner, statuts), code
+  `backend/app/services/data_needs/` (priority, completeness, notes, excel, `__main__`), API
+  `app/api/data_needs.py`, suivi en base (migration 0008), écran
+  `/territoire/<code>/besoins-donnees` (`DataNeedsView`, `DataNeedsSimulator`, aussi dans le mode
+  présentation), notes `config/report_templates/note_demande.yaml` → `make notes`
+  (`docs/notes-demande/<code>/`). Kit du professeur : `docs/kit-professeur/`. Assistant
+  documentaire reporté après Tétouan. Prochaine : étape 6 (Tétouan).
 - Publication future de la vitrine seule : décision 0006 (non réalisée).
 - Note machine : la CLI Docker est dans `~/.docker/bin` (ajouté au PATH par `~/.zprofile`).
 - Décisions prises : périmètre Rabat par défaut = agglomération Rabat-Salé-Skhirate-Témara ;

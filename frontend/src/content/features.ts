@@ -113,7 +113,7 @@ export const features: Feature[] = [
   },
   {
     id: "dataNeeds",
-    status: "in_development",
+    status: "available",
     stage: { fr: "Étape 5", ar: "المرحلة 5" },
     title: {
       fr: "Besoins en données et notes de demande",
@@ -127,12 +127,14 @@ export const features: Feature[] = [
       fr: [
         "Complétude des données, thème par thème",
         "Institution détentrice de chaque donnée manquante",
-        "Note de demande prête à signer, en Word et en PDF",
+        "Simulateur : ce que chaque donnée permettrait de calculer, fiabiliser ou affiner",
+        "Note de demande à relire et signer, en Word et en PDF",
       ],
       ar: [
         "مدى اكتمال المعطيات، موضوعاً بموضوع",
         "المؤسسة الحائزة لكل معطى ناقص",
-        "مذكرة طلب جاهزة للتوقيع، بصيغتي Word وPDF",
+        "محاكاة: ما يتيحه كل معطى من حساب أو تعزيز للموثوقية أو تدقيق",
+        "مذكرة طلب للمراجعة والتوقيع، بصيغتي Word وPDF",
       ],
     },
   },

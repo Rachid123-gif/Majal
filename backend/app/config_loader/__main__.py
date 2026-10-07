@@ -65,7 +65,15 @@ def main() -> int:
             ok &= check(f"taxonomy/{profile}.yaml", load_taxonomy, path)
         else:
             print(f"- taxonomy/{profile}.yaml : pas encore rédigé")
-    from app.config_loader.data_holders import load_data_holders, reference_errors
+    from app.config_loader.data_holders import (
+        load_data_holders,
+        load_module_rules,
+        reference_errors,
+    )
+
+    ok &= check(
+        "data_holders/regles.yaml", load_module_rules, root / "data_holders" / "regles.yaml"
+    )
 
     grid_codes = {i.code for i in load_grid(root / "indicators" / "grille-v0.yaml").indicators}
     for code, territory in sorted(territories.items()):

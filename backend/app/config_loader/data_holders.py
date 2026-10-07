@@ -23,6 +23,7 @@ class Institution(StrictModel):
     code: Slug
     name: Localized
     kind: InstitutionKind
+    with_data_of: Localized | None = None  # short form for sentences (« de l'AREF »)
     # Rule of the owner: every name is a proposal until the professor has checked it.
     to_verify: bool = True
 
@@ -137,3 +138,41 @@ def reference_errors(
                 "taxonomie (config/taxonomy/)."
             )
     return errors
+
+
+Criterion = Literal["enables", "boundaries", "context", "improves", "themes"]
+PriorityCode = Literal["essential", "useful", "context"]
+SortCriterion = Literal["priority", "indicators", "themes"]
+
+
+class PriorityRule(StrictModel):
+    priority: PriorityCode
+    when_any: list[Criterion] = Field(min_length=1)
+
+
+class ModuleRules(StrictModel):
+    """config/data_holders/regles.yaml: rules shared by every territory."""
+
+    status: Text
+    priority_rules: list[PriorityRule] = Field(min_length=1)
+    priorities: dict[PriorityCode, Localized]
+    sort_by: list[SortCriterion] = Field(min_length=1)
+    tracking_statuses: dict[Slug, Localized] = Field(min_length=1)
+    indicator_statuses: dict[Literal["official", "open", "estimated", "missing"], Localized]
+
+    @model_validator(mode="after")
+    def complete(self) -> Self:
+        missing = sorted({r.priority for r in self.priority_rules} - set(self.priorities))
+        if missing:
+            raise ValueError(f"Priorité sans libellé dans « priorities » : {', '.join(missing)}.")
+        if "to_send" not in self.tracking_statuses:
+            raise ValueError("« tracking_statuses » doit contenir « to_send » (statut de départ).")
+        return self
+
+
+def load_module_rules(path: Path) -> ModuleRules:
+    return load_model(
+        path,
+        ModuleRules,
+        {"priority_rules": "- priority: essential\n  when_any: [enables, boundaries]"},
+    )

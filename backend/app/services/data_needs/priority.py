@@ -1,49 +1,33 @@
 """Priority of a data request: COMPUTED from what the data would change, never chosen by hand
-(rule of the project owner, 2026-10-07).
-
-- essential: it makes indicators computable that are « non disponible » today, or it concerns
-  the official boundaries;
-- useful: it improves indicators that are only estimated or open, or it gives a measure to a
-  citizen theme;
-- context: programmed projects (to tell, later, a need not covered from a need already covered
-  by a programmed project); a request for programmed projects stays « context » even when it
-  also improves an indicator (Bouregreg: its public spaces complete the green spaces).
+(rule of the project owner, 2026-10-07). The rules, their order and the sort order are in
+config/data_holders/regles.yaml (TODO_REFERENT); the first rule that applies wins.
 """
 
-from typing import Literal
-
-from app.config_loader.data_holders import DataHolders, DataRequest
-
-Priority = Literal["essential", "useful", "context"]
-ORDER: dict[Priority, int] = {"essential": 0, "useful": 1, "context": 2}
-LABELS: dict[Priority, dict[str, str]] = {
-    "essential": {"fr": "Essentielle", "ar": "أساسية"},
-    "useful": {"fr": "Utile", "ar": "مفيدة"},
-    "context": {"fr": "Contexte", "ar": "سياق"},
-}
+from app.config_loader.data_holders import DataHolders, DataRequest, ModuleRules, PriorityCode
 
 
-def priority(request: DataRequest) -> Priority:
-    if request.enables or request.boundaries:
-        return "essential"
-    if request.context:
-        return "context"
-    if request.improves or request.themes:
-        return "useful"
-    return "context"
+def _criterion(request: DataRequest, name: str) -> bool:
+    return bool(getattr(request, name))
 
 
-def sort_key(request: DataRequest) -> tuple[int, int, int, int, str]:
-    """Priority first, then the number of indicators made computable, then improved, then
-    themes given a measure."""
-    return (
-        ORDER[priority(request)],
-        -len(request.enables),
-        -len(request.improves),
-        -len(request.themes),
-        request.code,
-    )
+def priority(request: DataRequest, rules: ModuleRules) -> PriorityCode:
+    for rule in rules.priority_rules:
+        if any(_criterion(request, name) for name in rule.when_any):
+            return rule.priority
+    return rules.priority_rules[-1].priority
 
 
-def ranked(holders: DataHolders) -> list[DataRequest]:
-    return sorted(holders.requests, key=sort_key)
+def sort_key(request: DataRequest, rules: ModuleRules) -> tuple[int | str, ...]:
+    """By default: priority, then the total number of indicators concerned (computable +
+    improved), then the number of citizen themes; the code last, for a stable order."""
+    order = list(rules.priorities)
+    values: dict[str, int] = {
+        "priority": order.index(priority(request, rules)),
+        "indicators": -len(set(request.enables) | set(request.improves)),
+        "themes": -len(request.themes),
+    }
+    return (*(values[name] for name in rules.sort_by), request.code)
+
+
+def ranked(holders: DataHolders, rules: ModuleRules) -> list[DataRequest]:
+    return sorted(holders.requests, key=lambda r: sort_key(r, rules))

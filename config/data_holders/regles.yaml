@@ -1,0 +1,48 @@
+# MAJAL — Règles du module « Besoins en données » (étape 5), communes à tous les territoires.
+# Statut : proposition du porteur du projet (2026-10-07), à valider par le professeur
+# (TODO_REFERENT). Modifiable sans programmer ; après modification : `make check-config`.
+
+status: TODO_REFERENT
+
+# Priorité d'une demande : CALCULÉE à partir de ce que la donnée changerait, jamais choisie à
+# la main. Les règles sont lues dans l'ordre ; la première qui s'applique donne la priorité.
+# Critères possibles (champs d'une demande dans <territoire>.yaml) :
+#   enables     rend calculables des indicateurs aujourd'hui « non disponibles »
+#   boundaries  porte sur les limites officielles
+#   context     projets programmés
+#   improves    améliore des indicateurs estimés ou ouverts
+#   themes      objective un thème citoyen
+priority_rules:
+  - priority: essential
+    when_any: [enables, boundaries]
+  # « Contexte » prime pour les projets programmés, même s'ils améliorent aussi un indicateur
+  # (ex. Agence du Bouregreg : ses espaces publics complètent les espaces verts).
+  - priority: context
+    when_any: [context]
+  - priority: useful
+    when_any: [improves, themes]
+
+# Libellés et ordre d'affichage (écran « Par où commencer », tableau Excel).
+priorities:
+  essential: { fr: "Essentielle", ar: "أساسية" }
+  useful: { fr: "Utile", ar: "مفيدة" }
+  context: { fr: "Contexte", ar: "سياق" }
+
+# Classement des demandes : par priorité (ordre ci-dessus), puis par nombre total
+# d'indicateurs concernés (calculables + améliorés), puis par nombre de thèmes citoyens.
+sort_by: [priority, indicators, themes]
+
+# Suivi des demandes, par institution (statut modifiable, avec sa date).
+tracking_statuses:
+  to_send: { fr: "À envoyer", ar: "للإرسال" }
+  sent: { fr: "Envoyée", ar: "أُرسلت" }
+  granted: { fr: "Accordée", ar: "مُنحت" }
+  refused: { fr: "Refusée", ar: "رُفضت" }
+
+# Statut d'un indicateur pour le territoire (écran de complétude), d'après les badges des
+# valeurs du diagnostic : le moins fiable des badges présents l'emporte.
+indicator_statuses:
+  official: { fr: "Disponible — officiel", ar: "متوفر — رسمي" }
+  open: { fr: "Disponible — ouvert ou approché", ar: "متوفر — مفتوح أو تقريبي" }
+  estimated: { fr: "Estimé", ar: "مقدر" }
+  missing: { fr: "Manquant", ar: "غير متوفر" }

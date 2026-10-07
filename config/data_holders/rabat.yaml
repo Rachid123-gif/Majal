@@ -18,6 +18,9 @@
 # Les contributions citoyennes (fictives dans le démonstrateur) ne sont jamais citées dans les
 # notes de demande (choix du porteur, 2026-10-07).
 #
+# Champ d'une institution `with_data_of` : forme courte pour les phrases de l'écran
+# (« Avec les données de la Direction régionale de la Santé, MAJAL pourrait… »).
+#
 # Champs d'une demande :
 #   holders       institutions destinataires (une note chacune ; une demande adressée à
 #                 plusieurs communes porte sur le territoire de chacune) ;
@@ -60,6 +63,7 @@ institutions:
     name:
       fr: "Wilaya de la Région Rabat-Salé-Kénitra – Préfecture de Rabat (et préfectures de Salé et de Skhirate-Témara)"
       ar: "ولاية جهة الرباط-سلا-القنيطرة – عمالة الرباط (وعمالتا سلا والصخيرات-تمارة)"
+    with_data_of: { fr: "de la Wilaya et des préfectures", ar: "الولاية والعمالات" }
     kind: administration_territoriale
     to_verify: true
 
@@ -67,6 +71,7 @@ institutions:
     name:
       fr: "Commune de Rabat et conseils d'arrondissement"
       ar: "جماعة الرباط ومجالس المقاطعات"
+    with_data_of: { fr: "de la Commune de Rabat", ar: "جماعة الرباط" }
     kind: collectivite
     to_verify: true
 
@@ -74,6 +79,7 @@ institutions:
     name:
       fr: "Commune de Salé et conseils d'arrondissement"
       ar: "جماعة سلا ومجالس المقاطعات"
+    with_data_of: { fr: "de la Commune de Salé", ar: "جماعة سلا" }
     kind: collectivite
     to_verify: true
 
@@ -81,6 +87,7 @@ institutions:
     name:
       fr: "Communes de la préfecture de Skhirate-Témara"
       ar: "جماعات عمالة الصخيرات-تمارة"
+    with_data_of: { fr: "des communes de Skhirate-Témara", ar: "جماعات الصخيرات-تمارة" }
     kind: collectivite
     to_verify: true
 
@@ -88,6 +95,7 @@ institutions:
     name:
       fr: "Conseil de la Région Rabat-Salé-Kénitra"
       ar: "مجلس جهة الرباط-سلا-القنيطرة"
+    with_data_of: { fr: "du Conseil de la Région", ar: "مجلس الجهة" }
     kind: collectivite
     to_verify: true
 
@@ -95,6 +103,7 @@ institutions:
     name:
       fr: "Agence urbaine de Rabat-Salé"
       ar: "الوكالة الحضرية للرباط-سلا"
+    with_data_of: { fr: "de l'Agence urbaine", ar: "الوكالة الحضرية" }
     kind: etablissement_public
     to_verify: true
 
@@ -102,6 +111,7 @@ institutions:
     name:
       fr: "Direction régionale du Haut-Commissariat au Plan (Rabat-Salé-Kénitra)"
       ar: "المديرية الجهوية للمندوبية السامية للتخطيط (الرباط-سلا-القنيطرة)"
+    with_data_of: { fr: "du HCP", ar: "المندوبية السامية للتخطيط" }
     kind: administration
     to_verify: true
 
@@ -109,6 +119,7 @@ institutions:
     name:
       fr: "Direction régionale de la Santé et de la Protection sociale (Rabat-Salé-Kénitra) et délégations préfectorales"
       ar: "المديرية الجهوية للصحة والحماية الاجتماعية (الرباط-سلا-القنيطرة) والمندوبيات الإقليمية"
+    with_data_of: { fr: "de la Direction régionale de la Santé", ar: "المديرية الجهوية للصحة" }
     kind: administration
     to_verify: true
 
@@ -116,6 +127,7 @@ institutions:
     name:
       fr: "Académie régionale d'éducation et de formation (AREF) Rabat-Salé-Kénitra et directions provinciales"
       ar: "الأكاديمية الجهوية للتربية والتكوين لجهة الرباط-سلا-القنيطرة والمديريات الإقليمية"
+    with_data_of: { fr: "de l'AREF", ar: "الأكاديمية الجهوية للتربية والتكوين" }
     kind: etablissement_public
     to_verify: true
 
@@ -123,6 +135,7 @@ institutions:
     name:
       fr: "Distributeur d'eau, d'électricité et d'assainissement de la région (Société régionale multiservices, à vérifier)"
       ar: "موزع الماء والكهرباء والتطهير بالجهة (الشركة الجهوية متعددة الخدمات، يتعين التحقق)"
+    with_data_of: { fr: "du distributeur d'eau, d'électricité et d'assainissement", ar: "موزع الماء والكهرباء والتطهير" }
     kind: operateur
     to_verify: true
 
@@ -130,6 +143,7 @@ institutions:
     name:
       fr: "Établissement de coopération intercommunale Al Assima (transport urbain)"
       ar: "مؤسسة التعاون بين الجماعات العاصمة (النقل الحضري)"
+    with_data_of: { fr: "d'Al Assima", ar: "مؤسسة العاصمة" }
     kind: groupement_collectivites
     to_verify: true
 
@@ -137,6 +151,7 @@ institutions:
     name:
       fr: "Opérateur du tramway de Rabat-Salé (à vérifier)"
       ar: "مشغل ترامواي الرباط-سلا (يتعين التحقق)"
+    with_data_of: { fr: "de l'opérateur du tramway", ar: "مشغل الترامواي" }
     kind: operateur
     to_verify: true
 
@@ -144,6 +159,7 @@ institutions:
     name:
       fr: "Agence pour l'aménagement de la vallée du Bouregreg"
       ar: "وكالة تهيئة ضفتي أبي رقراق"
+    with_data_of: { fr: "de l'Agence du Bouregreg", ar: "وكالة أبي رقراق" }
     kind: etablissement_public
     to_verify: true
 
@@ -151,6 +167,7 @@ institutions:
     name:
       fr: "Direction régionale de la Culture (monuments historiques et patrimoine)"
       ar: "المديرية الجهوية للثقافة (المباني التاريخية والتراث)"
+    with_data_of: { fr: "de la Direction régionale de la Culture", ar: "المديرية الجهوية للثقافة" }
     kind: administration
     to_verify: true
 
@@ -158,6 +175,7 @@ institutions:
     name:
       fr: "Direction régionale du développement durable (environnement, bruit)"
       ar: "المديرية الجهوية للتنمية المستدامة (البيئة، الضجيج)"
+    with_data_of: { fr: "de la Direction régionale du développement durable", ar: "المديرية الجهوية للتنمية المستدامة" }
     kind: administration
     to_verify: true
 
@@ -165,6 +183,7 @@ institutions:
     name:
       fr: "Direction régionale chargée de la Jeunesse (Rabat-Salé-Kénitra)"
       ar: "المديرية الجهوية المكلفة بالشباب (الرباط-سلا-القنيطرة)"
+    with_data_of: { fr: "de la Direction régionale chargée de la Jeunesse", ar: "المديرية الجهوية المكلفة بالشباب" }
     kind: administration
     to_verify: true
 
@@ -172,6 +191,7 @@ institutions:
     name:
       fr: "Entraide nationale (délégation régionale ou préfectorale)"
       ar: "التعاون الوطني (المندوبية الجهوية أو الإقليمية)"
+    with_data_of: { fr: "de l'Entraide nationale", ar: "التعاون الوطني" }
     kind: etablissement_public
     to_verify: true
 
@@ -179,6 +199,7 @@ institutions:
     name:
       fr: "Ministère de l'Intérieur — Direction générale des collectivités territoriales"
       ar: "وزارة الداخلية — المديرية العامة للجماعات الترابية"
+    with_data_of: { fr: "du Ministère de l'Intérieur (DGCT)", ar: "وزارة الداخلية (المديرية العامة للجماعات الترابية)" }
     kind: administration
     to_verify: true
 

@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from app.config_loader import ConfigError
-from app.config_loader.data_holders import load_data_holders, reference_errors
+from app.config_loader.data_holders import load_data_holders, load_module_rules, reference_errors
 from app.config_loader.indicators import load_grid
 from app.config_loader.taxonomy import load_taxonomy
 from app.settings import REPO_ROOT
@@ -14,6 +14,7 @@ CONFIG = REPO_ROOT / "config"
 HOLDERS = load_data_holders(CONFIG / "data_holders" / "rabat.yaml")
 GRID = load_grid(CONFIG / "indicators" / "grille-v0.yaml")
 TAXONOMY = load_taxonomy(CONFIG / "taxonomy" / "urbain.yaml")
+RULES = load_module_rules(CONFIG / "data_holders" / "regles.yaml")
 
 
 def test_every_reference_exists_in_the_grid_and_the_taxonomy() -> None:
@@ -95,7 +96,7 @@ def test_an_unknown_institution_is_explained_in_french(tmp_path: Path) -> None:
 def test_priority_is_computed_from_what_the_data_changes() -> None:
     from app.services.data_needs.priority import priority
 
-    by_code = {r.code: priority(r) for r in HOLDERS.requests}
+    by_code = {r.code: priority(r, RULES) for r in HOLDERS.requests}
     assert by_code["etablissements_sante"] == "essential"  # enables 3 indicators
     assert by_code["limites_officielles"] == "essential"  # official boundaries
     assert by_code["reseau_bus"] == "useful"  # improves an estimated indicator
@@ -105,11 +106,30 @@ def test_priority_is_computed_from_what_the_data_changes() -> None:
 
 
 def test_requests_are_ranked_by_priority_first() -> None:
-    from app.services.data_needs.priority import ORDER, priority, ranked
+    from app.services.data_needs.priority import priority, ranked
 
-    order = [ORDER[priority(r)] for r in ranked(HOLDERS)]
+    order = [list(RULES.priorities).index(priority(r, RULES)) for r in ranked(HOLDERS, RULES)]
     assert order == sorted(order)
-    assert ranked(HOLDERS)[0].code == "etablissements_sante"
+    # Then by total indicators concerned: the official boundaries (10) come first.
+    assert [r.code for r in ranked(HOLDERS, RULES)[:2]] == [
+        "limites_officielles",
+        "etablissements_sante",
+    ]
+
+
+def test_priority_rules_are_read_from_the_configuration(tmp_path: Path) -> None:
+    from app.services.data_needs.priority import priority
+
+    source = (CONFIG / "data_holders" / "regles.yaml").read_text(encoding="utf-8")
+    # Without the « context first » rule, Bouregreg (which improves green spaces) is useful.
+    edited = tmp_path / "regles.yaml"
+    edited.write_text(
+        source.replace("  - priority: context\n    when_any: [context]\n", ""), encoding="utf-8"
+    )
+    rules = load_module_rules(edited)
+    assert len(rules.priority_rules) == 2
+    bouregreg = next(r for r in HOLDERS.requests if r.code == "projets_bouregreg")
+    assert priority(bouregreg, rules) == "useful"
 
 
 def test_the_two_added_institutions_receive_their_own_request() -> None:

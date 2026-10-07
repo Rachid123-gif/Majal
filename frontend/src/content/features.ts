@@ -141,7 +141,7 @@ export const features: Feature[] = [
   {
     id: "assistant",
     status: "in_development",
-    stage: { fr: "Étape 5", ar: "المرحلة 5" },
+    stage: { fr: "Après Tétouan", ar: "بعد تطوان" },
     title: { fr: "Assistant documentaire", ar: "المساعد الوثائقي" },
     summary: {
       fr: "Des questions posées aux documents d'urbanisme et aux textes publics, avec le document et la page cités.",

@@ -43,6 +43,8 @@ def test_the_owners_list_of_institutions_is_there() -> None:
         "culture_dr_rsk",
         "developpement_durable_dr_rsk",
         "interieur_dgct",
+        "jeunesse_dr_rsk",
+        "entraide_nationale",
     }
 
 
@@ -88,3 +90,30 @@ def test_an_unknown_institution_is_explained_in_french(tmp_path: Path) -> None:
         load_data_holders(broken)
     assert "ministere_inconnu" in error.value.format()
     assert "absente de la liste" in error.value.format()
+
+
+def test_priority_is_computed_from_what_the_data_changes() -> None:
+    from app.services.data_needs.priority import priority
+
+    by_code = {r.code: priority(r) for r in HOLDERS.requests}
+    assert by_code["etablissements_sante"] == "essential"  # enables 3 indicators
+    assert by_code["limites_officielles"] == "essential"  # official boundaries
+    assert by_code["reseau_bus"] == "useful"  # improves an estimated indicator
+    assert by_code["proprete"] == "useful"  # citizen theme without indicator
+    assert by_code["projets_programmes_pti"] == "context"
+    assert by_code["projets_bouregreg"] == "context"  # programmed projects, even if it improves
+
+
+def test_requests_are_ranked_by_priority_first() -> None:
+    from app.services.data_needs.priority import ORDER, priority, ranked
+
+    order = [ORDER[priority(r)] for r in ranked(HOLDERS)]
+    assert order == sorted(order)
+    assert ranked(HOLDERS)[0].code == "etablissements_sante"
+
+
+def test_the_two_added_institutions_receive_their_own_request() -> None:
+    holders = {h for r in HOLDERS.requests for h in r.holders}
+    assert {"jeunesse_dr_rsk", "entraide_nationale"} <= holders
+    sport = next(r for r in HOLDERS.requests if r.code == "equipements_sport_culture")
+    assert sport.complementary == ["jeunesse_dr_rsk", "entraide_nationale"]

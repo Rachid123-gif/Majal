@@ -31,6 +31,8 @@ class DataRequest(StrictModel):
     code: Slug
     holders: list[Slug] = Field(min_length=1)
     alternatives: list[Slug] = Field(default_factory=list)
+    complementary: list[Slug] = Field(default_factory=list)
+    boundaries: bool = False
     data: Localized
     detail: Localized
     format: Localized
@@ -45,7 +47,7 @@ class DataRequest(StrictModel):
 
     @model_validator(mode="after")
     def has_a_purpose(self) -> Self:
-        if not (self.enables or self.improves or self.themes or self.context):
+        if not (self.enables or self.improves or self.themes or self.context or self.boundaries):
             raise ValueError(
                 f"La demande « {self.code} » ne sert à rien : indiquez au moins un indicateur "
                 "(enables ou improves), un thème (themes) ou « context: true »."
@@ -80,7 +82,8 @@ class DataHolders(StrictModel):
             raise ValueError(f"Demandes en double : {', '.join(duplicates)}.")
         known = set(codes)
         for request in self.requests:
-            unknown = sorted(set(request.holders + request.alternatives) - known)
+            cited = request.holders + request.alternatives + request.complementary
+            unknown = sorted(set(cited) - known)
             if unknown:
                 raise ValueError(
                     f"La demande « {request.code} » cite une institution absente de la liste "
@@ -92,12 +95,12 @@ class DataHolders(StrictModel):
                     f"La demande « {request.code} » dépend d'une demande inconnue : "
                     f"{', '.join(missing)}."
                 )
-        used = {h for r in self.requests for h in r.holders + r.alternatives}
+        used = {h for r in self.requests for h in r.holders}
         orphans = sorted(known - used)
         if orphans:
             raise ValueError(
-                f"Institution sans aucune demande : {', '.join(orphans)}. Ajoutez une demande "
-                "ou retirez l'institution."
+                f"Institution sans demande qui lui soit adressée (holders) : "
+                f"{', '.join(orphans)}. Ajoutez une demande ou retirez l'institution."
             )
         return self
 

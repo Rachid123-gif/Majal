@@ -22,12 +22,26 @@
 #   holders       institutions destinataires (une note chacune ; une demande adressée à
 #                 plusieurs communes porte sur le territoire de chacune) ;
 #   alternatives  autres détenteurs possibles, affichés à l'écran, sans note ;
+#   complementary détenteurs complémentaires (une partie de la même donnée), affichés à
+#                 l'écran ; ils reçoivent leur propre demande, donc leur propre note ;
+#   boundaries    la demande porte sur les limites officielles (priorité « essentielle ») ;
 #   enables       indicateurs aujourd'hui « non disponibles » que la donnée permettrait de calculer ;
 #   requires_also autre demande nécessaire pour calculer ces indicateurs ;
 #   improves      indicateurs déjà calculés (estimés ou ouverts) qui deviendraient officiels ou
 #                 plus fins ;
 #   themes        thèmes citoyens sans indicateur que la donnée permettrait d'objectiver ;
 #   detail        niveau de détail souhaité (Rabat : arrondissement, quartier ou îlot).
+#
+# Priorité de chaque demande : CALCULÉE, jamais choisie à la main
+# (app/services/data_needs/priority.py, règle du porteur du 2026-10-07) :
+#   essentielle  rend calculables des indicateurs aujourd'hui non disponibles (enables), ou
+#                porte sur les limites officielles (boundaries) ;
+#   utile        améliore des indicateurs estimés ou ouverts (improves), ou objective un thème
+#                citoyen (themes) ;
+#   contexte     projets programmés (context), même s'ils améliorent aussi un indicateur ;
+#                catégorie distincte : plus tard, MAJAL
+#                distinguera « besoin non couvert » et « besoin déjà couvert par un projet
+#                programmé » (docs/questions-referent.md).
 #
 # Après toute modification : `make check-config`.
 
@@ -147,6 +161,20 @@ institutions:
     kind: administration
     to_verify: true
 
+  - code: jeunesse_dr_rsk
+    name:
+      fr: "Direction régionale chargée de la Jeunesse (Rabat-Salé-Kénitra)"
+      ar: "المديرية الجهوية المكلفة بالشباب (الرباط-سلا-القنيطرة)"
+    kind: administration
+    to_verify: true
+
+  - code: entraide_nationale
+    name:
+      fr: "Entraide nationale (délégation régionale ou préfectorale)"
+      ar: "التعاون الوطني (المندوبية الجهوية أو الإقليمية)"
+    kind: etablissement_public
+    to_verify: true
+
   - code: interieur_dgct
     name:
       fr: "Ministère de l'Intérieur — Direction générale des collectivités territoriales"
@@ -159,6 +187,7 @@ requests:
   - code: limites_officielles
     holders: [interieur_dgct]
     alternatives: [agence_urbaine_rabat_sale, hcp_dr_rsk]
+    boundaries: true
     data:
       fr: "Limites officielles des communes et des arrondissements de l'agglomération (fichier géographique)"
       ar: "الحدود الرسمية للجماعات والمقاطعات بالتجمع الحضري (ملف جغرافي)"
@@ -394,6 +423,7 @@ requests:
 
   - code: equipements_sport_culture
     holders: [commune_rabat, commune_sale, communes_skhirate_temara]
+    complementary: [jeunesse_dr_rsk, entraide_nationale]
     data:
       fr: "Équipements sportifs et culturels de proximité (terrains, salles, bibliothèques)"
       ar: "تجهيزات القرب الرياضية والثقافية (ملاعب، قاعات، خزانات)"
@@ -439,6 +469,38 @@ requests:
     value:
       fr: "Disposer d'une mesure pour le thème « accessibilité des personnes à mobilité réduite », qui n'a aujourd'hui aucun indicateur."
       ar: "التوفر على قياس لموضوع «ولوجية الأشخاص في وضعية إعاقة حركية» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: equipements_jeunesse
+    holders: [jeunesse_dr_rsk]
+    data:
+      fr: "Maisons de jeunes, foyers féminins et équipements sportifs de proximité gérés par la Direction : localisation, capacité, fréquentation"
+      ar: "دور الشباب والأندية النسوية وتجهيزات القرب الرياضية التي تدبرها المديرية: الموقع، الطاقة الاستيعابية، الارتياد"
+    detail: { fr: "Équipement (coordonnées géographiques)", ar: "التجهيز (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [culture_sport]
+    source: [taxonomy]
+    value:
+      fr: "Compléter l'inventaire des équipements de proximité pour le thème « culture, sport et loisirs », qui n'a aujourd'hui aucun indicateur."
+      ar: "استكمال جرد تجهيزات القرب لموضوع «الثقافة والرياضة والترفيه» الذي لا يتوفر حاليا على أي مؤشر."
+
+  - code: equipements_sociaux
+    holders: [entraide_nationale]
+    data:
+      fr: "Centres sociaux, crèches et centres d'éducation et de formation : localisation, capacité, fréquentation"
+      ar: "المراكز الاجتماعية ودور الحضانة ومراكز التربية والتكوين: الموقع، الطاقة الاستيعابية، الارتياد"
+    detail: { fr: "Équipement (coordonnées géographiques)", ar: "التجهيز (الإحداثيات الجغرافية)" }
+    format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
+    frequency: { fr: "Annuelle", ar: "سنوية" }
+    enables: []
+    improves: []
+    themes: [culture_sport, education, emploi_jeunesse]
+    source: [taxonomy]
+    value:
+      fr: "Recenser les crèches (thème « éducation »), les centres de formation (thème « emploi et jeunesse ») et les centres sociaux, que les indicateurs actuels ne couvrent pas."
+      ar: "إحصاء دور الحضانة (موضوع «التعليم») ومراكز التكوين (موضوع «التشغيل والشباب») والمراكز الاجتماعية، التي لا تغطيها المؤشرات الحالية."
 
   # ---------------------------------------------------------------- Patrimoine, environnement
   - code: inventaire_patrimoine

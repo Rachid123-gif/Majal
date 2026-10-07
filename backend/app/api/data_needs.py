@@ -146,6 +146,22 @@ def update_tracking(
         return _tracking(row, rules)
 
 
+@router.get("/api/territories/{code}/data-needs/export.xlsx")
+def export_xlsx(code: str, _: Annotated[Account, Depends(require_account)]) -> Response:
+    """Summary spreadsheet of the data requests (ranked, with the « Priorité » column)."""
+    from app.services.data_needs.excel import to_xlsx
+
+    holders, _rules = _config(code)
+    body = to_xlsx(_data_needs(code), holders.note_territory.fr)
+    return Response(
+        content=body,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f'attachment; filename="majal-besoins-donnees-{code}.xlsx"'
+        },
+    )
+
+
 NOTE_TYPES = {
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "pdf": "application/pdf",

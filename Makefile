@@ -13,7 +13,7 @@ BACKEND  := cd backend && uv run
 FRONTEND := cd frontend &&
 endif
 
-.PHONY: help setup setup-local start awake stop logs dev dev-local down indicators reports citizens migrate data demo test test-backend \
+.PHONY: help setup setup-local start awake stop logs dev dev-local down indicators reports notes citizens migrate data demo test test-backend \
         test-frontend lint check-config backup restore
 
 help: ## Affiche cette aide
@@ -97,6 +97,9 @@ indicators: ## Recalcule les indicateurs (après une modification de la grille)
 
 reports: ## Pré-génère les rapports de toutes les unités (cache pour les démonstrations)
 	docker compose run --rm -T backend python -m app.services.reports pregenerate $(or $(TERRITORY),rabat) $(if $(FORCE),--force,)
+
+notes: ## Écrit les notes de demande de données (Word et PDF) dans docs/notes-demande/<territoire>/
+	docker compose run --rm -T backend python -m app.services.data_needs notes $(or $(TERRITORY),rabat)
 
 citizens: ## Importe et analyse les contributions fictives (IA locale), puis évalue
 	docker compose run --rm -T backend python -m app.services.citizens import-fictif $(or $(TERRITORY),rabat)

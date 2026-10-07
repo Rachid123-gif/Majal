@@ -13,12 +13,19 @@
 # - les contributions citoyennes (fictives dans le démonstrateur) ne sont jamais citées ;
 # - champs à compléter entre crochets.
 #
+# - première personne du singulier partout (un seul signataire) ;
+# - destinataire unique, avec son titre complet (recipient_title du référentiel) ; les entités
+#   complémentaires (also_concerned) sont citées dans le texte, jamais en destinataires.
+#
 # Variables remplacées automatiquement :
-#   {institution}  intitulé de l'institution destinataire
-#   {territory}    territoire étudié (note_territory du référentiel)
-#   {effects}      phrase calculée : ce que les données demandées permettraient
+#   {institution}      intitulé de l'institution destinataire
+#   {recipient_title}  titre complet du destinataire (« Monsieur / Madame le / la … »)
+#   {salutation_title} titre de l'appel et de la formule finale
+#   {also_concerned}   entités complémentaires citées dans la lettre
+#   {territory}        territoire étudié (note_territory du référentiel)
+#   {effects}          phrase calculée : ce que les données demandées permettraient
 
-template_version: "v0"
+template_version: "v1"
 status: TODO_REFERENT
 language: fr
 
@@ -29,35 +36,47 @@ sender:
   - "[Établissement]"
   - "[Adresse électronique — téléphone]"
 place_date: "[Ville], le [Date]"
-recipient:
-  - "À l'attention de [Destinataire]"
-  - "{institution}"
+# Destinataire unique ; « [Destinataire] » seulement si le référentiel n'a pas de titre.
+recipient: "À {recipient_title}"
+recipient_fallback: "À [Destinataire]"
 subject: "Objet : demande de données pour un diagnostic territorial de {territory}"
-salutation: "Monsieur / Madame [titre du destinataire],"
+salutation: "{salutation_title},"
+salutation_fallback: "Monsieur / Madame [titre du destinataire],"
+
+# Première phrase du contexte. Paragraphe optionnel, DÉSACTIVÉ par défaut (TODO_REFERENT) : s'il
+# est activé, il remplace la première phrase.
+context_opening: "Les programmes de développement territorial intégré (PDTI) reposent sur des diagnostics territoriaux précis et régulièrement actualisés."
+royal_context:
+  enabled: false
+  text: "Ce travail s'inscrit dans le cadre de la nouvelle génération des programmes de développement territorial intégré, lancée conformément aux Hautes Orientations Royales."
 paragraphs:
-  - "Les programmes de développement territorial intégré (PDTI) reposent sur des diagnostics territoriaux précis et régulièrement actualisés. Dans ce cadre, nous conduisons MAJAL, un projet de recherche appliquée qui développe un outil d'aide au diagnostic territorial à partir de données officielles et ouvertes, actuellement expérimenté sur {territory}."
-  - "Nous avons l'honneur de solliciter votre concours pour obtenir les données décrites dans l'annexe technique jointe. {effects}"
+  - "{context_opening} Dans ce cadre, je conduis le projet de recherche appliquée MAJAL, qui développe un outil d'aide au diagnostic territorial à partir de données officielles et ouvertes, actuellement expérimenté sur {territory}."
+  - "J'ai l'honneur de solliciter votre concours pour obtenir les données décrites dans l'annexe technique jointe. {effects} {also_concerned_sentence}"
   - "Ces données seraient utilisées exclusivement pour la recherche appliquée et la démonstration de l'outil. Elles seraient hébergées localement, sans transmission à un service extérieur, et traitées dans le respect de la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel. Aucune donnée nominative n'est demandée."
   - "En contrepartie, votre institution recevrait gratuitement les résultats produits avec ses données : diagnostics, cartes et indicateurs à l'échelle demandée."
-  - "Nous vous proposons d'encadrer cet échange par une convention d'échange de données précisant l'usage (recherche appliquée et démonstration), l'absence de diffusion à des tiers, l'hébergement local, ainsi que la restitution ou la destruction des données à la fin du projet."
-  - "Nous restons à votre disposition pour tout complément d'information et vous remercions par avance de l'attention que vous voudrez bien porter à cette demande."
-closing: "Veuillez agréer, [titre], l'expression de ma haute considération."
+  - "Je vous propose d'encadrer cet échange par une convention d'échange de données précisant l'usage (recherche appliquée et démonstration), l'absence de diffusion à des tiers, l'hébergement local, ainsi que la restitution ou la destruction des données à la fin du projet."
+  - "Je serais honoré de vous présenter l'outil MAJAL lors d'une rencontre, à votre convenance. Je reste à votre disposition pour tout complément d'information et vous remercie par avance de l'attention que vous voudrez bien porter à cette demande."
+# Phrase ajoutée au 2e paragraphe quand l'institution a des entités complémentaires.
+also_concerned_sentence: "Les données détenues par {also_concerned} pourraient utilement compléter cette demande."
+closing: "Veuillez agréer, {salutation_title}, l'expression de ma haute considération."
+closing_fallback: "Veuillez agréer, [titre], l'expression de ma haute considération."
 signature: "[Nom et titre du professeur]"
 attachment: "Pièce jointe : annexe technique (données demandées)"
 
 annex_title: "Annexe technique — données demandées"
-annex_intro: "Destinataire : {institution}. Données classées par priorité. Effet attendu sur les indicateurs de la grille d'analyse MAJAL : « calculer » un indicateur aujourd'hui non disponible, « fiabiliser » un indicateur aujourd'hui estimé ou issu de données ouvertes, « affiner » un indicateur officiel à une échelle plus fine."
+annex_intro: "Annexe à la lettre adressée à {recipient_title}. Données classées par priorité. Effet attendu sur les indicateurs de la grille d'analyse MAJAL : « calculer » un indicateur aujourd'hui non disponible, « fiabiliser » un indicateur aujourd'hui estimé ou issu de données ouvertes, « affiner » un indicateur officiel à une échelle plus fine."
 annex_columns:
   priority: "Priorité"
   data: "Donnée (contenu)"
   detail: "Niveau de détail"
   format: "Format"
-  period: "Période et fréquence"
+  period: "Période / fréquence"
   effect: "Effet attendu"
+frequency_label: "Fréquence"
 themes_effect: "Mesurer un thème aujourd'hui sans indicateur : {themes}"
 context_effect: "Situer les projets programmés par rapport aux déficits mesurés"
 
 footer: "Projet de note généré par MAJAL — à relire et adapter avant envoi"
 
 # Mots interdits dans une note (aucun partenariat supposé, aucune contribution citoyenne).
-forbidden: [partenariat, partenaire, "en collaboration avec", "convention signée", contribution, citoyen, fictif, fictive]
+forbidden: [partenariat, partenaire, "en collaboration avec", "convention signée", contribution, citoyen, fictif, fictive, nous, notre, nos]

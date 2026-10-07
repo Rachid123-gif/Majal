@@ -170,7 +170,15 @@ export function DataNeedsView({ code }: { code: string }) {
               <h2 id="start-title" className="font-heading text-petrol text-3xl">
                 {t("dataNeeds.startTitle")}
               </h2>
-              <p className="text-slate mt-2 text-sm">{t("dataNeeds.startIntro")}</p>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-slate text-sm">{t("dataNeeds.startIntro")}</p>
+                <a
+                  href={`/api/territories/${code}/data-needs/export.xlsx`}
+                  className="border-petrol text-petrol hover:bg-petrol rounded-full border px-4 py-1.5 text-sm hover:text-white"
+                >
+                  {t("dataNeeds.excel")}
+                </a>
+              </div>
               <div className="border-petrol/10 mt-4 overflow-x-auto rounded-2xl border bg-white">
                 <table className="w-full text-sm">
                   <thead className="text-slate text-xs">

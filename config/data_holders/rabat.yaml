@@ -21,6 +21,15 @@
 # Champ d'une institution `with_data_of` : forme courte pour les phrases de l'écran
 # (« Avec les données de la Direction régionale de la Santé, MAJAL pourrait… »).
 #
+# Champs d'une institution pour les notes de demande (français ; arabe à l'étape 7), tous À
+# VÉRIFIER PAR LE PROFESSEUR :
+#   recipient_title   destinataire unique, avec son titre complet (« À Monsieur / Madame … ») ;
+#   salutation_title  titre de l'appel et de la formule finale (« Monsieur / Madame le / la
+#                     Directeur / Directrice régional(e), ») ;
+#   also_concerned    entités complémentaires citées dans le texte de la lettre, jamais en
+#                     destinataires (ex. délégations préfectorales).
+# Communes de Skhirate-Témara : une note par commune, en complétant [nom de la commune].
+#
 # Champs d'une demande :
 #   holders       institutions destinataires (une note chacune ; une demande adressée à
 #                 plusieurs communes porte sur le territoire de chacune) ;
@@ -34,7 +43,9 @@
 #                 « affiner » s'ils sont déjà officiels (voir regles.yaml, effects) ;
 #   finer_scale   échelle plus fine apportée (« affiner … à l'échelle du quartier ») ;
 #   themes        thèmes citoyens sans indicateur que la donnée permettrait d'objectiver ;
-#   detail        niveau de détail souhaité (Rabat : arrondissement, quartier ou îlot).
+#   detail        niveau de détail souhaité (Rabat : arrondissement, quartier ou îlot) ;
+#   period        période demandée, distincte de la fréquence ; par défaut « situation la plus
+#                 récente disponible », une période explicite pour les séries (« 2020 à 2025 »).
 #
 # Priorité de chaque demande : CALCULÉE, jamais choisie à la main
 # (app/services/data_needs/priority.py, règle du porteur du 2026-10-07) :
@@ -67,6 +78,9 @@ institutions:
       fr: "Wilaya de la Région Rabat-Salé-Kénitra – Préfecture de Rabat (et préfectures de Salé et de Skhirate-Témara)"
       ar: "ولاية جهة الرباط-سلا-القنيطرة – عمالة الرباط (وعمالتا سلا والصخيرات-تمارة)"
     with_data_of: { fr: "de la Wilaya et des préfectures", ar: "الولاية والعمالات" }
+    recipient_title: { fr: "Monsieur / Madame le / la Wali de la Région Rabat-Salé-Kénitra, Gouverneur de la Préfecture de Rabat" }
+    salutation_title: { fr: "Monsieur / Madame le / la Wali" }
+    also_concerned: { fr: "les préfectures de Salé et de Skhirate-Témara" }
     kind: administration_territoriale
     to_verify: true
 
@@ -75,6 +89,9 @@ institutions:
       fr: "Commune de Rabat et conseils d'arrondissement"
       ar: "جماعة الرباط ومجالس المقاطعات"
     with_data_of: { fr: "de la Commune de Rabat", ar: "جماعة الرباط" }
+    recipient_title: { fr: "Monsieur / Madame le / la Président(e) du Conseil de la Commune de Rabat" }
+    salutation_title: { fr: "Monsieur / Madame le / la Président(e)" }
+    also_concerned: { fr: "les conseils d'arrondissement de Rabat" }
     kind: collectivite
     to_verify: true
 
@@ -83,6 +100,9 @@ institutions:
       fr: "Commune de Salé et conseils d'arrondissement"
       ar: "جماعة سلا ومجالس المقاطعات"
     with_data_of: { fr: "de la Commune de Salé", ar: "جماعة سلا" }
+    recipient_title: { fr: "Monsieur / Madame le / la Président(e) du Conseil de la Commune de Salé" }
+    salutation_title: { fr: "Monsieur / Madame le / la Président(e)" }
+    also_concerned: { fr: "les conseils d'arrondissement de Salé" }
     kind: collectivite
     to_verify: true
 
@@ -91,6 +111,8 @@ institutions:
       fr: "Communes de la préfecture de Skhirate-Témara"
       ar: "جماعات عمالة الصخيرات-تمارة"
     with_data_of: { fr: "des communes de Skhirate-Témara", ar: "جماعات الصخيرات-تمارة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Président(e) du Conseil de la Commune de [nom de la commune] (préfecture de Skhirate-Témara)" }
+    salutation_title: { fr: "Monsieur / Madame le / la Président(e)" }
     kind: collectivite
     to_verify: true
 
@@ -99,6 +121,8 @@ institutions:
       fr: "Conseil de la Région Rabat-Salé-Kénitra"
       ar: "مجلس جهة الرباط-سلا-القنيطرة"
     with_data_of: { fr: "du Conseil de la Région", ar: "مجلس الجهة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Président(e) du Conseil de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Président(e)" }
     kind: collectivite
     to_verify: true
 
@@ -107,6 +131,8 @@ institutions:
       fr: "Agence urbaine de Rabat-Salé"
       ar: "الوكالة الحضرية للرباط-سلا"
     with_data_of: { fr: "de l'Agence urbaine", ar: "الوكالة الحضرية" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice de l'Agence urbaine de Rabat-Salé" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice" }
     kind: etablissement_public
     to_verify: true
 
@@ -115,6 +141,8 @@ institutions:
       fr: "Direction régionale du Haut-Commissariat au Plan (Rabat-Salé-Kénitra)"
       ar: "المديرية الجهوية للمندوبية السامية للتخطيط (الرباط-سلا-القنيطرة)"
     with_data_of: { fr: "du HCP", ar: "المندوبية السامية للتخطيط" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e) du Haut-Commissariat au Plan de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e)" }
     kind: administration
     to_verify: true
 
@@ -123,6 +151,9 @@ institutions:
       fr: "Direction régionale de la Santé et de la Protection sociale (Rabat-Salé-Kénitra) et délégations préfectorales"
       ar: "المديرية الجهوية للصحة والحماية الاجتماعية (الرباط-سلا-القنيطرة) والمندوبيات الإقليمية"
     with_data_of: { fr: "de la Direction régionale de la Santé", ar: "المديرية الجهوية للصحة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e) de la Santé et de la Protection sociale de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e)" }
+    also_concerned: { fr: "les délégations préfectorales de la Santé et de la Protection sociale" }
     kind: administration
     to_verify: true
 
@@ -131,6 +162,9 @@ institutions:
       fr: "Académie régionale d'éducation et de formation (AREF) Rabat-Salé-Kénitra et directions provinciales"
       ar: "الأكاديمية الجهوية للتربية والتكوين لجهة الرباط-سلا-القنيطرة والمديريات الإقليمية"
     with_data_of: { fr: "de l'AREF", ar: "الأكاديمية الجهوية للتربية والتكوين" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice de l'Académie régionale d'éducation et de formation de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice" }
+    also_concerned: { fr: "les directions provinciales de l'Éducation nationale" }
     kind: etablissement_public
     to_verify: true
 
@@ -139,6 +173,8 @@ institutions:
       fr: "Distributeur d'eau, d'électricité et d'assainissement de la région (Société régionale multiservices, à vérifier)"
       ar: "موزع الماء والكهرباء والتطهير بالجهة (الشركة الجهوية متعددة الخدمات، يتعين التحقق)"
     with_data_of: { fr: "du distributeur d'eau, d'électricité et d'assainissement", ar: "موزع الماء والكهرباء والتطهير" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e) du distributeur d'eau, d'électricité et d'assainissement de la région ([intitulé exact à vérifier])" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e)" }
     kind: operateur
     to_verify: true
 
@@ -147,6 +183,8 @@ institutions:
       fr: "Établissement de coopération intercommunale Al Assima (transport urbain)"
       ar: "مؤسسة التعاون بين الجماعات العاصمة (النقل الحضري)"
     with_data_of: { fr: "d'Al Assima", ar: "مؤسسة العاصمة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Président(e) de l'Établissement de coopération intercommunale Al Assima" }
+    salutation_title: { fr: "Monsieur / Madame le / la Président(e)" }
     kind: groupement_collectivites
     to_verify: true
 
@@ -155,6 +193,8 @@ institutions:
       fr: "Opérateur du tramway de Rabat-Salé (à vérifier)"
       ar: "مشغل ترامواي الرباط-سلا (يتعين التحقق)"
     with_data_of: { fr: "de l'opérateur du tramway", ar: "مشغل الترامواي" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e) de l'opérateur du tramway de Rabat-Salé ([intitulé exact à vérifier])" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e)" }
     kind: operateur
     to_verify: true
 
@@ -163,6 +203,8 @@ institutions:
       fr: "Agence pour l'aménagement de la vallée du Bouregreg"
       ar: "وكالة تهيئة ضفتي أبي رقراق"
     with_data_of: { fr: "de l'Agence du Bouregreg", ar: "وكالة أبي رقراق" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e) de l'Agence pour l'aménagement de la vallée du Bouregreg" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e)" }
     kind: etablissement_public
     to_verify: true
 
@@ -171,6 +213,8 @@ institutions:
       fr: "Direction régionale de la Culture (monuments historiques et patrimoine)"
       ar: "المديرية الجهوية للثقافة (المباني التاريخية والتراث)"
     with_data_of: { fr: "de la Direction régionale de la Culture", ar: "المديرية الجهوية للثقافة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e) de la Culture de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e)" }
     kind: administration
     to_verify: true
 
@@ -179,6 +223,8 @@ institutions:
       fr: "Direction régionale du développement durable (environnement, bruit)"
       ar: "المديرية الجهوية للتنمية المستدامة (البيئة، الضجيج)"
     with_data_of: { fr: "de la Direction régionale du développement durable", ar: "المديرية الجهوية للتنمية المستدامة" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e) du développement durable de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e)" }
     kind: administration
     to_verify: true
 
@@ -187,6 +233,8 @@ institutions:
       fr: "Direction régionale chargée de la Jeunesse (Rabat-Salé-Kénitra)"
       ar: "المديرية الجهوية المكلفة بالشباب (الرباط-سلا-القنيطرة)"
     with_data_of: { fr: "de la Direction régionale chargée de la Jeunesse", ar: "المديرية الجهوية المكلفة بالشباب" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e) chargé(e) de la Jeunesse de la Région Rabat-Salé-Kénitra" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice régional(e)" }
     kind: administration
     to_verify: true
 
@@ -195,6 +243,8 @@ institutions:
       fr: "Entraide nationale (délégation régionale ou préfectorale)"
       ar: "التعاون الوطني (المندوبية الجهوية أو الإقليمية)"
     with_data_of: { fr: "de l'Entraide nationale", ar: "التعاون الوطني" }
+    recipient_title: { fr: "Monsieur / Madame le / la Délégué(e) [régional(e) / préfectoral(e)] de l'Entraide nationale" }
+    salutation_title: { fr: "Monsieur / Madame le / la Délégué(e)" }
     kind: etablissement_public
     to_verify: true
 
@@ -203,6 +253,8 @@ institutions:
       fr: "Ministère de l'Intérieur — Direction générale des collectivités territoriales"
       ar: "وزارة الداخلية — المديرية العامة للجماعات الترابية"
     with_data_of: { fr: "du Ministère de l'Intérieur (DGCT)", ar: "وزارة الداخلية (المديرية العامة للجماعات الترابية)" }
+    recipient_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e) des collectivités territoriales, Ministère de l'Intérieur" }
+    salutation_title: { fr: "Monsieur / Madame le / la Directeur / Directrice général(e)" }
     kind: administration
     to_verify: true
 
@@ -252,6 +304,7 @@ requests:
     detail: { fr: "Arrondissement", ar: "المقاطعة" }
     format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
     frequency: { fr: "Une fois (recensement 2024)", ar: "مرة واحدة (إحصاء 2024)" }
+    period: { fr: "Recensement de 2024", ar: "إحصاء 2024" }
     enables: [EDU_ECOLES]
     requires_also: [etablissements_scolaires]
     improves: []
@@ -270,6 +323,7 @@ requests:
     finer_scale: { fr: "du quartier", ar: "الحي" }
     format: { fr: "Tableau et fichier géographique des districts", ar: "جدول وملف جغرافي للمناطق" }
     frequency: { fr: "Une fois (recensement 2024)", ar: "مرة واحدة (إحصاء 2024)" }
+    period: { fr: "Recensement de 2024", ar: "إحصاء 2024" }
     enables: []
     improves: [DEM_POP, DEM_DENS, DEM_JEUNES, DEM_AGES, EMP_CHOM, EMP_ACTF, EMP_ANALPH, EAU_RES, EAU_ASS, LOG_PREC]
     themes: []
@@ -287,6 +341,7 @@ requests:
     detail: { fr: "Établissement (coordonnées géographiques)", ar: "المؤسسة (الإحداثيات الجغرافية)" }
     format: { fr: "Tableau avec coordonnées (Excel ou CSV)", ar: "جدول مع الإحداثيات (Excel أو CSV)" }
     frequency: { fr: "Annuelle (rentrée scolaire)", ar: "سنوية (الدخول المدرسي)" }
+    period: { fr: "Rentrée scolaire la plus récente", ar: "آخر دخول مدرسي" }
     enables: [EDU_ECOLES]
     requires_also: [population_6_14]
     improves: [EDU_PROX]
@@ -323,6 +378,7 @@ requests:
     finer_scale: { fr: "du quartier", ar: "الحي" }
     format: { fr: "Tableau (Excel ou CSV), fichier géographique si disponible", ar: "جدول (Excel أو CSV)، وملف جغرافي إن توفر" }
     frequency: { fr: "Annuelle", ar: "سنوية" }
+    period: { fr: "2020 à 2025", ar: "من 2020 إلى 2025" }
     enables: []
     improves: [EAU_RES, EAU_ASS]
     themes: [eau_assainissement]
@@ -406,6 +462,7 @@ requests:
     detail: { fr: "Arrondissement ou secteur de collecte", ar: "المقاطعة أو قطاع الجمع" }
     format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
     frequency: { fr: "Mensuelle ou annuelle", ar: "شهرية أو سنوية" }
+    period: { fr: "2020 à 2025", ar: "من 2020 إلى 2025" }
     enables: []
     improves: []
     themes: [proprete]
@@ -570,6 +627,7 @@ requests:
     detail: { fr: "Projet (commune ou arrondissement)", ar: "المشروع (الجماعة أو المقاطعة)" }
     format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
     frequency: { fr: "Semestrielle", ar: "نصف سنوية" }
+    period: { fr: "Programmation en cours", ar: "البرمجة الجارية" }
     enables: []
     improves: []
     themes: []
@@ -587,6 +645,7 @@ requests:
     detail: { fr: "Projet (commune ou arrondissement)", ar: "المشروع (الجماعة أو المقاطعة)" }
     format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }
     frequency: { fr: "Annuelle", ar: "سنوية" }
+    period: { fr: "Programmation en cours", ar: "البرمجة الجارية" }
     enables: []
     improves: []
     themes: []
@@ -604,6 +663,7 @@ requests:
     detail: { fr: "Projet ou espace (fichier géographique)", ar: "المشروع أو الفضاء (ملف جغرافي)" }
     format: { fr: "Fichier géographique ou tableau avec coordonnées", ar: "ملف جغرافي أو جدول مع الإحداثيات" }
     frequency: { fr: "Annuelle", ar: "سنوية" }
+    period: { fr: "Réalisations et programmation en cours", ar: "المنجزات والبرمجة الجارية" }
     enables: []
     improves: [ENV_VERT, ENV_VERT300]
     themes: []

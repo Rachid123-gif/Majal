@@ -19,11 +19,24 @@ InstitutionKind = Literal[
 ]
 
 
+class NoteText(StrictModel):
+    """Text of the data request notes: French now, Arabic at stage 7."""
+
+    fr: Text
+    ar: Text | None = None
+
+
+DEFAULT_PERIOD = Localized(fr="Situation la plus récente disponible", ar="آخر وضعية متوفرة")
+
+
 class Institution(StrictModel):
     code: Slug
     name: Localized
     kind: InstitutionKind
     with_data_of: Localized | None = None  # short form for sentences (« de l'AREF »)
+    recipient_title: NoteText | None = None  # « À Monsieur / Madame le / la … »
+    salutation_title: NoteText | None = None  # « Monsieur / Madame le / la Directeur / … , »
+    also_concerned: NoteText | None = None  # cited in the letter, never as recipients
     # Rule of the owner: every name is a proposal until the professor has checked it.
     to_verify: bool = True
 
@@ -38,6 +51,7 @@ class DataRequest(StrictModel):
     detail: Localized
     format: Localized
     frequency: Localized
+    period: Localized = DEFAULT_PERIOD
     enables: list[str] = Field(default_factory=list)
     requires_also: list[Slug] = Field(default_factory=list)
     improves: list[str] = Field(default_factory=list)

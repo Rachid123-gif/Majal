@@ -318,6 +318,7 @@
     "trackingBy": "mis à jour par {by}",
     "generateNote": "Note de demande (projet à relire) :",
     "toVerify": "Intitulé à vérifier par le professeur",
-    "legend": "Légende"
+    "legend": "Légende",
+    "excel": "Tableau Excel des données demandées"
   }
 }

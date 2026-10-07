@@ -140,6 +140,7 @@ def request_row(
         "detail": request.detail.model_dump(),
         "format": request.format.model_dump(),
         "frequency": request.frequency.model_dump(),
+        "period": request.period.model_dump(),
         "value": request.value.model_dump(),
         "effects": effects,
         "finer_scale": request.finer_scale.model_dump() if request.finer_scale else None,

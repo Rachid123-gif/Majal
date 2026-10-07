@@ -137,3 +137,10 @@ def test_the_two_added_institutions_receive_their_own_request() -> None:
     assert {"jeunesse_dr_rsk", "entraide_nationale"} <= holders
     sport = next(r for r in HOLDERS.requests if r.code == "equipements_sport_culture")
     assert sport.complementary == ["jeunesse_dr_rsk", "entraide_nationale"]
+
+
+def test_every_institution_has_a_single_recipient_title_for_the_notes() -> None:
+    for institution in HOLDERS.institutions:
+        assert institution.recipient_title is not None, institution.code
+        assert institution.salutation_title is not None, institution.code
+        assert institution.recipient_title.fr.startswith("Monsieur / Madame")

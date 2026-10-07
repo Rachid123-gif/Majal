@@ -36,6 +36,11 @@ class AnnexColumns(StrictModel):
     effect: Text
 
 
+class OptionalParagraph(StrictModel):
+    enabled: bool = False
+    text: Text
+
+
 class NoteTemplate(StrictModel):
     template_version: Text
     status: Text
@@ -44,16 +49,23 @@ class NoteTemplate(StrictModel):
     header_placeholder: Text
     sender: list[Text]
     place_date: Text
-    recipient: list[Text]
+    recipient: Text
+    recipient_fallback: Text
     subject: Text
     salutation: Text
+    salutation_fallback: Text
+    context_opening: Text
+    royal_context: OptionalParagraph
     paragraphs: list[Text] = Field(min_length=1)
+    also_concerned_sentence: Text
     closing: Text
+    closing_fallback: Text
     signature: Text
     attachment: Text
     annex_title: Text
     annex_intro: Text
     annex_columns: AnnexColumns
+    frequency_label: Text
     themes_effect: Text
     context_effect: Text
     footer: Text
@@ -136,12 +148,27 @@ def build_note(
 ) -> dict[str, Any]:
     """The note as plain data (letter, then annex rows), shared by the Word and PDF writers."""
     institution = next(i for i in data["institutions"] if i["code"] == institution_code)
+    config = holders.institution(institution_code)
+    assert config is not None
     name = institution["name"]["fr"]
     territory = holders.note_territory.fr
+    recipient_title = config.recipient_title.fr if config.recipient_title else None
+    salutation_title = config.salutation_title.fr if config.salutation_title else None
+    also = config.also_concerned.fr if config.also_concerned else None
     values = {
         "institution": name,
         "territory": territory,
+        "recipient_title": recipient_title or "[Destinataire]",
+        "salutation_title": salutation_title or "",
+        "also_concerned": also or "",
         "effects": effects_sentence(institution, data, holders),
+        # Optional paragraph (disabled by default): replaces the first sentence of the context.
+        "context_opening": template.royal_context.text
+        if template.royal_context.enabled
+        else template.context_opening,
+        "also_concerned_sentence": template.also_concerned_sentence.format(also_concerned=also)
+        if also
+        else "",
     }
 
     def fill(text: str) -> str:
@@ -177,7 +204,10 @@ def build_note(
                 "data": french_spacing(request["data"]["fr"]),
                 "detail": french_spacing(request["detail"]["fr"]),
                 "format": french_spacing(request["format"]["fr"]),
-                "period": french_spacing(request["frequency"]["fr"]),
+                "period": french_spacing(request["period"]["fr"]),
+                "frequency": french_spacing(
+                    f"{template.frequency_label} : {request['frequency']['fr'].lower()}"
+                ),
                 "effect": [french_spacing(line) for line in effect_lines],
             }
         )
@@ -187,11 +217,13 @@ def build_note(
         "header_placeholder": template.header_placeholder,
         "sender": template.sender,
         "place_date": template.place_date,
-        "recipient": [fill(line) for line in template.recipient],
+        "recipient": [fill(template.recipient if recipient_title else template.recipient_fallback)],
         "subject": fill(template.subject),
-        "salutation": fill(template.salutation),
+        "salutation": fill(
+            template.salutation if salutation_title else template.salutation_fallback
+        ),
         "paragraphs": [fill(p) for p in template.paragraphs],
-        "closing": fill(template.closing),
+        "closing": fill(template.closing if salutation_title else template.closing_fallback),
         "signature": template.signature,
         "attachment": fill(template.attachment),
         "annex_title": template.annex_title,
@@ -221,7 +253,8 @@ def note_text(note: dict[str, Any]) -> str:
         note["footer"],
     ]
     for row in note["rows"]:
-        parts += [row["data"], row["detail"], row["format"], row["period"], *row["effect"]]
+        parts += [row["data"], row["detail"], row["format"], row["period"], row["frequency"]]
+        parts += row["effect"]
     return "\n".join(parts)
 
 
@@ -319,7 +352,12 @@ def to_docx(note: dict[str, Any]) -> bytes:
         cells = table.add_row().cells
         for index, key in enumerate(keys):
             cells[index].width = widths[index]
-            value = "\n".join(row[key]) if key == "effect" else row[key]
+            if key == "effect":
+                value = "\n".join(row[key])
+            elif key == "period":
+                value = f"{row['period']}\n{row['frequency']}"
+            else:
+                value = row[key]
             cells[index].text = value
             for paragraph in cells[index].paragraphs:
                 for run in paragraph.runs:
@@ -336,9 +374,8 @@ def to_html(note: dict[str, Any]) -> str:
     e = html.escape
     rows = "".join(
         "<tr>"
-        + "".join(
-            f"<td>{e(row[k])}</td>" for k in ("priority", "data", "detail", "format", "period")
-        )
+        + "".join(f"<td>{e(row[k])}</td>" for k in ("priority", "data", "detail", "format"))
+        + f"<td>{e(row['period'])}<br>{e(row['frequency'])}</td>"
         + "<td>"
         + "<br>".join(e(line) for line in row["effect"])
         + "</td></tr>"

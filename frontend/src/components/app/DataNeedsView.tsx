@@ -283,14 +283,18 @@ export function DataNeedsView({ code }: { code: string }) {
                         statuses={data.tracking_statuses}
                         canEdit={canEdit}
                       />
-                      <button
-                        type="button"
-                        disabled
-                        title={t("dataNeeds.noteSoon")}
-                        className="border-petrol/30 text-petrol/60 rounded-full border px-4 py-1.5 text-sm"
-                      >
-                        {t("dataNeeds.generateNote")}
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        <span className="text-slate text-xs">{t("dataNeeds.generateNote")}</span>
+                        {(["docx", "pdf"] as const).map((fmt) => (
+                          <a
+                            key={fmt}
+                            href={`/api/territories/${code}/data-needs/institutions/${institution.code}/note.${fmt}`}
+                            className="border-petrol text-petrol hover:bg-petrol rounded-full border px-3 py-1 hover:text-white"
+                          >
+                            {fmt === "docx" ? "Word" : "PDF"}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </article>
                 ))}

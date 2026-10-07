@@ -4,7 +4,7 @@ allow, ranked requests (« Par où commencer ») and the follow-up of the reques
 import datetime as dt
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -65,6 +65,10 @@ def _tracking(row: DataRequestTracking | None, rules: ModuleRules) -> dict[str, 
 
 @router.get("/api/territories/{code}/data-needs")
 def data_needs(code: str, _: Annotated[Account, Depends(require_account)]) -> dict[str, Any]:
+    return _data_needs(code)
+
+
+def _data_needs(code: str) -> dict[str, Any]:
     holders, rules = _config(code)
     with Session(get_engine()) as session:
         area = _area(session, code)
@@ -140,3 +144,34 @@ def update_tracking(
         ]
         session.commit()
         return _tracking(row, rules)
+
+
+NOTE_TYPES = {
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "pdf": "application/pdf",
+}
+
+
+@router.get("/api/territories/{code}/data-needs/institutions/{institution}/note.{fmt}")
+def note(
+    code: str, institution: str, fmt: str, _: Annotated[Account, Depends(require_account)]
+) -> Response:
+    """Draft data request note (fixed template, no AI), to be read and adapted before sending."""
+    from app.services.data_needs.notes import build_note, load_note_template, to_docx, to_pdf
+
+    if fmt not in NOTE_TYPES:
+        raise HTTPException(status_code=404, detail="Format inconnu : docx ou pdf.")
+    holders, _rules = _config(code)
+    if holders.institution(institution) is None:
+        raise HTTPException(status_code=404, detail="Institution absente du référentiel.")
+    template = load_note_template(
+        get_settings().config_dir / "report_templates" / "note_demande.yaml"
+    )
+    content = build_note(_data_needs(code), institution, holders, template)
+    body = to_docx(content) if fmt == "docx" else to_pdf(content)
+    filename = f"majal-note-demande-{code}-{institution}.{fmt}"
+    return Response(
+        content=body,
+        media_type=NOTE_TYPES[fmt],
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

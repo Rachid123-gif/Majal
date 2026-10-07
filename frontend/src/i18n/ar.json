@@ -316,8 +316,7 @@
     "trackingDate": "التاريخ",
     "trackingSave": "تسجيل",
     "trackingBy": "حُيّن من طرف {by}",
-    "generateNote": "إعداد مذكرة الطلب",
-    "noteSoon": "متاح في النقطة الموالية (مذكرات Word وPDF).",
+    "generateNote": "مذكرة الطلب (مشروع للمراجعة):",
     "toVerify": "تسمية يتعين أن يتحقق منها الأستاذ",
     "legend": "مفتاح الألوان"
   }

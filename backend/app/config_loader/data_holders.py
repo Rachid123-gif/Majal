@@ -68,6 +68,7 @@ class DataHolders(StrictModel):
     version: Text
     status: Text
     display_label: Localized
+    note_territory: Localized
     to_verify_label: Localized
     institutions: list[Institution] = Field(min_length=1)
     requests: list[DataRequest] = Field(min_length=1)

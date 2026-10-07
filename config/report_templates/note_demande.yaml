@@ -1,0 +1,63 @@
+# MAJAL — Modèle fixe de la note de demande de données (étape 5.4)
+#
+# La note est rédigée à partir de ce modèle, complété par les données du module « Besoins en
+# données » (config/data_holders/<territoire>.yaml). Aucun texte n'est écrit par l'IA.
+# Statut : proposition (porteur du projet, 2026-10-07), à relire par le professeur
+# (TODO_REFERENT). Français maintenant ; arabe à l'étape 7.
+#
+# Règles (porteur du projet) :
+# - une page au plus pour la lettre, plus une annexe technique d'une page ;
+# - en-tête par défaut « MAJAL — projet de recherche appliquée » ; l'en-tête d'un établissement
+#   n'est ajouté qu'avec son autorisation ;
+# - aucune note ne laisse croire à un partenariat existant avec l'institution destinataire ;
+# - les contributions citoyennes (fictives dans le démonstrateur) ne sont jamais citées ;
+# - champs à compléter entre crochets.
+#
+# Variables remplacées automatiquement :
+#   {institution}  intitulé de l'institution destinataire
+#   {territory}    territoire étudié (note_territory du référentiel)
+#   {effects}      phrase calculée : ce que les données demandées permettraient
+
+template_version: "v0"
+status: TODO_REFERENT
+language: fr
+
+header: "MAJAL — projet de recherche appliquée"
+header_placeholder: "[En-tête de l'établissement, uniquement avec son autorisation]"
+sender:
+  - "[Nom et titre du professeur]"
+  - "[Établissement]"
+  - "[Adresse électronique — téléphone]"
+place_date: "[Ville], le [Date]"
+recipient:
+  - "À l'attention de [Destinataire]"
+  - "{institution}"
+subject: "Objet : demande de données pour un diagnostic territorial de {territory}"
+salutation: "Monsieur / Madame [titre du destinataire],"
+paragraphs:
+  - "Les programmes de développement territorial intégré (PDTI) reposent sur des diagnostics territoriaux précis et régulièrement actualisés. Dans ce cadre, nous conduisons MAJAL, un projet de recherche appliquée qui développe un outil d'aide au diagnostic territorial à partir de données officielles et ouvertes, actuellement expérimenté sur {territory}."
+  - "Nous avons l'honneur de solliciter votre concours pour obtenir les données décrites dans l'annexe technique jointe. {effects}"
+  - "Ces données seraient utilisées exclusivement pour la recherche appliquée et la démonstration de l'outil. Elles seraient hébergées localement, sans transmission à un service extérieur, et traitées dans le respect de la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel. Aucune donnée nominative n'est demandée."
+  - "En contrepartie, votre institution recevrait gratuitement les résultats produits avec ses données : diagnostics, cartes et indicateurs à l'échelle demandée."
+  - "Nous vous proposons d'encadrer cet échange par une convention d'échange de données précisant l'usage (recherche appliquée et démonstration), l'absence de diffusion à des tiers, l'hébergement local, ainsi que la restitution ou la destruction des données à la fin du projet."
+  - "Nous restons à votre disposition pour tout complément d'information et vous remercions par avance de l'attention que vous voudrez bien porter à cette demande."
+closing: "Veuillez agréer, [titre], l'expression de ma haute considération."
+signature: "[Nom et titre du professeur]"
+attachment: "Pièce jointe : annexe technique (données demandées)"
+
+annex_title: "Annexe technique — données demandées"
+annex_intro: "Destinataire : {institution}. Données classées par priorité. Effet attendu sur les indicateurs de la grille d'analyse MAJAL : « calculer » un indicateur aujourd'hui non disponible, « fiabiliser » un indicateur aujourd'hui estimé ou issu de données ouvertes, « affiner » un indicateur officiel à une échelle plus fine."
+annex_columns:
+  priority: "Priorité"
+  data: "Donnée (contenu)"
+  detail: "Niveau de détail"
+  format: "Format"
+  period: "Période et fréquence"
+  effect: "Effet attendu"
+themes_effect: "Mesurer un thème aujourd'hui sans indicateur : {themes}"
+context_effect: "Situer les projets programmés par rapport aux déficits mesurés"
+
+footer: "Projet de note généré par MAJAL — à relire et adapter avant envoi"
+
+# Mots interdits dans une note (aucun partenariat supposé, aucune contribution citoyenne).
+forbidden: [partenariat, partenaire, "en collaboration avec", "convention signée", contribution, citoyen, fictif, fictive]

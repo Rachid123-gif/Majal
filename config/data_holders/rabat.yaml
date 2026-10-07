@@ -13,7 +13,7 @@
 # - taxonomy: thème citoyen sans indicateur, marqué « donnée à demander »
 #   (config/taxonomy/urbain.yaml) ;
 # - question: point ouvert de docs/questions-referent.md (ex. Q15) ;
-# - context: projets programmés (programmes territoriaux intégrés, BRIEF §1), à mettre en regard
+# - context: projets programmés (programmes de développement territorial intégré, BRIEF §1), à mettre en regard
 #   des déficits mesurés, sans indicateur propre.
 # Les contributions citoyennes (fictives dans le démonstrateur) ne sont jamais citées dans les
 # notes de demande (choix du porteur, 2026-10-07).
@@ -55,6 +55,8 @@ status: TODO_REFERENT
 display_label:
   fr: "Référentiel des institutions — proposition, intitulés à vérifier par le professeur"
   ar: "مرجع المؤسسات — مقترح، التسميات يتعين أن يتحقق منها الأستاذ"
+# Territoire tel qu'il est nommé dans les notes de demande (« … expérimenté sur … »).
+note_territory: { fr: "l'agglomération de Rabat-Salé-Skhirate-Témara", ar: "تجمع الرباط سلا الصخيرات تمارة" }
 to_verify_label:
   fr: "Intitulé à vérifier par le professeur"
   ar: "تسمية يتعين أن يتحقق منها الأستاذ"
@@ -563,7 +565,7 @@ requests:
   - code: projets_programmes_pti
     holders: [wilaya_rsk]
     data:
-      fr: "Projets programmés ou en cours dans le cadre des programmes territoriaux intégrés : localisation, secteur, état d'avancement"
+      fr: "Projets programmés ou en cours dans le cadre des programmes de développement territorial intégré (PDTI) : localisation, secteur, état d'avancement"
       ar: "المشاريع المبرمجة أو الجارية في إطار البرامج الترابية المندمجة: الموقع، القطاع، درجة التقدم"
     detail: { fr: "Projet (commune ou arrondissement)", ar: "المشروع (الجماعة أو المقاطعة)" }
     format: { fr: "Tableau (Excel ou CSV)", ar: "جدول (Excel أو CSV)" }

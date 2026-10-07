@@ -316,8 +316,7 @@
     "trackingDate": "Date",
     "trackingSave": "Enregistrer",
     "trackingBy": "mis à jour par {by}",
-    "generateNote": "Générer la note de demande",
-    "noteSoon": "Disponible au point suivant (notes Word et PDF).",
+    "generateNote": "Note de demande (projet à relire) :",
     "toVerify": "Intitulé à vérifier par le professeur",
     "legend": "Légende"
   }
